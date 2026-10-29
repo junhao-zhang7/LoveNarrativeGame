@@ -1,6 +1,6 @@
 # 原创 2D 叙事游戏（开发代号待定）
 
-目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。当前已通过 Unity 编译，用户确认点击方块变色及还原正常。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。**IDE 断点和 Windows 独立构建仍待验证**。
+目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。当前已通过 Unity 编译，用户确认点击方块变色及还原正常；Windows Development Build 已成功生成，用户确认本机独立运行成功。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。**IDE 补全与断点仍待验证**；运行日志中的 URP 提示已登记在 PROGRESS。
 
 ## 首轮环境检查 · 2026-10-29
 
@@ -17,7 +17,7 @@ Unity 自带自己的脚本编译工具链；独立 .NET SDK 不是编辑器内�
 
 ### 后续环境更新 · 2026-10-29
 
-用户已独立安装 Unity 6.6（6000.6.7f1），实际路径为 `D:\zachary\Editor\Unity.exe`，现已通过 Hub 的“选择位置”添加，安装列表已显示版本、路径及 Windows 标记。下方第 1、2 步已具备 Hub 和编辑器，下一步从创建工程开始。项目运行、编译和构建仍未验证。
+用户已独立安装 Unity 6.6（6000.6.7f1），实际路径为 `D:\zachary\Editor\Unity.exe`，已通过 Hub 的“选择位置”添加。后续已完成工程创建、编辑器点击测试和首次 Windows 构建；下方保留初始化操作顺序，最新验收结果见 PROGRESS。
 
 ## 你现在需要执行的操作
 
@@ -39,6 +39,7 @@ Unity 自带自己的脚本编译工具链；独立 .NET SDK 不是编辑器内�
 - [执行计划与验收](docs/ROADMAP.md)
 - [进度、决策与验证记录](docs/PROGRESS.md)
 - [素材来源与授权台账](docs/ASSET_LICENSES.csv)
+- [C# 编辑器与断点验收](docs/DEBUGGING.md)
 - [长期协作规则](AGENTS.md)
 
 后续才按实际需要新增 GDD、模块设计、DEVLOG 和 PORTFOLIO；现在的决策及工作记录集中在 PROGRESS，避免空文档堆积。项目暂未授予公共开源许可证，也未创建远程仓库。

@@ -2,7 +2,7 @@
 
 ## 当前状态 · 2026-10-29
 
-当前里程碑：Phase 0，用户确认点击、再次点击还原及按住不连续切换均正常。检查发现实际交互位于 Assets/Scenes/SampleScene.unity；Bootstrap 仍为静态方块场景。已创建 Windows Build Profile，首次独立构建待完成。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
+当前里程碑：Phase 0，Windows 首次构建成功，用户确认独立程序运行成功。实际交互位于 Assets/Scenes/SampleScene.unity；Bootstrap 仍为静态方块场景。尚需补齐 C# IDE 补全与断点验收。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
 
 ### 本次已经完成
 - 读取用户完整项目要求；检查空工作区、工具命令、常见安装路径、注册表、Hub 配置与运行进程。
@@ -19,8 +19,8 @@
 | C# 编译 | ClickableSquare 已通过 Unity 编译：Logs/Editor.log 记录 Csc、ILPostProcess 和 CopyFiles Assembly-CSharp.dll；Library/ScriptAssemblies/Assembly-CSharp.dll 已更新；断点尚未验证 |
 | 自动化测试 | 未执行；尚无测试代码 |
 | Unity 编辑器运行 | 用户确认点击交互正常；实际保存的 SampleScene 已含 ClickableSquare 和 BoxCollider2D；已退出 Play 并保存 |
-| Windows 构建生成 | 未执行 |
-| 独立进程 / 实际设备测试 | 未执行 |
+| Windows 构建生成 | 成功：Editor.log 记录 Succeeded，71 秒（71464 ms）；Builds/Windows/UnityProject.exe 与配套目录已存在；Windows 64 位 Development Build，输出包含 MonoBleedingEdge |
+| 独立进程 / 实际设备测试 | 用户确认 Windows 本机独立程序运行成功；Player.log 存在并记录输入系统启动/关闭。其他电脑及移动设备未测试；重启后的初始状态尚无单独反馈 |
 
 ## 当前决策
 - D001：Windows / Steam 优先，离线买断短篇，移动端后置（用户要求）。
@@ -30,8 +30,16 @@
 - D005：商业素材逐项登记；当前无外部美术、音频、字体或 AI 生成素材；不添加默认开源许可。
 - D006：用户已采用 Universal 2D；实际 manifest 声明 URP 17.6.0。首轮 Windows 构建建议 Mono，具体设置待检查。
 
-## 下一项：P0-05（P0-04 的 IDE 断点验证仍未完成）
-已通过编辑器 Build Profiles 创建 Windows 配置，界面显示 Active、Intel 64-bit；已勾选 Development Build 并点击 Build。当前停在 Build Windows 输出文件夹对话框，需选择仓库根 Builds/Windows。独立构建后验证点击、还原、空白区域无响应、退出并重启后的初始状态。构建后再补齐 IDE 补全和断点验证，Phase 0 尚未全部完成。
+## 下一项：完成 P0-04 的 IDE 补全与断点验证
+用户双击 ClickableSquare.cs 后反馈“txt”。旧 PATH 中 code.cmd 指向 D:\zachary\courses\vscode\Code.exe，但此文件不存在；安装目录仅发现 new_Code.exe 和若干版本目录，疑似更新未完成。尚未更名、卸载或安装软件；当前未发现 C# / Unity 扩展。先恢复可正常启动的 VS Code，再按 docs/DEBUGGING.md 配置 Unity External Script Editor，验证自动补全和断点。Phase 0 尚未全部完成。
+
+## 首次 Windows 构建验收 · 2026-10-29
+- 构建日志明确记录：2026-10-29 15:46:57 至 15:48:09，Succeeded，71464 ms；时间来自本次本地 Editor.log，仅作该机器此次构建记录。
+- 输出：Builds/Windows/UnityProject.exe、UnityProject_Data、UnityPlayer.dll、MonoBleedingEdge 等。Windows.asset 已保存 m_Development: 1；构建不含 Script Debugging，本轮先对 Editor 做 IDE 断点验收。
+- 用户确认“已完成。运行成功”，记录为用户执行的本机测试；没有把反馈扩大成跨设备、所有用例或无警告测试。
+- Player.log 含 URP 后处理 shader 不受支持或被裁剪的提示，以及退出时 ComputeBuffer / D3D12 资源释放提示。记录为待排查项；不在本轮推断根因、不随意升级或改动渲染配置。
+- 构建后发现 URP 预筛选字段、全局渲染运行时列表、Input System 预载资源等序列化变化，已检查差异并保留；不把它们描述为手工性能优化。
+- 输出路径已确认受 Git 忽略；本次不提交可执行文件、日志、缓存或备份构建目录。
 
 ## 点击验收与首次构建准备 · 2026-10-29
 - 用户已正确解释 wasPressedThisFrame 只在按下的那一帧成立，并报告点击交互三项均正常。
