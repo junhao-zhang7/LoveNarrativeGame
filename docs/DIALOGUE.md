@@ -1,6 +1,6 @@
 # P1-02 对话原型
 
-当前状态：用户已完成静态 UI、三句对话和中文显示的编辑器运行验收。Noto Sans CJK SC Regular 2.004 的 TMP SDF 已生成，原字体引用缺失已修复并保存；原字体、许可证、来源说明与全部 .meta 齐全。下一步 Windows 构建回归。文字与界面均为技术占位，不代表正式剧情或美术。
+当前状态：P1-02 完成编辑器与 Windows 本机验收；中文对话构建成功（44882 ms），用户确认中文、推进、结束、重置与关闭 Unity 后运行正常。Noto TMP SDF 的原字体引用修复并保存。下一步 P1-03 点击方块启动对话。文字与界面均为技术占位，不代表正式剧情或美术。
 
 中文排查记录：首次运行显示方框与 missing character 警告；当时 SDF 为 Dynamic、Multi Atlas 开启，但运行时 Source Font File 为 None，来源 GUID 为空，字形表为空。停止 Play 后给 SDF 重新赋值原 .otf 并 Apply / Save Project，清除旧日志再运行；用户已反馈完成。保存文件确认来源 GUID 与运行时字体引用恢复且字形数据存在。保留上述失败与修复证据，独立构建仍需另测。
 
@@ -43,7 +43,7 @@
 - DialoguePresenter : MonoBehaviour：Start 检查三个引用和非空数组，显示第 0 句；NextLine 先检查是否结束，再检查数组边界，推进或显示结束文字并禁用按钮。缺配置时输出明确错误并禁用组件，已分配的 Next 按钮先禁用。
 - 内容资源与进度分开：索引与结束标记属于场景组件；场景重新加载会创建新组件，从第一句开始。当前进入场景自动开始，点击方块触发留到 P1-03；本轮没有分支、存档或打字机效果。
 - 独立 csc 检查返回成功；CS0649 提示三个 SerializeField 引用没有在 C# 中赋值，它们需要通过 Inspector 赋值。此检查不代替 Unity 导入编译、事件接线或运行验收。
-- 用户已反馈三句英文推进、结束与重新进入检查完成。尚未执行自动化测试，尚未生成带对话的新 Windows 构建。中文验收独立进行，不能把默认 LiberationSans 的英文显示通过当作中文通过。
+- 用户已分别完成英文、中文的编辑器运行检查，并完成中文对话 Windows 回归；没有自动化测试或跨设备测试。P1-03 行为改动需另行验收，不能沿用自动开始对话版本的结果。
 
 练习：停止 Play 后修改 PrototypeDialogue 的第二句，再运行确认内容来自资源。面试问题：为什么当前句索引存放在 DialoguePresenter，而不是共享的 ScriptableObject 资源里？
 
@@ -67,7 +67,7 @@
 
 1. 停止 Play，Ctrl+S 保存场景，File → Save Project。关闭之前运行的独立程序。
 2. File → Build Profiles，选现有 Windows，保持 Development Build；Scene List 应勾选 MainMenu（0）、SampleScene（1），无需创建新 Profile。
-3. Build，选择仓库根 Builds/Windows，等待成功。当前这轮新构建尚未执行；不要运行旧版本后当成新对话验收。
+3. Build，选择仓库根 Builds/Windows，等待成功。本轮中文对话已构建成功并获用户验收，保留步骤供后续回归。
 4. 打开 Builds/Windows/UnityProject.exe：主菜单 → Start，确认三句中文、数字和中文标点都正常；Next 依次推进，结束提示出现且按钮变灰，快速点击无异常。
 5. Back → Start，确认从第一句重置，方块仍能点击；返回菜单 Quit 关闭。重新打开 exe 再走一遍，可关闭 Unity 后运行以检查独立程序；无需断网或修改网络设置。
 6. 反馈结果后核验最新构建日志、Player.log 和 Git 差异，再标记 P1-02 的构建回归。构建目录不入 Git，公开分发前还需将字体版权和许可说明随产物打包。
