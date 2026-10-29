@@ -683,6 +683,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoveNarrativeGame.Prototype.ClickableSquare
   selectedColor: {r: 0.8627452, g: 0.07843138, b: 0.2352941, a: 1}
+  onClicked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1428422497}
+        m_TargetAssemblyTypeName: LoveNarrativeGame.Prototype.DialoguePresenter, Assembly-CSharp
+        m_MethodName: BeginDialogue
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!61 &637849532
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1267,6 +1282,7 @@ GameObject:
   - component: {fileID: 1428422496}
   - component: {fileID: 1428422495}
   - component: {fileID: 1428422497}
+  - component: {fileID: 1428422498}
   m_Layer: 5
   m_Name: DialoguePanel
   m_TagString: Untagged
@@ -1348,6 +1364,18 @@ MonoBehaviour:
   dialogue: {fileID: 11400000, guid: f2e02307b2a0e6744ab246fc4a66aeb9, type: 2}
   dialogueText: {fileID: 1010531282}
   nextButton: {fileID: 1871425230}
+--- !u!225 &1428422498
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1428422493}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1871425228
 GameObject:
   m_ObjectHideFlags: 0

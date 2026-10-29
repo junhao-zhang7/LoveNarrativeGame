@@ -2,7 +2,7 @@
 
 ## 当前状态 · 2026-10-29
 
-当前里程碑：P1-01 与 P1-02 已完成 Windows 本机验收；用户确认中文对话独立运行、推进、结束、重进与退出正常。下一步 P1-03：点击方块才显示对话，保留已有 UI 遮挡判断并防止重复开始。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
+当前里程碑：P1-01 与 P1-02 已完成 Windows 本机验收。P1-03 点击触发已接线，基础编辑器流程获用户确认；真实 UI 重叠专项和含新行为的 Windows 构建仍待验收。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
 
 ### 本次已经完成
 - 读取用户完整项目要求；检查空工作区、工具命令、常见安装路径、注册表、Hub 配置与运行进程。
@@ -14,11 +14,11 @@
 ### 验证等级
 | 层级 | 状态 / 证据 |
 | --- | --- |
-| 文档与代码已编写 | 点击、菜单和中文线性对话均已接线验收，原字体和 TMP 资源齐全；点击触发对话为下一项 |
+| 文档与代码已编写 | P1-03 命中事件、按需开始、CanvasGroup 隐藏、防重复开始已编写并接线 |
 | 静态与 Git 规则检查 | 通过：7 个代表缓存/构建路径被忽略，7 个代表源文件/.meta/包/设置路径未被忽略；README 本地链接均存在；授权台账表头为 13 列；提交前 git diff --cached --check 通过 |
-| C# 编译 | 点击、菜单、对话已有 Unity 运行证据；新脚本导入日志、Assembly-CSharp.dll 更新时间与用户运行反馈支持对话编译成功。独立 csc 检查亦成功 |
+| C# 编译 | P1-03 独立 csc 检查成功（Interaction.dll）；随后用户完成新行为的 Unity 运行检查，具备编译并运行证据 |
 | 自动化测试 | 未执行；尚无测试代码 |
-| Unity 编辑器运行 | 点击、断点、菜单和中文对话已有验收；点击方块启动对话尚未实现验收 |
+| Unity 编辑器运行 | P1-03 初始隐藏、空白不启动、点击启动、重复点击不重置、结束不重启、菜单重进已获用户确认。真实 UI 重叠仍待专项验证 |
 | Windows 构建生成 | 最新中文对话构建成功：UnityProject/Logs/Editor.log 记录 23:41:14–23:41:59，Succeeded，44882 ms。Windows 64 位 Development Build；方块与菜单早期构建另有成功记录 |
 | 独立进程 / 实际设备测试 | 用户完成中文对话独立程序回归：显示、推进、结束、重进、退出与关闭 Unity 后运行正常。Player.log 未检出缺字 / NullReference / IndexOutOfRange；仍有退出 ComputeBuffer / D3D12 资源提示。其他电脑和移动设备未测试 |
 
@@ -32,7 +32,19 @@
 - D007：用户已选择 ScriptableObject 保存小规模对话文本。索引和结束状态放在场景组件中，不写共享内容资源。
 
 ## 下一项：P1-03 点击方块启动对话
-保留现有鼠标命中和 UI 遮挡处理，在命中后发出可由 Inspector 连接的 UnityEvent；对话通过 CanvasGroup 初始隐藏且不拦截输入，由 BeginDialogue 显示第 0 句。同一场景进入期间只启动一次，重复点击不重置句子。开始、推进、结束、返回流程均需要新一轮编辑器运行验收。
+基础流程已验收。下一步在 Play 期间临时将 Square Position Y 从保存的 0 改为 -3.5：隐藏 UI 时点击物体能启动，显示 UI 后再点击相同屏幕位置不会让物体变色或重置对话。停止 Play 后确认位置自动恢复 0。该专项通过后才做新 Windows 构建回归，详见 docs/INTERACTION.md。
+
+### P1-03 基础编辑器运行确认 · 2026-10-29
+- 用户在基础流程步骤后反馈“已完成，进行下一步”，记录初始隐藏、空白不启动、方块启动、第二句不被重复点击重置、结束后不重启、菜单重进重新等待点击为用户完成的编辑器检查。
+- 保存场景确认 Square 的 onClicked 仅一个 BeginDialogue 事件，目标为面板上的 DialoguePresenter；DialoguePanel 已有一个启用的 CanvasGroup，Ignore Parent Groups 为 0；原 NextLine 事件保留。Square 保存位置仍为 (0, 0, 0)，相机正交尺寸为 5。
+- 本轮仅完善后续专项测试步骤和记录，不修改代码或场景。专项临时移动改在 Play 期间进行，停止运行会恢复，避免把测试位置保存到正式场景。
+- 真实重叠专项、P1-03 Windows 新构建和自动化测试尚未执行；已有 Windows 成功日志仍对应自动启动的 P1-02 版本。
+
+### P1-03 点击触发代码准备 · 2026-10-29
+- 已保留 P1-02 本地检查点 1bcde8f。随后只修改 ClickableSquare.cs 与 DialoguePresenter.cs；未改用户场景或手写 GUID。
+- ClickableSquare 增加序列化 UnityEvent onClicked，命中并变色后调用；DialoguePresenter 的 Awake 获取 CanvasGroup 并隐藏，Start 校验引用后只准备，BeginDialogue 首次显示，NextLine 增加未开始保护。hasStarted 防止进行中及结束后的重复开始；场景重载重置。
+- 查阅 Unity 6000.6 官方 CanvasGroup / UnityEvent 文档；使用本机 Unity 引用程序集对三个相关脚本独立编译成功，产物在忽略的 TestResults/ScriptCompile/Interaction.dll。没有写自动化测试或启动编辑器测试。
+- 场景中尚需检查 CanvasGroup 并由用户绑定一个 BeginDialogue 事件；Unity 导入编译及实际新行为尚未验收。真实 UI 重叠需要单独临时布置验证，不能由互不重叠的点击推断通过。
 
 ### P1-02 中文对话 Windows 回归完成 · 2026-10-29
 - 用户执行构建和独立程序步骤后反馈“已完成，进行下一步”，记录本机中文显示、推进、结束禁用、返回重置、退出、重新启动和关闭 Unity 后运行通过。

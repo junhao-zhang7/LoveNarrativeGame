@@ -1,6 +1,6 @@
 # 原创 2D 叙事游戏（开发代号待定）
 
-目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。基础环境、P1-01 主菜单和 P1-02 中文线性对话已完成编辑器与 Windows 本机验收。下一步 P1-03：由点击场景方块启动对话。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。补全列表手测和 URP / 退出资源提示排查仍有后续记录项。
+目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。基础环境、P1-01 主菜单和 P1-02 中文线性对话已完成编辑器与 Windows 本机验收。P1-03 点击触发的基础编辑器流程已获用户确认，下一步专项验证 UI 覆盖物体时不点击穿透，再构建新版本。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。补全列表手测和 URP / 退出资源提示排查仍有后续记录项。
 
 ## 首轮环境检查 · 2026-10-29
 
@@ -42,6 +42,7 @@ Unity 自带自己的脚本编译工具链；独立 .NET SDK 不是编辑器内�
 - [C# 编辑器与断点验收](docs/DEBUGGING.md)
 - [主菜单搭建与验收](docs/MAIN_MENU.md)
 - [对话原型搭建与验收](docs/DIALOGUE.md)
+- [点击物体触发对话](docs/INTERACTION.md)
 - [长期协作规则](AGENTS.md)
 
 后续才按实际需要新增 GDD、模块设计、DEVLOG 和 PORTFOLIO；现在的决策及工作记录集中在 PROGRESS，避免空文档堆积。项目暂未授予公共开源许可证，也未创建远程仓库。

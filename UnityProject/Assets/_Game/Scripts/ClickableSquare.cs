@@ -1,14 +1,16 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace LoveNarrativeGame.Prototype
 {
-    // A small mouse-input exercise for the Bootstrap scene.
+    // Mouse hit detection and feedback; listeners decide what the click starts.
     [RequireComponent(typeof(SpriteRenderer), typeof(BoxCollider2D))]
     public sealed class ClickableSquare : MonoBehaviour
     {
         [SerializeField] private Color selectedColor = new Color(0.25f, 0.7f, 1f, 1f);
+        [SerializeField] private UnityEvent onClicked = new UnityEvent();
 
         private SpriteRenderer spriteRenderer;
         private BoxCollider2D hitbox;
@@ -59,6 +61,7 @@ namespace LoveNarrativeGame.Prototype
             {
                 isSelected = !isSelected;
                 spriteRenderer.color = isSelected ? selectedColor : originalColor;
+                onClicked.Invoke();
             }
         }
     }
