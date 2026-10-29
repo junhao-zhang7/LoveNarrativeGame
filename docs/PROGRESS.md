@@ -2,7 +2,7 @@
 
 ## 当前状态 · 2026-10-29
 
-当前里程碑：Phase 0，Windows 首次构建成功，用户确认独立程序运行成功。实际交互位于 Assets/Scenes/SampleScene.unity；Bootstrap 仍为静态方块场景。尚需补齐 C# IDE 补全与断点验收。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
+当前里程碑：Phase 1 P1-01a 已通过用户 Play 验收，MainMenu 的 Start 可进入 SampleScene，方块交互正常。接下来做 P1-01b 返回菜单并验证往返；完整菜单闭环和新 Windows 构建尚未验收。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
 
 ### 本次已经完成
 - 读取用户完整项目要求；检查空工作区、工具命令、常见安装路径、注册表、Hub 配置与运行进程。
@@ -14,11 +14,11 @@
 ### 验证等级
 | 层级 | 状态 / 证据 |
 | --- | --- |
-| 文档与代码已编写 | 是；新增 ClickableSquare 输入练习脚本 |
+| 文档与代码已编写 | ClickableSquare 已验收；SceneNavigation / MainMenu 的开始按钮已接线，返回和退出待接线 |
 | 静态与 Git 规则检查 | 通过：7 个代表缓存/构建路径被忽略，7 个代表源文件/.meta/包/设置路径未被忽略；README 本地链接均存在；授权台账表头为 13 列；提交前 git diff --cached --check 通过 |
-| C# 编译 | ClickableSquare 已通过 Unity 编译：Logs/Editor.log 记录 Csc、ILPostProcess 和 CopyFiles Assembly-CSharp.dll；Library/ScriptAssemblies/Assembly-CSharp.dll 已更新；断点尚未验证 |
+| C# 编译 | ClickableSquare 已通过 Unity 编译与用户断点验收；SceneNavigation 通过独立 Editor / Player 分支编译，后续用户也已在 Unity 成功执行 StartGame 场景跳转 |
 | 自动化测试 | 未执行；尚无测试代码 |
-| Unity 编辑器运行 | 用户确认点击交互正常；实际保存的 SampleScene 已含 ClickableSquare 和 BoxCollider2D；已退出 Play 并保存 |
+| Unity 编辑器运行 | 用户确认点击交互、断点状态切换及 MainMenu → Start → SampleScene 正常；返回菜单尚未验证 |
 | Windows 构建生成 | 成功：Editor.log 记录 Succeeded，71 秒（71464 ms）；Builds/Windows/UnityProject.exe 与配套目录已存在；Windows 64 位 Development Build，输出包含 MonoBleedingEdge |
 | 独立进程 / 实际设备测试 | 用户确认 Windows 本机独立程序运行成功；Player.log 存在并记录输入系统启动/关闭。其他电脑及移动设备未测试；重启后的初始状态尚无单独反馈 |
 
@@ -30,8 +30,48 @@
 - D005：商业素材逐项登记；当前无外部美术、音频、字体或 AI 生成素材；不添加默认开源许可。
 - D006：用户已采用 Universal 2D；实际 manifest 声明 URP 17.6.0。首轮 Windows 构建建议 Mono，具体设置待检查。
 
-## 下一项：完成 P0-04 的 IDE 补全与断点验证
-用户双击 ClickableSquare.cs 后反馈“txt”。旧 PATH 中 code.cmd 指向 D:\zachary\courses\vscode\Code.exe，但此文件不存在；安装目录仅发现 new_Code.exe 和若干版本目录，疑似更新未完成。尚未更名、卸载或安装软件；当前未发现 C# / Unity 扩展。先恢复可正常启动的 VS Code，再按 docs/DEBUGGING.md 配置 Unity External Script Editor，验证自动补全和断点。Phase 0 尚未全部完成。
+## 下一项：P1-01b 返回菜单
+已检查 SampleScene 的保存文件，当前仅有 Main Camera、Global Light 2D、Square，没有 Canvas / EventSystem。用户退出 Play 后，打开 Assets/Scenes/SampleScene.unity，添加 UGUI / TMP 的 Back 按钮，在自动创建的 Canvas 上挂 SceneNavigation，把 On Click 绑定 ReturnToMenu，配置 Input System UI 模块并保存。随后从 MainMenu Play，验证 Start → SampleScene → Back → MainMenu 连续 3 次及重新进入后的方块初始状态。通过后再加 Quit 并回归新 Windows 构建。
+
+### 主菜单 Start 运行验收 · 2026-10-29
+- 用户在执行 MainMenu Play / Start 跳转 / 方块交互检查后反馈“已完成，下一步”，记录该项运行验收通过。
+- Scene List 已包含启用的 MainMenu（0）和 SampleScene（1）；ReturnToMenu 方法已存在，无需为返回按钮新增运行时代码。
+- 返回按钮仍需用户在编辑器创建和绑定；本轮只记录结果并完善步骤，不自动修改原有交互场景。独立程序目前仍是之前的方块构建，不声称含新菜单。
+- 主菜单本地检查点保留用户导入的 TMP 官方资源和 .meta；其原始 Shader / ShaderGraph 存在缩进、文件末尾空行等 whitespace 提示，保持上游内容原样。手写代码和文档按默认规则检查，其他 Unity 序列化文件仅豁免行尾空格；不为风格检查重写第三方资源。
+
+### MainMenu 接线静态检查 · 2026-10-29
+- 已保存 Assets/_Game/Scenes/MainMenu.unity 和 .meta；SceneNavigation.cs.meta 已由 Unity 生成。
+- Canvas 上的 SceneNavigation 目标为 SampleScene / MainMenu；StartButton 的 On Click 持久化事件已绑定该组件的 StartGame。
+- EventSystem 当前包含 InputSystemUIInputModule；文字子对象已设为 Start。
+- EditorBuildSettings 的启用场景为 MainMenu（第 0 项）、SampleScene（第 1 项），与脚本目标一致。
+- 用户已通过编辑器导入 TMP Essentials，包含 LiberationSans 字体和随附 OFL 文件；来源与许可证据登记到素材台账。本轮不改场景、不重新绑定事件，实际跳转尚未验证。
+
+### 基础环境验收与进入原型阶段 · 2026-10-29
+- 用户报告断点已命中并实际看到 false → true → false，记录为用户完成的调试验收；SDK 和语言服务启动已有此前日志证据。补全建议列表尚无单独反馈，后续编辑中继续观察，不虚报已手测。
+- 已具备项目打开、保存场景、编辑器运行、脚本编译、断点、Git 源工程管理、Windows 构建与本机运行的证据，基础验收闭环通过。其他电脑测试、独立程序重启初始状态的单独反馈、URP 提示排查仍保留为后续回归项。
+- SceneNavigation 的 Editor 与 Player 编译检查均成功，输出在 TestResults/ScriptCompile，不导入 Assets、不覆盖 Unity 的 Assembly-CSharp 程序集。没有新增自动化功能测试，菜单行为待接线后手工验收。
+
+### SDK 安装与工程加载复验 · 2026-10-29
+- 用户反馈安装完成。dotnet --list-sdks 实际返回 10.0.403 [C:\Program Files\dotnet\sdk]。
+- 最新 VS Code 日志记录 C#、C# Dev Kit、Unity 扩展的激活，C# Dev Kit .NET 服务启动且 IPC 建立，UnityProject.slnx 成功打开、NuGet 恢复完成；C# 日志确认 Assembly-CSharp.csproj 由 C# Dev Kit 加载。
+- 上述证据确认 SDK 与语言服务启动链路已有进展，不等同于补全已手工验证或 Unity 调试断点已命中。下一步仍为用户亲手验证第 60 行状态切换。
+
+### 重载后的明确依赖要求 · 2026-10-29
+- 用户新截图显示 C# Workspace Requirements：No .NET 10.x or later SDK installed，建议安装 SDK 10.0.403；底部显示 .slnx 无法打开和 No Solution，.NET 运行库仍在下载。
+- 复查系统 dotnet --list-sdks 无输出。Microsoft .NET 10 官方下载页当前列出 SDK 10.0.403 和 Windows x64 安装程序，已核对。
+- 下一步由用户点击 Resolve Requirements 安装该 SDK；如自动下载失败，使用 https://dotnet.microsoft.com/zh-cn/download/dotnet/10.0 的 SDK / Windows x64 安装程序。仅安装 Runtime 不能满足这项 SDK 要求。
+- 安装后完全退出并重新打开 VS Code，从 Unity 双击脚本打开工程，检查工作区要求、解决方案加载、补全和 F5。此处仍为待执行方案，尚未确认 SDK 安装或断点通过；不修改 Unity 游戏目标框架。
+
+### F5 调试适配器错误 · 2026-10-29
+- 用户截图报 Couldn't find a debug adapter descriptor for debug type 'vstuc'。
+- 读取 VS Code logs/20261029T161419/window1/exthost/exthost.log 和 C# Dev Kit.log：16:14:20，C# Dev Kit 因 C# 扩展未安装或未激活而启动失败；16:17:09 才出现 C# 扩展的激活记录；16:17:12 C# 日志仍报告依赖的 C# Dev Kit 激活失败。
+- 已确认 C# 2.160.4 目录存在，launch.json 的 vstuc 配置与 Unity 扩展一致。本轮不改调试类型、不卸载扩展、不预先安装额外 SDK。
+- 下一步先取消错误弹窗，在 VS Code 执行 Developer: Reload Window，让依赖按完整状态重新激活，然后重试 F5。该修复尚待用户执行和验证；若仍失败，再读取重载后新日志。
+
+### IDE 检查记录 · 2026-10-29
+- 已确认恢复的 Code.exe 和生成的工程/调试配置；配置存在不代表调试已命中。用户补全与断点反馈仍待获取。
+- 本轮 CLI 列出扩展时受到沙箱对 VS Code 安装目录切换和本地日志目录写入的限制，但返回了扩展清单；不能把该 CLI 权限错误当作用户桌面 VS Code 启动失败。
+- .csproj、.slnx、项目 .vscode 配置已确认被 Git 忽略。本轮不改用户正在使用的 IDE 配置，也不提交用户自行产生的 ProjectSettings.asset 差异。
 
 ## 首次 Windows 构建验收 · 2026-10-29
 - 构建日志明确记录：2026-10-29 15:46:57 至 15:48:09，Succeeded，71464 ms；时间来自本次本地 Editor.log，仅作该机器此次构建记录。

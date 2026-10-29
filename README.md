@@ -1,6 +1,6 @@
 # 原创 2D 叙事游戏（开发代号待定）
 
-目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。当前已通过 Unity 编译，用户确认点击方块变色及还原正常；Windows Development Build 已成功生成，用户确认本机独立运行成功。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。**IDE 补全与断点仍待验证**；运行日志中的 URP 提示已登记在 PROGRESS。
+目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。用户已确认点击交互、Windows 独立运行和断点状态切换；基础环境验收闭环通过。MainMenu 的 Start 跳转已通过编辑器验收，**返回菜单、退出按钮及含菜单的新构建仍待验证**。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。补全列表手测和 URP 提示排查仍有后续记录项。
 
 ## 首轮环境检查 · 2026-10-29
 
@@ -40,6 +40,7 @@ Unity 自带自己的脚本编译工具链；独立 .NET SDK 不是编辑器内�
 - [进度、决策与验证记录](docs/PROGRESS.md)
 - [素材来源与授权台账](docs/ASSET_LICENSES.csv)
 - [C# 编辑器与断点验收](docs/DEBUGGING.md)
+- [主菜单搭建与验收](docs/MAIN_MENU.md)
 - [长期协作规则](AGENTS.md)
 
 后续才按实际需要新增 GDD、模块设计、DEVLOG 和 PORTFOLIO；现在的决策及工作记录集中在 PROGRESS，避免空文档堆积。项目暂未授予公共开源许可证，也未创建远程仓库。
