@@ -2,7 +2,7 @@
 
 目标：MainMenu → Start → SampleScene，接着补齐返回菜单和独立程序退出。全部为技术占位 UI，尚无正式游戏名称、美术或剧情。
 
-当前 MainMenu → Start → SampleScene 已通过用户编辑器运行验收。Scene List 顺序正确，TMP Essentials 已导入并登记来源。现在添加 Back 按钮；下方保留完整搭建步骤供复查。
+P1-01 已完成：用户确认 MainMenu → Start → SampleScene → Back 三次往返、方块颜色重置、Quit 关闭独立程序及重新启动正常；编辑器 Quit 提示亦有截图证据。21:02 的新版 Windows 构建成功（34428 ms）。下方保留搭建步骤供复查。
 
 ## 第一轮：一个开始按钮
 
@@ -32,6 +32,19 @@
 
 通过返回按钮验收后再添加 Quit 和构建回归：
 
+### 当前练习：退出按钮与新版构建
+
+1. 退出 Play，在底部 Project 打开 Assets/_Game/Scenes/MainMenu。
+2. 左侧 Hierarchy 展开 Canvas，选 StartButton，Ctrl+D 复制。将复制对象改名 QuitButton，在右侧 Rect Transform 仅把 Pos Y 改为 -80，让它位于开始按钮下方。
+3. 展开 QuitButton，选下面的文字子对象（复制后可能仍叫 Start 或 Text (TMP)）。在 Inspector 的 TextMeshPro - Text (UI) → Text Input，把显示内容改为 Quit。
+4. 选 QuitButton，找到 Inspector 的 Button → On Click()。复制保留了 StartGame 事件，把现有函数下拉框改成 SceneNavigation.QuitGame()，对象栏保留当前 MainMenu 的 Canvas，事件只保留一个；不要再添加第二个事件。Ctrl+S 保存。
+5. Play → Game 点击 Quit。当前脚本在编辑器中只向 Console 输出提示，不关闭 Unity，也不自动退出 Play。确认提示出现后手动退出 Play。
+6. 关闭之前的独立测试程序。File → Build Profiles，选 Windows，确认 Development Build 勾选；Scene List 保持 MainMenu（0）、SampleScene（1）。点击 Build，输出仍选仓库根 Builds/Windows。
+7. 构建结束运行 Builds/Windows/UnityProject.exe，确认启动是主菜单。Start → 点击方块变色 → Back → Start，检查方块恢复初始颜色；总共往返 3 次，再 Back → Quit，确认独立程序关闭。重新启动确认仍从菜单开始，再 Quit。
+8. 记录实际结果与错误，未完成这些独立程序回归前，不把整个 P1-01 标为完成。
+
+本机检查补充：SampleScene 的 EventSystem 已直接使用 Input System UI Input Module，输入动作已分配，因此不需要旧模块的替换按钮。Back 的显示文字已修正。Hierarchy 中的对象名称与屏幕显示文本是两个独立属性；修改显示文字应在 TextMeshPro - Text (UI) 的 Text Input 中操作。
+
 - MainMenu 中复制 StartButton 为 QuitButton，分开摆放，把文字改为 Quit；On Click 事件改为同一 Canvas 上 SceneNavigation.QuitGame()，避免仍保留 StartGame 的事件。编辑器中只输出提示；独立 Windows 程序中才实际退出。
 - 打开 SampleScene，添加一个 UGUI / TMP 按钮，文字 Back。在它的 Canvas 上挂 SceneNavigation，按钮绑定 ReturnToMenu()。正确配置 EventSystem / Input System UI 模块。保存两个场景。
 - MainMenu → Start → SampleScene → Back → MainMenu，重复 3 次；检验没有重复跳转、没有 UI 点击穿透到方块、重新进入场景时方块恢复原始状态。
@@ -51,4 +64,4 @@ SceneNavigation.cs 只有场景按钮入口，不是全局管理器：
 
 ## 当前验证边界
 
-已用现有 Unity 编译响应文件中的引用程序集，对 SceneNavigation 分别定义/不定义 UNITY_EDITOR 做独立 C# 编译，两分支均成功。随后用户已通过 Unity 实际运行 StartGame；ReturnToMenu / QuitGame 尚未接线和验证。菜单场景、脚本 .meta、TMP 资源由编辑器操作生成，没有手写 GUID。编译临时文件位于忽略的 TestResults/ScriptCompile。
+已用现有 Unity 编译响应文件中的引用程序集，对 SceneNavigation 分别定义/不定义 UNITY_EDITOR 做独立 C# 编译，两分支均成功。随后用户已通过 Unity 实际运行 StartGame / ReturnToMenu，截图确认 QuitGame 编辑器提示；新版 Windows 构建成功，用户确认完整菜单回归通过。没有自动化功能测试或跨设备测试，Player.log 的退出资源提示尚未修复。菜单场景、脚本 .meta、TMP 资源由编辑器操作生成，没有手写 GUID。编译临时文件位于忽略的 TestResults/ScriptCompile。

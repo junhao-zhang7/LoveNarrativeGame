@@ -2,7 +2,7 @@
 
 ## 当前状态 · 2026-10-29
 
-当前里程碑：Phase 1 P1-01a 已通过用户 Play 验收，MainMenu 的 Start 可进入 SampleScene，方块交互正常。接下来做 P1-01b 返回菜单并验证往返；完整菜单闭环和新 Windows 构建尚未验收。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
+当前里程碑：P1-01 主菜单已完成编辑器与 Windows 本机验收；用户确认三次往返、颜色重置、退出与重新启动均正常。下一步 P1-02，先搭建静态对话 UI，尚未实现对话推进。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
 
 ### 本次已经完成
 - 读取用户完整项目要求；检查空工作区、工具命令、常见安装路径、注册表、Hub 配置与运行进程。
@@ -14,13 +14,13 @@
 ### 验证等级
 | 层级 | 状态 / 证据 |
 | --- | --- |
-| 文档与代码已编写 | ClickableSquare 已验收；SceneNavigation / MainMenu 的开始按钮已接线，返回和退出待接线 |
+| 文档与代码已编写 | ClickableSquare 已验收；SceneNavigation 的开始、返回与退出按钮已接线 |
 | 静态与 Git 规则检查 | 通过：7 个代表缓存/构建路径被忽略，7 个代表源文件/.meta/包/设置路径未被忽略；README 本地链接均存在；授权台账表头为 13 列；提交前 git diff --cached --check 通过 |
 | C# 编译 | ClickableSquare 已通过 Unity 编译与用户断点验收；SceneNavigation 通过独立 Editor / Player 分支编译，后续用户也已在 Unity 成功执行 StartGame 场景跳转 |
 | 自动化测试 | 未执行；尚无测试代码 |
-| Unity 编辑器运行 | 用户确认点击交互、断点状态切换及 MainMenu → Start → SampleScene 正常；返回菜单尚未验证 |
-| Windows 构建生成 | 成功：Editor.log 记录 Succeeded，71 秒（71464 ms）；Builds/Windows/UnityProject.exe 与配套目录已存在；Windows 64 位 Development Build，输出包含 MonoBleedingEdge |
-| 独立进程 / 实际设备测试 | 用户确认 Windows 本机独立程序运行成功；Player.log 存在并记录输入系统启动/关闭。其他电脑及移动设备未测试；重启后的初始状态尚无单独反馈 |
+| Unity 编辑器运行 | 用户确认点击交互、断点状态切换、开始与返回菜单正常；截图确认 Quit 编辑器提示出现。对话 UI 尚未搭建验证 |
+| Windows 构建生成 | 首次方块构建成功；新版菜单构建亦成功：UnityProject/Logs/Editor.log 记录 21:02:41–21:03:16，Succeeded，34428 ms。Windows 64 位 Development Build，输出包含 MonoBleedingEdge |
+| 独立进程 / 实际设备测试 | 用户确认新版菜单程序的三次往返、颜色重置、退出与重新启动均正常。其他电脑及移动设备未测试；URP / 退出资源提示仍保留排查项 |
 
 ## 当前决策
 - D001：Windows / Steam 优先，离线买断短篇，移动端后置（用户要求）。
@@ -30,8 +30,32 @@
 - D005：商业素材逐项登记；当前无外部美术、音频、字体或 AI 生成素材；不添加默认开源许可。
 - D006：用户已采用 Universal 2D；实际 manifest 声明 URP 17.6.0。首轮 Windows 构建建议 Mono，具体设置待检查。
 
-## 下一项：P1-01b 返回菜单
-已检查 SampleScene 的保存文件，当前仅有 Main Camera、Global Light 2D、Square，没有 Canvas / EventSystem。用户退出 Play 后，打开 Assets/Scenes/SampleScene.unity，添加 UGUI / TMP 的 Back 按钮，在自动创建的 Canvas 上挂 SceneNavigation，把 On Click 绑定 ReturnToMenu，配置 Input System UI 模块并保存。随后从 MainMenu Play，验证 Start → SampleScene → Back → MainMenu 连续 3 次及重新进入后的方块初始状态。通过后再加 Quit 并回归新 Windows 构建。
+## 下一项：P1-02a 静态对话 UI
+在 SampleScene 的现有 Canvas 上统一缩放设置，再通过编辑器生成 DialoguePanel 和 DialogueText；使用现有 TMP 默认字体与英文技术占位文字。先验收底部布局和现有返回功能，再确定少量对话数据的配置方式并实现逐句推进。详见 docs/DIALOGUE.md。中文字体、数据配置和推进逻辑均尚未完成。
+
+### P1-01 Windows 菜单闭环验收 · 2026-10-29
+- 用户在完整回归步骤后反馈“已完成，全部正常”，记录为用户执行的本机验收：菜单首先启动、Start 进入、方块交互、Back 返回、三次往返、再次进入时恢复原色、Quit 关闭和重新启动回到菜单均通过。
+- 项目日志明确记录第二次构建 Succeeded，34428 ms；构建数据与 Assembly-CSharp.dll 更新。UnityProject.exe 启动器本身可复用，不能仅凭其旧时间戳判断未重新构建。
+- Player.log 仍含 ComputeBuffer / D3D12 退出资源提示；本次功能通过不代表这些提示已修复。无自动化测试、无跨设备测试。
+- 本轮仅记录验收、保留用户保存的 Back / Quit 场景改动并建立本地检查点；未修改运行时代码、未自动编辑 Unity 场景。
+- 下一轮静态 UI 操作先检查 Canvas Scaler：当前 SampleScene 为 Constant Pixel Size（m_UiScaleMode 0），需按指南调整。新对话框布局尚待用户操作与验证。
+
+### Quit 编辑器提示确认 · 2026-10-29
+- 用户截图显示 Quit is available in the Windows build. Stop Play to exit this test.，确认 QuitGame 的编辑器分支已执行。
+- 保存场景检查：QuitButton 位于 Pos Y -80，显示 Quit，On Click 绑定 QuitGame；StartButton 仍绑定 StartGame。Scene List 为启用的 MainMenu（0）和 SampleScene（1），Windows Profile 保持 Development Build。
+- 未生成本轮新构建，未验证独立程序退出；下一步由用户通过 Unity Build Profiles 构建并手工回归。
+
+### 返回菜单运行确认 · 2026-10-29
+- 用户在修正文字并执行返回测试后反馈“已完成，进行下一步”，记录返回路径验收通过。
+- 复查保存文件：TMP m_text 已变为 Back，按钮仍绑定 ReturnToMenu，Input System UI 模块保留。MainMenu 的 Start 位于 Pos Y 0，尚无 QuitButton；退出方法已存在，接线无需新增代码。
+- 三次往返、方块颜色重置、独立程序退出将在新版 Windows 构建中集中回归；当前不扩大用户反馈为这些测试均已通过。
+
+### 返回按钮配置检查 · 2026-10-29
+- 用户截图显示 Game 中按钮仍为 Button，并询问 Standalone Input Module 未找到。
+- 检查已保存 SampleScene：EventSystem 使用 InputSystemUIInputModule，Point 和 LeftClick 等动作引用已分配。此时无需寻找或替换旧模块。
+- BackButton 的 On Click 已绑定 ReturnToMenu，Canvas 的 menuSceneName 为 MainMenu；Scene List 包含两场景，配置检查通过。
+- 发现文字子对象的 GameObject 名称为 Back，TextMeshProUGUI.m_text 为 Button；重命名对象不改变显示文字。指导用户选 Canvas → BackButton → Back，在 Inspector 的 Text Input 修改为 Back。
+- 本轮未修改场景；返回跳转和往返验收仍待用户实际执行，不用静态配置检查代替运行验证。
 
 ### 主菜单 Start 运行验收 · 2026-10-29
 - 用户在执行 MainMenu Play / Start 跳转 / 方块交互检查后反馈“已完成，下一步”，记录该项运行验收通过。
