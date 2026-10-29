@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PrototypeDialogue
   m_EditorClassIdentifier: Assembly-CSharp::LoveNarrativeGame.Prototype.DialogueSequence
   lines:
-  - '[Prototype 1/3] This is the first line.'
-  - '[Prototype 2/3] Next shows the following line.'
-  - '[Prototype 3/3] One more click ends this dialogue.'
+  - "[\u5360\u4F4D 1/3] \u8FD9\u662F\u4E00\u6BB5\u4E2D\u6587\u663E\u793A\u6D4B\u8BD5\u3002"
+  - "[\u5360\u4F4D 2/3] \u70B9\u51FB Next \u67E5\u770B\u4E0B\u4E00\u53E5\u3002"
+  - "[\u5360\u4F4D 3/3] \u518D\u70B9\u4E00\u6B21\uFF0C\u672C\u8F6E\u5BF9\u8BDD\u7ED3\u675F\u3002"

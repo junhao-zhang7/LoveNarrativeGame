@@ -2,7 +2,7 @@
 
 ## 当前状态 · 2026-10-29
 
-当前里程碑：P1-01 已完成 Windows 本机验收；P1-02 三句英文对话已获用户编辑器运行确认，保存的场景与引用亦检查通过。已准备 Noto 中文字体与许可证，下一步生成 TMP SDF 并验证中文。带对话的 Windows 构建尚未生成。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
+当前里程碑：P1-01 已完成 Windows 本机验收；P1-02 中文对话已获用户编辑器运行确认，SDF 原字体引用修复且保存。下一步构建带中文对话的 Windows 版本，检查离开 Unity 后的字体、推进、结束与重进。该新版尚未生成或验收。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
 
 ### 本次已经完成
 - 读取用户完整项目要求；检查空工作区、工具命令、常见安装路径、注册表、Hub 配置与运行进程。
@@ -18,7 +18,7 @@
 | 静态与 Git 规则检查 | 通过：7 个代表缓存/构建路径被忽略，7 个代表源文件/.meta/包/设置路径未被忽略；README 本地链接均存在；授权台账表头为 13 列；提交前 git diff --cached --check 通过 |
 | C# 编译 | 点击、菜单、对话已有 Unity 运行证据；新脚本导入日志、Assembly-CSharp.dll 更新时间与用户运行反馈支持对话编译成功。独立 csc 检查亦成功 |
 | 自动化测试 | 未执行；尚无测试代码 |
-| Unity 编辑器运行 | 点击、断点、菜单已有验收；用户反馈英文对话推进、结束禁用、快速点击及重新进入检查完成。保存场景引用正确；中文待验证 |
+| Unity 编辑器运行 | 点击、断点、菜单、英文对话已有验收；用户完成中文原字体引用修复后的运行检查。保存的 SDF 引用正确且已有字形数据；中文独立构建待验证 |
 | Windows 构建生成 | 首次方块构建成功；新版菜单构建亦成功：UnityProject/Logs/Editor.log 记录 21:02:41–21:03:16，Succeeded，34428 ms。Windows 64 位 Development Build，输出包含 MonoBleedingEdge |
 | 独立进程 / 实际设备测试 | 用户确认新版菜单程序的三次往返、颜色重置、退出与重新启动均正常。其他电脑及移动设备未测试；URP / 退出资源提示仍保留排查项 |
 
@@ -31,8 +31,19 @@
 - D006：用户已采用 Universal 2D；实际 manifest 声明 URP 17.6.0。首轮 Windows 构建建议 Mono，具体设置待检查。
 - D007：用户已选择 ScriptableObject 保存小规模对话文本。索引和结束状态放在场景组件中，不写共享内容资源。
 
-## 下一项：P1-02c 中文字体与显示
-经编辑器使用已下载的 NotoSansCJKsc-Regular.otf 创建 TMP SDF 资源，Dynamic 模式、保留 Source Font File、开启 Multi Atlas Textures，赋给 DialogueText。将数据资源三句替换为明确标注的中文测试文字，检查标点、缺字警告、推进和重进。详见 docs/DIALOGUE.md。中文编辑器和独立构建均尚未验收。
+## 下一项：P1-02d 中文对话 Windows 回归
+停止 Play 并保存场景 / Project，用既有 Windows Development Build 配置构建到 Builds/Windows。新 exe 检查三句中文与标点、连续推进和结束禁用、Back / Start 从第一句重置、Quit 关闭和重新启动；可关闭 Unity 后再测，以排除依赖编辑器状态。详见 docs/DIALOGUE.md。尚不标记 P1-02 整体验收完成。
+
+### 中文字体引用修复与编辑器确认 · 2026-10-29
+- 用户在重新赋值原 .otf、Apply、保存并清空旧日志重测的步骤后反馈“已完成，进行下一步”，记录中文修复后的编辑器运行检查通过。
+- 磁盘 SDF 的 m_SourceFontFileGUID 已指向原 .otf GUID；m_SourceFontFile 引用同一字体，Dynamic 为 1、Multi Atlas 为 1，字形数据已生成。原 .otf Include Font Data 为 1，DialogueText 引用该 SDF；中文数据资源仍保存三句测试内容。
+- 字体目录已包含原字体、SDF、许可证、来源说明及 Unity 自动生成的全部 .meta，允许为本轮修复建立完整本地检查点。保留与本轮无关的 ProjectSettings.asset 预载资源差异，不纳入提交。
+- 本轮没有修改运行时代码或自动修改 SDF YAML，没有执行自动化测试、生成新构建或跨设备测试；先前缺字日志属于修复前失败证据，不据此声称新构建成功。
+
+### 中文缺字排查 · 2026-10-29
+- 用户截图显示汉字和中文标点均被替换成方框，Console 报 NotoSansCJKsc-Regular SDF 缺字警告。
+- 保存数据已有中文，DialogueText 已引用新 SDF。SDF 的 m_AtlasPopulationMode 为 1、Multi Atlas 为 1，但 m_SourceFontFile 为 fileID 0、m_SourceFontFileGUID 为空，字形表为空；原 .otf 的 Include Font Data 为 1。因此先修复 SDF 原字体引用，不重复下载或更换字体。
+- 核对本机 TMP 编辑器源码：Source Font File 字段赋值会更新编辑器 / 运行时原字体引用，并出现待 Apply 的生成设置变更。指导停止 Play，拖入 .otf，点击 Apply，保存资源再清空旧日志重测。未自动改动 SDF YAML 或 GUID；修复结果仍待用户运行确认。
 
 ### 线性对话运行验收与中文准备 · 2026-10-29
 - 用户在完整操作和验收步骤后反馈“已完成，进行下一步”，记录三句英文对话推进、结束禁用、快速点击及返回再进入为用户完成的编辑器检查；不是自动化测试。

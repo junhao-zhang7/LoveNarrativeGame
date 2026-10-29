@@ -1,6 +1,8 @@
 # P1-02 对话原型
 
-当前状态：用户已完成静态 UI 和三句英文对话的编辑器运行验收；磁盘场景确认层级、Raycast Target、三个组件引用和单个 NextLine 事件正确，数据资源与脚本 .meta 已由 Unity 生成。下一步中文字体；Noto Sans CJK SC Regular 2.004 和 OFL 许可证已下载，TMP 资源生成及中文显示待用户验证。文字与界面均为技术占位，不代表正式剧情或美术。
+当前状态：用户已完成静态 UI、三句对话和中文显示的编辑器运行验收。Noto Sans CJK SC Regular 2.004 的 TMP SDF 已生成，原字体引用缺失已修复并保存；原字体、许可证、来源说明与全部 .meta 齐全。下一步 Windows 构建回归。文字与界面均为技术占位，不代表正式剧情或美术。
+
+中文排查记录：首次运行显示方框与 missing character 警告；当时 SDF 为 Dynamic、Multi Atlas 开启，但运行时 Source Font File 为 None，来源 GUID 为空，字形表为空。停止 Play 后给 SDF 重新赋值原 .otf 并 Apply / Save Project，清除旧日志再运行；用户已反馈完成。保存文件确认来源 GUID 与运行时字体引用恢复且字形数据存在。保留上述失败与修复证据，独立构建仍需另测。
 
 ## 第一小步：底部面板和一行文字
 
@@ -60,3 +62,12 @@
 知识点：.otf 是原字体，TMP SDF.asset 是 TMP 使用的字形与图集资源；Dynamic 按实际字符添加字形，需要保留原字体引用。Multi Atlas 允许图集扩充，不代表所有中文字符都已验收。
 
 练习：停止 Play 后把第二句改为另一句中文，观察新字能否显示。面试问题：为什么编辑器能显示中文，还要测试独立 Windows 构建？
+
+## 第四小步：含中文对话的 Windows 构建
+
+1. 停止 Play，Ctrl+S 保存场景，File → Save Project。关闭之前运行的独立程序。
+2. File → Build Profiles，选现有 Windows，保持 Development Build；Scene List 应勾选 MainMenu（0）、SampleScene（1），无需创建新 Profile。
+3. Build，选择仓库根 Builds/Windows，等待成功。当前这轮新构建尚未执行；不要运行旧版本后当成新对话验收。
+4. 打开 Builds/Windows/UnityProject.exe：主菜单 → Start，确认三句中文、数字和中文标点都正常；Next 依次推进，结束提示出现且按钮变灰，快速点击无异常。
+5. Back → Start，确认从第一句重置，方块仍能点击；返回菜单 Quit 关闭。重新打开 exe 再走一遍，可关闭 Unity 后运行以检查独立程序；无需断网或修改网络设置。
+6. 反馈结果后核验最新构建日志、Player.log 和 Git 差异，再标记 P1-02 的构建回归。构建目录不入 Git，公开分发前还需将字体版权和许可说明随产物打包。
