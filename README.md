@@ -1,6 +1,6 @@
 # 原创 2D 叙事游戏（开发代号待定）
 
-目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。当前只完成仓库准备，**尚未生成或运行 Unity 工程**。
+目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。当前 Bootstrap 场景已由用户确认在 Play 中显示方块且无报错；ClickableSquare 脚本已通过 Unity 编译，**挂载后的点击、IDE 断点和 Windows 构建仍待验证**。
 
 ## 首轮环境检查 · 2026-10-29
 
@@ -15,11 +15,15 @@
 
 Unity 自带自己的脚本编译工具链；独立 .NET SDK 不是编辑器内编译的替代品。VS Code 的 C# 工具若提示缺 SDK，再按其官方要求配置；暂不为此安装多个环境。
 
+### 后续环境更新 · 2026-10-29
+
+用户已独立安装 Unity 6.6（6000.6.7f1），实际路径为 `D:\zachary\Editor\Unity.exe`，现已通过 Hub 的“选择位置”添加，安装列表已显示版本、路径及 Windows 标记。下方第 1、2 步已具备 Hub 和编辑器，下一步从创建工程开始。项目运行、编译和构建仍未验证。
+
 ## 你现在需要执行的操作
 
 1. 从 [Unity 官方下载页](https://unity.com/download)安装 Unity Hub，登录并完成适用的许可证激活。账号步骤由你操作。
-2. 在 Hub 安装 Unity **6.3 LTS（6000.3.x）**中当时可用的稳定补丁。记录完整版本号。先满足 Windows 编辑器与 Windows 构建需求；当前不安装 Android / iOS 模块。首个测试构建使用 Mono；如切换 IL2CPP，再检查对应 Windows 构建模块与 C++ 工具链要求。
-3. Hub → Projects → New project，选上述 Editor。优先选择描述为 **2D / Built-In Render Pipeline** 的核心模板；名称以实际 Hub 显示为准。其设置较少，适合当前占位交互。若只看到 Universal 2D，请先记录可用模板，不要自行改装渲染管线。
+2. 使用已添加的 Unity **6.6（6000.6.7f1）**，无需重复安装。先满足 Windows 编辑器与 Windows 构建需求；当前不安装 Android / iOS 模块。首个测试构建使用 Mono；如切换 IL2CPP，再检查对应 Windows 构建模块与 C++ 工具链要求。
+3. 已使用 **Universal 2D** 模板创建工程；继续使用其 URP / 2D Renderer 配置，无需重新创建或切换渲染管线。
 4. 项目名称填 `UnityProject`，Location 填 `C:\Users\张俊豪\Desktop\LoveNarrativeGame`，确保最终路径为 `...\LoveNarrativeGame\UnityProject`。当前仓库已有文档，不要让 Hub 覆盖它；无需额外启用 Unity Version Control。
 5. 等首次导入结束，确认 Console 无红色错误。把完整版本号与任何错误原文带回；随后共同检查 Packages/manifest.json 和 packages-lock.json，再确定官方包的实际兼容版本。
 6. 在 Project Settings 中检查 Version Control 为 Visible Meta Files、Asset Serialization 为 Force Text。将 VS Code 设为 External Script Editor；后续用一个小脚本验证补全、编译与断点。

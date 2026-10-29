@@ -6,7 +6,7 @@
 ## 工作边界
 - 用户每周可投入 10 小时以上；工时估算包含学习、操作和调试，安装下载另计。
 - 名称、故事、人物、美术、长度、机制、售价、预算、素材制作方式均未确定。LoveNarrativeGame 仅为工作目录名。使用占位内容时必须标注，不把建议当成已批准设计。
-- 默认 Unity 6.3 LTS、C#、UGUI / TextMeshPro、Input System；以实际 ProjectVersion.txt 和 Packages 为准，查阅对应官方文档后使用不确定 API。不要臆造包版本。
+- 已选择 Unity 6.6（6000.6.7f1），本机编辑器为 D:\zachary\Editor\Unity.exe，已添加到 Hub。C#、UGUI / TextMeshPro、Input System；创建工程后以实际 ProjectVersion.txt 和 Packages 为准，查阅对应官方文档后使用不确定 API。不要臆造包版本。
 - 先完成小范围可验证功能，再扩展。避免框架先行、付费依赖、后端和运行时生成式 AI。
 - 普通小任务直接推进；整体架构、重要产品决策、大量文件修改先说明方案并征求意见。
 - 删除重要文件、破坏性 Git 操作、公开仓库推送、商业发布、付费必须先获确认。不可覆盖用户改动，不自动发送对外消息。
