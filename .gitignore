@@ -1,0 +1,44 @@
+# Unity-generated caches and local output (project lives in UnityProject/)
+/UnityProject/[Ll]ibrary/
+/UnityProject/[Tt]emp/
+/UnityProject/[Oo]bj/
+/UnityProject/[Ll]ogs/
+/UnityProject/[Uu]ser[Ss]ettings/
+/UnityProject/[Bb]uild/
+/UnityProject/[Bb]uilds/
+/UnityProject/[Mm]emoryCaptures/
+/UnityProject/[Rr]ecordings/
+/UnityProject/.vs/
+/UnityProject/.idea/
+/UnityProject/.vscode/
+/Builds/
+/TestResults/
+
+# Generated C# IDE project files; Unity owns their generation
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.opendb
+*.VC.db
+*.csproj.meta
+*.sln.meta
+*.slnx.meta
+*.pidb.meta
+
+# OS-local files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local credentials (no project credentials are currently needed)
+.env
+.env.*
+!.env.example
+
+# Keep Assets/**/*.meta, Packages/manifest.json, packages-lock.json,
+# ProjectSettings and licensed source assets tracked.
