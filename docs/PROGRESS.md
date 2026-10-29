@@ -2,7 +2,7 @@
 
 ## 当前状态 · 2026-10-29
 
-当前里程碑：P1-01 主菜单已完成编辑器与 Windows 本机验收；用户确认三次往返、颜色重置、退出与重新启动均正常。下一步 P1-02，先搭建静态对话 UI，尚未实现对话推进。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
+当前里程碑：P1-01 已完成 Windows 本机验收；P1-02 三句英文对话已获用户编辑器运行确认，保存的场景与引用亦检查通过。已准备 Noto 中文字体与许可证，下一步生成 TMP SDF 并验证中文。带对话的 Windows 构建尚未生成。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
 
 ### 本次已经完成
 - 读取用户完整项目要求；检查空工作区、工具命令、常见安装路径、注册表、Hub 配置与运行进程。
@@ -14,11 +14,11 @@
 ### 验证等级
 | 层级 | 状态 / 证据 |
 | --- | --- |
-| 文档与代码已编写 | ClickableSquare 已验收；SceneNavigation 的开始、返回与退出按钮已接线 |
+| 文档与代码已编写 | 点击、菜单和线性对话均已编写接线；中文字体已下载，TMP 资源待生成 |
 | 静态与 Git 规则检查 | 通过：7 个代表缓存/构建路径被忽略，7 个代表源文件/.meta/包/设置路径未被忽略；README 本地链接均存在；授权台账表头为 13 列；提交前 git diff --cached --check 通过 |
-| C# 编译 | ClickableSquare 已通过 Unity 编译与用户断点验收；SceneNavigation 通过独立 Editor / Player 分支编译，后续用户也已在 Unity 成功执行 StartGame 场景跳转 |
+| C# 编译 | 点击、菜单、对话已有 Unity 运行证据；新脚本导入日志、Assembly-CSharp.dll 更新时间与用户运行反馈支持对话编译成功。独立 csc 检查亦成功 |
 | 自动化测试 | 未执行；尚无测试代码 |
-| Unity 编辑器运行 | 用户确认点击交互、断点状态切换、开始与返回菜单正常；截图确认 Quit 编辑器提示出现。对话 UI 尚未搭建验证 |
+| Unity 编辑器运行 | 点击、断点、菜单已有验收；用户反馈英文对话推进、结束禁用、快速点击及重新进入检查完成。保存场景引用正确；中文待验证 |
 | Windows 构建生成 | 首次方块构建成功；新版菜单构建亦成功：UnityProject/Logs/Editor.log 记录 21:02:41–21:03:16，Succeeded，34428 ms。Windows 64 位 Development Build，输出包含 MonoBleedingEdge |
 | 独立进程 / 实际设备测试 | 用户确认新版菜单程序的三次往返、颜色重置、退出与重新启动均正常。其他电脑及移动设备未测试；URP / 退出资源提示仍保留排查项 |
 
@@ -27,11 +27,35 @@
 - D002：原计划 Unity 6.3 LTS，后经讨论改选 Unity 6.6；已确认本地版本为 6000.6.7f1（b22767f04f04），官方包版本待创建工程后检查。
 - D003：仓库根存协作文档，UnityProject/ 存模板生成的工程，避免 Hub 对非空仓库的处理差异。
 - D004：先验证启动→场景→互动→对话→选择→两个结果→重玩闭环，不提前搭建完整游戏框架。
-- D005：商业素材逐项登记；当前无外部美术、音频、字体或 AI 生成素材；不添加默认开源许可。
+- D005：商业素材逐项登记；已导入 TMP 资源 / Liberation Sans，并下载 Noto 中文占位字体，均有单独授权记录。暂无外部美术、音频或 AI 生成素材；不为整个项目添加默认开源许可。
 - D006：用户已采用 Universal 2D；实际 manifest 声明 URP 17.6.0。首轮 Windows 构建建议 Mono，具体设置待检查。
+- D007：用户已选择 ScriptableObject 保存小规模对话文本。索引和结束状态放在场景组件中，不写共享内容资源。
 
-## 下一项：P1-02a 静态对话 UI
-在 SampleScene 的现有 Canvas 上统一缩放设置，再通过编辑器生成 DialoguePanel 和 DialogueText；使用现有 TMP 默认字体与英文技术占位文字。先验收底部布局和现有返回功能，再确定少量对话数据的配置方式并实现逐句推进。详见 docs/DIALOGUE.md。中文字体、数据配置和推进逻辑均尚未完成。
+## 下一项：P1-02c 中文字体与显示
+经编辑器使用已下载的 NotoSansCJKsc-Regular.otf 创建 TMP SDF 资源，Dynamic 模式、保留 Source Font File、开启 Multi Atlas Textures，赋给 DialogueText。将数据资源三句替换为明确标注的中文测试文字，检查标点、缺字警告、推进和重进。详见 docs/DIALOGUE.md。中文编辑器和独立构建均尚未验收。
+
+### 线性对话运行验收与中文准备 · 2026-10-29
+- 用户在完整操作和验收步骤后反馈“已完成，进行下一步”，记录三句英文对话推进、结束禁用、快速点击及返回再进入为用户完成的编辑器检查；不是自动化测试。
+- 保存场景确认 DialogueText 已在 DialoguePanel 下且 Raycast Target 为 0；DialoguePresenter 三个引用齐全，NextButton 只有一个 NextLine 事件。PrototypeDialogue.asset 保存三句占位文字，数据与脚本 .meta 由 Unity 生成。
+- 新脚本导入日志存在，Assembly-CSharp.dll 更新于 22:30:15；结合用户运行结果记录为 Unity 编译并运行通过，不再仅为独立 csc 检查。
+- 从 Noto 官方仓库下载 Regular 2.004，大小 16,437,364 字节；检查 OTTO 文件头、内嵌版权 / OFL 信息和 SHA256，证据存 Fonts/SOURCE.md。先登记素材，再下载；官方 LICENSE 原样保留。GitHub API 限流，未获得仓库提交号，因此只记录下载 URL、版本和哈希。
+- 字体先作为中文技术占位，不作正式美术决策。单个约 16.4 MB 原字体计划用普通 Git，暂不整体启用 LFS，后续依据大资源与历史增长再评估。Unity 已生成原字体及许可证 .meta，原字体 includeFontData 为 1；SOURCE.md.meta 与 TMP SDF 资源尚未生成，字体将在后续资源齐全时一起提交。
+- 带对话的新 Windows 构建尚未生成，中文运行与构建包含情况仍待验收；先为已验收的英文对话及完整 .meta 保留本地 Git 检查点。
+
+### 线性对话代码准备 · 2026-10-29
+- 用户反馈静态 UI 修复“已完成”；重新检查磁盘 SampleScene 仍为文字与面板同级且 Raycast Target 为 1，提示先停止运行并保存，不能把运行中完成扩大成持久配置已修复。
+- 用户明确选 ScriptableObject。新增 DialogueSequence.cs（默认三句技术占位）和 DialoguePresenter.cs（引用校验、初始显示、边界检查、结束禁用）。未自动改场景、未手写 GUID、未创建伪造 .asset。
+- 查阅 Unity 6000.6 官方 ScriptableObject / CreateAssetMenu 文档；用本机 Unity 的引用程序集与 csc 做独立编译，exit 0。三个 Inspector 引用有预期 CS0649 提示，需通过编辑器赋值；不声称 Unity 已导入或运行。
+- 编译产物在忽略的 TestResults/ScriptCompile/Dialogue.dll；无自动化测试、无新对话构建。Unity 尚未为新脚本生成 .meta，本轮暂不建立不完整的脚本 Git 检查点，待导入后一起保存。
+
+### 对话文字遮挡点击排查 · 2026-10-29
+- 用户报告点击无反应，截图文字位于屏幕左上角。保存场景确认 DialogueText 的父对象是 Canvas（与 DialoguePanel 同级），Min (0, 0) / Max (1, 1)，边距 32 / 24，Raycast Target 为 1；因此其矩形覆盖几乎全屏。
+- ClickableSquare 在 IsPointerOverGameObject 时跳过点击；覆盖其上的文字也会阻止底层 BackButton 接收事件。定位为层级及 UI 射线配置问题，尚未修改脚本或用户场景。
+- 指导退出 Play 后将文字拖入 DialoguePanel，重新填写边距并关闭文字的 Raycast Target，保持面板的 Raycast Target；修复后方块 / Back 和文字位置待用户手测。当前占位文字没有点击推进功能。
+
+### 对话 UI 锚点排查 · 2026-10-29
+- 用户截图未显示边距字段，Anchors Min / Max 均为 (0, 1)，对应固定左上角。指导先选 DialogueText，把 Min 改为 (0, 0)、Max 改为 (1, 1)，再填写边距；面板仅水平拉伸时没有 Top / Bottom。
+- 已保存 SampleScene 中存在 DialoguePanel，其水平拉伸及尺寸符合指南。截图未包含对象名称，不能据此确认当前选中对象；文字与整体 UI 运行仍待验收。本轮不自动修改用户场景。
 
 ### P1-01 Windows 菜单闭环验收 · 2026-10-29
 - 用户在完整回归步骤后反馈“已完成，全部正常”，记录为用户执行的本机验收：菜单首先启动、Start 进入、方块交互、Back 返回、三次往返、再次进入时恢复原色、Quit 关闭和重新启动回到菜单均通过。
