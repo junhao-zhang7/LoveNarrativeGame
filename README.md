@@ -1,6 +1,6 @@
 # 原创 2D 叙事游戏（开发代号待定）
 
-目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。当前 Bootstrap 场景已由用户确认在 Play 中显示方块且无报错；ClickableSquare 脚本已通过 Unity 编译，**挂载后的点击、IDE 断点和 Windows 构建仍待验证**。
+目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。当前已通过 Unity 编译，用户确认点击方块变色及还原正常。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。**IDE 断点和 Windows 独立构建仍待验证**。
 
 ## 首轮环境检查 · 2026-10-29
 
@@ -29,7 +29,7 @@ Unity 自带自己的脚本编译工具链；独立 .NET SDK 不是编辑器内�
 6. 在 Project Settings 中检查 Version Control 为 Visible Meta Files、Asset Serialization 为 Force Text。将 VS Code 设为 External Script Editor；后续用一个小脚本验证补全、编译与断点。
 7. 在编辑器 Project 窗口创建 `Assets/_Game/Scenes`、`Scripts`、`Prefabs`。把测试场景另存为 `Assets/_Game/Scenes/Bootstrap.unity`。暂不创建尚无用途的大量目录。
 8. 给场景添加一个 Square Sprite，摆到正交相机可见处，保存。进入 Play，确认 Game 视图可见方块，退出 Play 后场景仍保留，Console 无红色错误。此时只验证渲染流程，不宣称有玩法。
-9. File → Build Profiles，选择或创建 Windows 配置，使用 x86-64、Mono，把 Bootstrap 加入 Scene List 并启用。生成 Development Build 到仓库根目录 `Builds/Windows/`。退出编辑器 Play 后单独启动 exe，确认显示一致；分发时必须保留构建生成的配套文件。
+9. File → Build Profiles（Ctrl+Shift+B），使用已创建的 Windows 配置，Intel 64-bit、Development Build。Scene List 当前为实际含点击脚本的 `Assets/Scenes/SampleScene.unity`；不要误换成尚无点击脚本的 Bootstrap。构建输出选择仓库根目录 `Builds/Windows/`。首轮预期使用 Mono，构建后检查实际后端与日志。退出编辑器 Play 后单独启动 exe，确认显示一致；分发时必须保留构建生成的配套文件。
 10. 记录实际结果到 docs/PROGRESS.md，检查 `git status`：场景及 .meta、Packages、ProjectSettings 应出现；Library、Temp、Builds 应不出现。之后才建立 Unity 工程的初始化提交。
 
 如出现 Hub 安装、许可证、包下载、中文路径或编译错误，先记录错误及日志位置，再决定是否调整；没有证据时不迁移项目或重复安装。

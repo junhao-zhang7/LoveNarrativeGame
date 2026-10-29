@@ -2,7 +2,7 @@
 
 ## 当前状态 · 2026-10-29
 
-当前里程碑：Phase 0，Bootstrap 已保存，用户确认 Play 中方块可见、Console 无报错。首个 ClickableSquare 脚本已通过编辑器编译，等待用户挂载并验证点击。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。预算、故事方向和其余未定设计保持未定。
+当前里程碑：Phase 0，用户确认点击、再次点击还原及按住不连续切换均正常。检查发现实际交互位于 Assets/Scenes/SampleScene.unity；Bootstrap 仍为静态方块场景。已创建 Windows Build Profile，首次独立构建待完成。Unity 6.6（6000.6.7f1），每周可投入 10 小时以上。
 
 ### 本次已经完成
 - 读取用户完整项目要求；检查空工作区、工具命令、常见安装路径、注册表、Hub 配置与运行进程。
@@ -18,7 +18,7 @@
 | 静态与 Git 规则检查 | 通过：7 个代表缓存/构建路径被忽略，7 个代表源文件/.meta/包/设置路径未被忽略；README 本地链接均存在；授权台账表头为 13 列；提交前 git diff --cached --check 通过 |
 | C# 编译 | ClickableSquare 已通过 Unity 编译：Logs/Editor.log 记录 Csc、ILPostProcess 和 CopyFiles Assembly-CSharp.dll；Library/ScriptAssemblies/Assembly-CSharp.dll 已更新；断点尚未验证 |
 | 自动化测试 | 未执行；尚无测试代码 |
-| Unity 编辑器运行 | 用户确认 Bootstrap 中方块可见且无报错；本轮激活编辑器后观察 Console 为 0 错误；点击脚本尚未挂载和运行 |
+| Unity 编辑器运行 | 用户确认点击交互正常；实际保存的 SampleScene 已含 ClickableSquare 和 BoxCollider2D；已退出 Play 并保存 |
 | Windows 构建生成 | 未执行 |
 | 独立进程 / 实际设备测试 | 未执行 |
 
@@ -30,8 +30,15 @@
 - D005：商业素材逐项登记；当前无外部美术、音频、字体或 AI 生成素材；不添加默认开源许可。
 - D006：用户已采用 Universal 2D；实际 manifest 声明 URP 17.6.0。首轮 Windows 构建建议 Mono，具体设置待检查。
 
-## 下一项：P0-04
-用户退出 Play，在 Project 的 Assets/_Game/Scripts 中找到 ClickableSquare，拖到 Hierarchy 的 Square 上，确认新增 Clickable Square 和 Box Collider 2D，保存场景。进入 Game 验证：点方块变蓝、再点还原、点空白不变、按住不连续切换、退出重进恢复初始色，Console 无报错。随后验证 IDE 断点与 P0-05 Windows 构建；Phase 0 尚未全部完成。
+## 下一项：P0-05（P0-04 的 IDE 断点验证仍未完成）
+已通过编辑器 Build Profiles 创建 Windows 配置，界面显示 Active、Intel 64-bit；已勾选 Development Build 并点击 Build。当前停在 Build Windows 输出文件夹对话框，需选择仓库根 Builds/Windows。独立构建后验证点击、还原、空白区域无响应、退出并重启后的初始状态。构建后再补齐 IDE 补全和断点验证，Phase 0 尚未全部完成。
+
+## 点击验收与首次构建准备 · 2026-10-29
+- 用户已正确解释 wasPressedThisFrame 只在按下的那一帧成立，并报告点击交互三项均正常。
+- 检查场景差异发现点击脚本挂在 SampleScene，原先文档按 Bootstrap 推断，现更正；本轮保留两个场景，构建 Scene List 继续使用已验证的 SampleScene。
+- 用 Ctrl+S 保存 SampleScene；通过 Build Profiles 的 Add Build Profile 建立 Assets/Settings/Build Profiles/Windows.asset，.meta 由 Unity 生成。
+- 已创建仓库根 Builds/Windows 目录供构建输出，目录受 .gitignore 排除。
+- 系统文件夹对话框未能通过自动操作可靠聚焦/填入路径，已请求用户完成路径选择。尚无构建成功证据，不标记为已生成可执行文件。
 
 ## 首个输入脚本 · 2026-10-29
 - 文件：Assets/_Game/Scripts/ClickableSquare.cs；命名空间 LoveNarrativeGame.Prototype。
