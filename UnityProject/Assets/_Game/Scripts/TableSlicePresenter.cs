@@ -44,7 +44,7 @@ namespace LoveNarrativeGame.Prototype
         {
             var go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI)); go.transform.SetParent(parent, false);
             var r = (RectTransform)go.transform; r.anchorMin = r.anchorMax = Vector2.zero; r.anchoredPosition = pos; r.sizeDelta = size;
-            var t = go.GetComponent<TMP_Text>(); t.font = font; t.fontSize = points * MenuPreferences.TextScale; t.color = ink; t.text = value;
+            var t = go.GetComponent<TMP_Text>(); t.font = font; t.fontSize = points; t.color = ink; t.text = value;
             t.alignment = TextAlignmentOptions.MidlineLeft; t.raycastTarget = false; return t;
         }
         private Button Button(string name, Vector2 pos, Vector2 size, string value, UnityEngine.Events.UnityAction action)

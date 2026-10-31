@@ -76,6 +76,10 @@ public static class MainMenuInstaller
         if (MenuPreferences.NormalizeVolume(-1) != 0 || MenuPreferences.NormalizeVolume(2) != 1 ||
             MenuPreferences.NormalizeVolume(.4f) != .4f || MenuPreferences.NormalizeVolume(float.NaN) != .8f ||
             MenuPreferences.NormalizeVolume(float.PositiveInfinity) != .8f) throw new Exception("Invalid menu volume normalization.");
-        Debug.Log("MENU_PREFERENCES_CHECK_PASS: 5 assertions");
+        if (MenuPreferences.NormalizeLanguage(-1) != MenuLanguage.SimplifiedChinese || MenuPreferences.NormalizeLanguage(4) != MenuLanguage.SimplifiedChinese)
+            throw new Exception("Invalid language fallback.");
+        for (int i = 0; i < 4; i++) if ((int)MenuPreferences.NormalizeLanguage(i) != i) throw new Exception("Invalid supported language.");
+        if (!MenuCopy.HasCompleteTranslations()) throw new Exception("Incomplete menu translations.");
+        Debug.Log("MENU_PREFERENCES_CHECK_PASS: 12 assertions; 4 complete menu languages");
     }
 }

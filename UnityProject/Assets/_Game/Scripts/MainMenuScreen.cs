@@ -9,162 +9,239 @@ using UnityEngine.UI;
 
 namespace LoveNarrativeGame.Prototype
 {
-    // Builds actual UGUI controls over an independent illustration (no baked-in buttons).
     public sealed class MainMenuScreen : MonoBehaviour
     {
         private MainMenuTheme theme;
-        private SceneNavigation navigation;
-        private RectTransform root, settings, quit;
+        private TMP_FontAsset runtimeFont;
+        private RectTransform root, stage, settings, quit, resolutionList;
         private Button startButton, settingsButton, quitButton;
-        private TMP_Text status, volumeLabel;
-        private Slider volume;
-        private Toggle fullscreen, largeText;
-        private readonly Dictionary<TMP_Text, float> fontSizes = new Dictionary<TMP_Text, float>();
-        private readonly Color ink = new Color(.18f, .26f, .28f);
+        private TMP_Text status, musicLabel, soundLabel, resolutionLabel;
+        private Slider music, sound;
+        private Toggle fullscreen;
+        private readonly List<Toggle> languageToggles = new List<Toggle>();
+        private readonly Dictionary<TMP_Text, string> copy = new Dictionary<TMP_Text, string>();
+        private readonly Color ink = new Color(.20f, .29f, .32f);
+        private readonly Color blue = new Color(.34f, .49f, .57f);
+        private CanvasGroup entrance;
+        private float entered;
+        private bool loading;
+
         public static void TryInstall(SceneNavigation owner)
         {
             if (owner.gameObject.scene.name != "MainMenu" || FindAnyObjectByType<MainMenuScreen>() != null) return;
             var data = Resources.Load<MainMenuTheme>("Menu/MainMenuTheme");
             if (data == null || data.chineseFont == null || data.background == null)
-            { Debug.LogWarning("Main menu theme not imported yet. Use Tools/Story Prototype/Install Main Menu."); return; }
-            var view = new GameObject("Main Menu Screen").AddComponent<MainMenuScreen>();
-            view.theme = data; view.navigation = owner;
+            { Debug.LogWarning("Main menu theme not imported. Use Tools/Story Prototype/Install Main Menu."); return; }
+            new GameObject("Main Menu Screen").AddComponent<MainMenuScreen>().theme = data;
         }
-        private RectTransform Panel(string name, Transform parent, Vector2 pos, Vector2 size, Color color)
+        private RectTransform Rect(string name, Transform parent, Vector2 pos, Vector2 size)
         {
-            var go = new GameObject(name, typeof(RectTransform), typeof(Image)); go.transform.SetParent(parent, false);
+            var go = new GameObject(name, typeof(RectTransform)); go.transform.SetParent(parent, false);
             var r = (RectTransform)go.transform; r.anchorMin = r.anchorMax = Vector2.zero;
-            r.anchoredPosition = pos; r.sizeDelta = size; go.GetComponent<Image>().color = color; return r;
+            r.anchoredPosition = pos; r.sizeDelta = size; return r;
+        }
+        private Image Fill(string name, Transform parent, Vector2 pos, Vector2 size, Color color)
+        {
+            var r = Rect(name, parent, pos, size); var g = r.gameObject.AddComponent<Image>(); g.color = color; return g;
+        }
+        private MenuInkGraphic Draw(string name, Transform parent, Vector2 pos, Vector2 size, MenuInkGraphic.Shape shape, Color color)
+        {
+            var r = Rect(name, parent, pos, size); var g = r.gameObject.AddComponent<MenuInkGraphic>();
+            g.kind = shape; g.color = color; g.raycastTarget = false; return g;
         }
         private TMP_Text Text(Transform parent, Vector2 pos, Vector2 size, string value, int points, Color? color = null)
         {
-            var go = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI)); go.transform.SetParent(parent, false);
-            var r = (RectTransform)go.transform; r.anchorMin = r.anchorMax = Vector2.zero; r.anchoredPosition = pos; r.sizeDelta = size;
-            var t = go.GetComponent<TMP_Text>(); t.font = theme.chineseFont; t.fontSize = points * MenuPreferences.TextScale;
-            t.text = value; t.color = color ?? ink; t.alignment = TextAlignmentOptions.MidlineLeft; t.raycastTarget = false;
-            fontSizes[t] = points; return t;
+            var r = Rect("Text", parent, pos, size); var t = r.gameObject.AddComponent<TextMeshProUGUI>();
+            t.font = runtimeFont != null ? runtimeFont : theme.chineseFont; t.fontSize = points; t.text = value; t.color = color ?? ink;
+            t.alignment = TextAlignmentOptions.MidlineLeft; t.raycastTarget = false;
+            if (parent == stage)
+            { var shadow = r.gameObject.AddComponent<Shadow>(); shadow.effectColor = new Color(1, .98f, .92f, .8f); shadow.effectDistance = new Vector2(1, -1); }
+            return t;
         }
-        private Button MakeButton(Transform parent, Vector2 pos, Vector2 size, string title, UnityEngine.Events.UnityAction action, bool primary = false)
+        private TMP_Text Local(Transform parent, Vector2 pos, Vector2 size, string key, int points, Color? color = null)
+        { var t = Text(parent, pos, size, MenuCopy.Get(key), points, color); copy[t] = key; return t; }
+        private Button MakeButton(Transform parent, Vector2 pos, Vector2 size, string key, UnityEngine.Events.UnityAction action, bool center = true)
         {
-            var r = Panel(title, parent, pos, size, primary ? new Color(.29f, .43f, .46f) : new Color(.98f, .96f, .91f, .9f));
-            var b = r.gameObject.AddComponent<Button>(); b.targetGraphic = r.GetComponent<Image>();
-            var colors = b.colors; colors.highlightedColor = new Color(.83f, .9f, .86f); colors.pressedColor = new Color(.68f, .79f, .75f); b.colors = colors;
-            b.onClick.AddListener(action);
-            var t = Text(r, size * .5f, size - new Vector2(40, 8), title, 29, primary ? Color.white : ink);
-            t.alignment = TextAlignmentOptions.Center; return b;
+            var hit = Fill(key, parent, pos, size, new Color(1, 1, 1, 0));
+            var b = hit.gameObject.AddComponent<Button>(); b.targetGraphic = hit; b.transition = Selectable.Transition.None; b.onClick.AddListener(action);
+            var t = Local(hit.transform, size * .5f, size - new Vector2(48, 8), key, center ? 26 : 36);
+            t.alignment = center ? TextAlignmentOptions.Center : TextAlignmentOptions.MidlineLeft;
+            float lineWidth = Mathf.Min(size.x - 48, 190);
+            var line = Draw("Pencil underline", hit.transform, new Vector2(center ? (size.x - lineWidth) / 2 : 24, 8), new Vector2(lineWidth, 4), MenuInkGraphic.Shape.Stroke, blue);
+            line.rectTransform.pivot = new Vector2(0, .5f); line.rectTransform.localScale = new Vector3(.001f, 1, 1);
+            var hover = hit.gameObject.AddComponent<MenuHoverInk>(); hover.stroke = line.rectTransform; hover.label = t; hover.resting = ink; hover.active = blue;
+            return b;
         }
         private void Start()
         {
-            if (theme == null || navigation == null) { enabled = false; return; }
-            // The old scene remains intact on disk; disable only its runtime presentation.
-            foreach (var old in FindObjectsByType<Canvas>())
-                if (old.gameObject.scene == gameObject.scene) old.gameObject.SetActive(false);
+            if (theme == null) { enabled = false; return; }
+            // Dynamic glyphs belong to this view, avoiding changes to the shared font asset in Play.
+            if (theme.chineseFont.sourceFontFile != null)
+            { runtimeFont = TMP_FontAsset.CreateFontAsset(theme.chineseFont.sourceFontFile); if (runtimeFont != null) runtimeFont.hideFlags = HideFlags.DontSave; }
+            foreach (var old in FindObjectsByType<Canvas>()) if (old.gameObject.scene == gameObject.scene) old.gameObject.SetActive(false);
             if (FindAnyObjectByType<EventSystem>() == null) new GameObject("Menu EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
             MenuPreferences.Apply();
             var canvas = new GameObject("Illustrated Menu Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
             var scaler = canvas.GetComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920, 1080); scaler.matchWidthOrHeight = 1;
-            root = Panel("Root", canvas.transform, Vector2.zero, Vector2.zero, Color.white);
+            scaler.referenceResolution = new Vector2(1920, 1080); scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
+            root = Rect("Full classroom", canvas.transform, Vector2.zero, Vector2.zero);
             root.anchorMin = Vector2.zero; root.anchorMax = Vector2.one; root.offsetMin = root.offsetMax = Vector2.zero;
-            var art = new GameObject("Classroom Background", typeof(RectTransform), typeof(RawImage), typeof(AspectRatioFitter)); art.transform.SetParent(root, false);
-            var ar = (RectTransform)art.transform; ar.anchorMin = Vector2.zero; ar.anchorMax = Vector2.one; ar.offsetMin = ar.offsetMax = Vector2.zero;
-            var raw = art.GetComponent<RawImage>(); raw.texture = theme.background; raw.raycastTarget = false;
-            var fit = art.GetComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            var art = Rect("Classroom Background", root, Vector2.zero, Vector2.zero);
+            art.anchorMin = Vector2.zero; art.anchorMax = Vector2.one; art.offsetMin = art.offsetMax = Vector2.zero;
+            var raw = art.gameObject.AddComponent<RawImage>(); raw.texture = theme.background; raw.raycastTarget = false;
+            var fit = art.gameObject.AddComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
             fit.aspectRatio = (float)theme.background.width / theme.background.height;
-            Panel("Paper menu", root, new Vector2(320, 540), new Vector2(640, 1080), new Color(.97f, .95f, .9f, .94f));
-            Text(root, new Vector2(320, 908), new Vector2(420, 50), "原创校园叙事 · 开发版", 23, new Color(.43f, .49f, .48f));
-            Text(root, new Vector2(320, 805), new Vector2(420, 105), "未定名", 68);
-            Panel("Rule", root, new Vector2(173, 715), new Vector2(125, 3), new Color(.63f, .49f, .36f));
-            Text(root, new Vector2(320, 653), new Vector2(420, 80), "从一次换座开始的故事", 26);
-            startButton = MakeButton(root, new Vector2(320, 500), new Vector2(420, 80), "开始游戏", StartGame, true);
-            settingsButton = MakeButton(root, new Vector2(320, 390), new Vector2(420, 80), "设置", () => ShowSettings(true));
-            quitButton = MakeButton(root, new Vector2(320, 280), new Vector2(420, 80), "退出游戏", () => ShowQuit(true));
-            status = Text(root, new Vector2(320, 146), new Vector2(420, 85), "当前可体验：数学讲题与英语互助\n完整主线制作中", 20, new Color(.43f, .49f, .48f));
-            Text(root, new Vector2(320, 60), new Vector2(420, 34), "Windows · 离线演示", 18, new Color(.43f, .49f, .48f));
+            stage = Rect("Composition", root, Vector2.zero, new Vector2(1920, 1080)); stage.anchorMin = stage.anchorMax = Vector2.one * .5f;
+            entrance = stage.gameObject.AddComponent<CanvasGroup>(); entrance.alpha = 0;
+            Local(stage, new Vector2(385, 884), new Vector2(490, 42), "edition", 19, blue);
+            var title = Local(stage, new Vector2(400, 775), new Vector2(520, 140), "title", 77); title.characterSpacing = 7;
+            Draw("Title pencil stroke", stage, new Vector2(207, 681), new Vector2(135, 3), MenuInkGraphic.Shape.Stroke, blue);
+            Local(stage, new Vector2(400, 615), new Vector2(520, 90), "tagline", 25);
+            startButton = MakeButton(stage, new Vector2(345, 443), new Vector2(450, 76), "start", StartGame, false);
+            settingsButton = MakeButton(stage, new Vector2(345, 350), new Vector2(450, 76), "settings", () => ShowSettings(true), false);
+            quitButton = MakeButton(stage, new Vector2(345, 257), new Vector2(450, 76), "quit", () => ShowQuit(true), false);
+            status = Local(stage, new Vector2(410, 121), new Vector2(540, 44), "demo", 20);
+            Local(stage, new Vector2(410, 78), new Vector2(540, 36), "storyNote", 17, new Color(.36f, .40f, .39f));
             BuildSettings(); BuildQuit(); Select(startButton);
         }
-        private RectTransform Modal(string name)
+        private RectTransform Modal(string name, Vector2 size)
         {
-            var shade = Panel(name, root, Vector2.zero, Vector2.zero, new Color(.12f, .18f, .19f, .62f));
-            shade.anchorMin = Vector2.zero; shade.anchorMax = Vector2.one; shade.offsetMin = shade.offsetMax = Vector2.zero;
-            var paper = Panel("Dialog paper", shade, Vector2.zero, new Vector2(780, 660), new Color(.98f, .96f, .91f));
-            paper.anchorMin = paper.anchorMax = new Vector2(.5f, .5f); return paper;
+            var shade = Fill(name, stage, new Vector2(960, 540), new Vector2(8000, 5000), new Color(.18f, .23f, .25f, .47f));
+            Draw("Paper shadow", shade.transform, new Vector2(4008, 2491), size, MenuInkGraphic.Shape.Paper, new Color(.12f, .19f, .21f, .24f));
+            var paper = Draw("Exercise paper", shade.transform, new Vector2(4000, 2500), size, MenuInkGraphic.Shape.Paper, new Color(.96f, .96f, .92f));
+            // Children use the bottom-left of this rectangular paper as a stable layout origin.
+            return paper.rectTransform;
         }
-        private Toggle MakeToggle(Transform parent, Vector2 pos, string label, bool initial, UnityEngine.Events.UnityAction<bool> changed)
+        private Slider MakeSlider(Transform parent, float x, float y, string key, float initial, UnityEngine.Events.UnityAction<float> changed, out TMP_Text label)
         {
-            var r = Panel(label, parent, pos, new Vector2(620, 70), new Color(.9f, .9f, .85f));
-            var t = r.gameObject.AddComponent<Toggle>();
-            Panel("Check background", r, new Vector2(37, 35), new Vector2(34, 34), new Color(.98f, .96f, .91f));
-            var check = Panel("Check", r, new Vector2(37, 35), new Vector2(25, 25), new Color(.29f, .43f, .46f));
-            t.targetGraphic = r.GetComponent<Image>(); t.graphic = check.GetComponent<Image>(); t.SetIsOnWithoutNotify(initial);
-            Text(r, new Vector2(340, 35), new Vector2(515, 60), label, 26); t.onValueChanged.AddListener(changed); return t;
+            label = Local(parent, new Vector2(x, y + 50), new Vector2(480, 48), key, 28, blue);
+            var track = Fill(key + " slider", parent, new Vector2(x, y), new Vector2(480, 38), new Color(1, 1, 1, 0));
+            Draw("Pencil rail", track.transform, new Vector2(240, 19), new Vector2(480, 5), MenuInkGraphic.Shape.Stroke, new Color(.68f, .72f, .70f));
+            var slider = track.gameObject.AddComponent<Slider>(); slider.minValue = 0; slider.maxValue = 1;
+            var fill = Draw("Ink fill", track.transform, Vector2.zero, Vector2.zero, MenuInkGraphic.Shape.Stroke, blue);
+            fill.rectTransform.anchorMin = Vector2.zero; fill.rectTransform.anchorMax = Vector2.one; fill.rectTransform.offsetMin = new Vector2(0, 17); fill.rectTransform.offsetMax = new Vector2(0, -17);
+            var handle = Draw("Round pencil handle", track.transform, Vector2.zero, new Vector2(26, 26), MenuInkGraphic.Shape.Dot, ink);
+            slider.fillRect = fill.rectTransform; slider.handleRect = handle.rectTransform; slider.targetGraphic = handle;
+            slider.SetValueWithoutNotify(initial); handle.rectTransform.sizeDelta = new Vector2(26, -12);
+            slider.onValueChanged.AddListener(changed); return slider;
+        }
+        private Toggle MakeToggle(Transform parent, Vector2 pos, Vector2 size, string value, bool initial, UnityEngine.Events.UnityAction<bool> changed)
+        {
+            var r = Fill(value, parent, pos, size, new Color(1, 1, 1, 0)); var t = r.gameObject.AddComponent<Toggle>();
+            Draw("Checkbox", r.transform, new Vector2(27, size.y / 2), new Vector2(30, 30), MenuInkGraphic.Shape.Box, blue);
+            var tick = Draw("Pencil check", r.transform, new Vector2(27, size.y / 2), new Vector2(25, 25), MenuInkGraphic.Shape.Tick, ink);
+            t.targetGraphic = r; t.graphic = tick; t.SetIsOnWithoutNotify(initial);
+            Text(r.transform, new Vector2(size.x / 2 + 30, size.y / 2), new Vector2(size.x - 75, size.y - 4), value, 29);
+            t.onValueChanged.AddListener(changed); return t;
         }
         private void BuildSettings()
         {
-            settings = Modal("Settings overlay");
-            Text(settings, new Vector2(390, 585), new Vector2(620, 60), "设置", 38);
-            volumeLabel = Text(settings, new Vector2(390, 493), new Vector2(620, 45), "", 26);
-            var track = Panel("Volume", settings, new Vector2(390, 434), new Vector2(620, 40), new Color(.78f, .8f, .76f));
-            volume = track.gameObject.AddComponent<Slider>(); volume.minValue = 0; volume.maxValue = 1;
-            var fill = Panel("Fill", track, Vector2.zero, Vector2.zero, new Color(.44f, .6f, .59f));
-            fill.anchorMin = Vector2.zero; fill.anchorMax = Vector2.one; fill.offsetMin = fill.offsetMax = Vector2.zero;
-            var handle = Panel("Handle", track, Vector2.zero, new Vector2(22, 48), ink);
-            volume.fillRect = fill; volume.handleRect = handle; volume.targetGraphic = handle.GetComponent<Image>();
-            volume.SetValueWithoutNotify(MenuPreferences.Volume); UpdateVolumeLabel();
-            volume.onValueChanged.AddListener(v => { MenuPreferences.SetVolume(v); UpdateVolumeLabel(); });
-            fullscreen = MakeToggle(settings, new Vector2(390, 340), "全屏显示", MenuPreferences.Fullscreen, MenuPreferences.SetFullscreen);
-            largeText = MakeToggle(settings, new Vector2(390, 250), "较大文字", MenuPreferences.TextScale > 1, v => { MenuPreferences.SetLargeText(v); ApplyTextScale(); });
-            Text(settings, new Vector2(390, 174), new Vector2(620, 55), "设置自动保存", 19);
-            MakeButton(settings, new Vector2(235, 84), new Vector2(280, 66), "恢复默认", () => {
-                MenuPreferences.RestoreDefaults(); volume.SetValueWithoutNotify(MenuPreferences.Volume);
-                fullscreen.SetIsOnWithoutNotify(false); largeText.SetIsOnWithoutNotify(false); UpdateVolumeLabel(); ApplyTextScale();
-            });
-            MakeButton(settings, new Vector2(545, 84), new Vector2(280, 66), "返回", () => ShowSettings(false), true);
-            settings.parent.gameObject.SetActive(false);
+            settings = Modal("Settings overlay", new Vector2(1380, 820));
+            Local(settings, new Vector2(380, 727), new Vector2(520, 70), "settings", 43);
+            Draw("Header rule", settings, new Vector2(690, 672), new Vector2(1140, 3), MenuInkGraphic.Shape.Stroke, new Color(.49f, .61f, .65f, .45f));
+            music = MakeSlider(settings, 360, 560, "music", MenuPreferences.Music, v => { MenuPreferences.SetMusic(v); RefreshValues(); }, out musicLabel);
+            sound = MakeSlider(settings, 1010, 560, "sound", MenuPreferences.Sound, v => { MenuPreferences.SetSound(v); RefreshValues(); }, out soundLabel);
+            Local(settings, new Vector2(240, 446), new Vector2(240, 50), "resolution", 28, blue);
+            var rb = MakeButton(settings, new Vector2(515, 446), new Vector2(300, 62), "resolution", () => resolutionList.gameObject.SetActive(!resolutionList.gameObject.activeSelf));
+            resolutionLabel = rb.GetComponentInChildren<TMP_Text>(); copy.Remove(resolutionLabel);
+            Draw("Resolution field outline", rb.transform, new Vector2(150, 31), new Vector2(292, 56), MenuInkGraphic.Shape.Box, blue);
+            Draw("Dropdown arrow", rb.transform, new Vector2(271, 31), new Vector2(16, 9), MenuInkGraphic.Shape.Chevron, blue);
+            fullscreen = MakeToggle(settings, new Vector2(1020, 446), new Vector2(470, 62), MenuCopy.Get("fullscreen"), MenuPreferences.Fullscreen, MenuPreferences.SetFullscreen);
+            copy[fullscreen.GetComponentInChildren<TMP_Text>()] = "fullscreen";
+            Draw("Section rule", settings, new Vector2(690, 373), new Vector2(1140, 2), MenuInkGraphic.Shape.Stroke, new Color(.49f, .61f, .65f, .25f));
+            Local(settings, new Vector2(240, 310), new Vector2(240, 45), "language", 28, blue);
+            var group = settings.gameObject.AddComponent<ToggleGroup>(); group.allowSwitchOff = false;
+            for (int i = 0; i < 4; i++)
+            {
+                int index = i;
+                var t = MakeToggle(settings, new Vector2(525 + (i / 2) * 500, 306 - (i % 2) * 92), new Vector2(410, 65), MenuCopy.LanguageNames[i], i == (int)MenuPreferences.Language,
+                    on => { if (on) { MenuPreferences.SetLanguage((MenuLanguage)index); RefreshLanguage(); } });
+                t.group = group; languageToggles.Add(t);
+            }
+            Local(settings, new Vector2(470, 80), new Vector2(700, 45), "saved", 19, blue);
+            MakeButton(settings, new Vector2(900, 80), new Vector2(270, 64), "reset", ResetPreferences);
+            MakeButton(settings, new Vector2(1175, 80), new Vector2(220, 64), "back", () => ShowSettings(false));
+            BuildResolutionList(); RefreshValues(); settings.parent.gameObject.SetActive(false);
+        }
+        private void BuildResolutionList()
+        {
+            resolutionList = Fill("Resolution choices", settings, new Vector2(515, 315), new Vector2(300, 196), new Color(.96f, .96f, .92f)).rectTransform;
+            var options = new List<Vector2Int>();
+            int maxWidth = Mathf.Max(1280, Screen.currentResolution.width), maxHeight = Mathf.Max(720, Screen.currentResolution.height);
+            foreach (var size in new[] { new Vector2Int(1280, 720), new Vector2Int(1600, 900), new Vector2Int(1920, 1080), new Vector2Int(2560, 1440), new Vector2Int(3840, 2160) })
+                if (size.x <= maxWidth && size.y <= maxHeight) options.Add(size);
+            var native = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
+            if (native.x >= 640 && native.y >= 360 && !options.Contains(native)) options.Add(native);
+            resolutionList.sizeDelta = new Vector2(300, options.Count * 55 + 12);
+            resolutionList.anchoredPosition = new Vector2(515, 415 - resolutionList.sizeDelta.y / 2);
+            for (int i = 0; i < options.Count; i++)
+            {
+                var size = options[i]; var b = MakeButton(resolutionList, new Vector2(150, resolutionList.sizeDelta.y - 34 - i * 55), new Vector2(300, 54), "resolution",
+                    () => { MenuPreferences.SetResolution(size.x, size.y); RefreshValues(); resolutionList.gameObject.SetActive(false); });
+                var text = b.GetComponentInChildren<TMP_Text>(); copy.Remove(text); text.text = size.x + " × " + size.y; text.fontSize = 25;
+            }
+            resolutionList.gameObject.SetActive(false);
         }
         private void BuildQuit()
         {
-            quit = Modal("Quit overlay"); quit.sizeDelta = new Vector2(780, 380);
-            Text(quit, new Vector2(390, 260), new Vector2(620, 80), "确定退出游戏？", 36);
-            MakeButton(quit, new Vector2(235, 100), new Vector2(280, 72), "取消", () => ShowQuit(false));
-            MakeButton(quit, new Vector2(545, 100), new Vector2(280, 72), "退出", QuitGame, true);
+            quit = Modal("Quit overlay", new Vector2(920, 400));
+            Local(quit, new Vector2(460, 265), new Vector2(740, 90), "confirm", 38).alignment = TextAlignmentOptions.Center;
+            MakeButton(quit, new Vector2(280, 105), new Vector2(360, 72), "cancel", () => ShowQuit(false));
+            MakeButton(quit, new Vector2(680, 105), new Vector2(240, 72), "exit", QuitGame);
             quit.parent.gameObject.SetActive(false);
         }
-        private void UpdateVolumeLabel() { volumeLabel.text = "总音量  " + Mathf.RoundToInt(MenuPreferences.Volume * 100) + "%"; }
-        private void ApplyTextScale() { foreach (var pair in fontSizes) if (pair.Key != null) pair.Key.fontSize = pair.Value * MenuPreferences.TextScale; }
-        private void LockMenu(bool value) { startButton.interactable = settingsButton.interactable = quitButton.interactable = !value; }
-        private void ShowSettings(bool value)
+        private void RefreshLanguage()
         {
-            settings.parent.gameObject.SetActive(value); LockMenu(value);
-            if (value) { EventSystem.current.SetSelectedGameObject(volume.gameObject); } else Select(settingsButton);
+            foreach (var entry in copy) if (entry.Key != null) entry.Key.text = MenuCopy.Get(entry.Value);
+            RefreshValues();
         }
-        private void ShowQuit(bool value)
+        private void RefreshValues()
         {
-            quit.parent.gameObject.SetActive(value); LockMenu(value);
-            if (value) Select(quit.GetComponentInChildren<Button>()); else Select(quitButton);
+            musicLabel.text = MenuCopy.Get("music") + "  " + Mathf.RoundToInt(MenuPreferences.Music * 100) + "%";
+            soundLabel.text = MenuCopy.Get("sound") + "  " + Mathf.RoundToInt(MenuPreferences.Sound * 100) + "%";
+            resolutionLabel.text = MenuPreferences.Width + " × " + MenuPreferences.Height;
         }
-        private static void Select(Button b) { if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(b.gameObject); }
+        private void ResetPreferences()
+        {
+            MenuPreferences.RestoreDefaults(); music.SetValueWithoutNotify(MenuPreferences.Music); sound.SetValueWithoutNotify(MenuPreferences.Sound);
+            fullscreen.SetIsOnWithoutNotify(MenuPreferences.Fullscreen); RefreshValues(); resolutionList.gameObject.SetActive(false);
+        }
+        private void LockMenu(bool locked) { startButton.interactable = settingsButton.interactable = quitButton.interactable = !locked; }
+        private void ShowSettings(bool on)
+        { settings.parent.gameObject.SetActive(on); resolutionList.gameObject.SetActive(false); LockMenu(on); if (on) Select(music); else Select(settingsButton); }
+        private void ShowQuit(bool on)
+        { quit.parent.gameObject.SetActive(on); LockMenu(on); if (on) Select(quit.GetComponentInChildren<Button>()); else Select(quitButton); }
+        private static void Select(Selectable b) { if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(b.gameObject); }
         private void Update()
         {
-            if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
-            if (settings.parent.gameObject.activeSelf) ShowSettings(false);
-            else if (quit.parent.gameObject.activeSelf) ShowQuit(false);
-            else ShowQuit(true);
+            if (entrance == null) return;
+            entered += Time.unscaledDeltaTime; entrance.alpha = Mathf.SmoothStep(0, 1, Mathf.Clamp01(entered / .65f));
+            if (loading || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
+            if (resolutionList.gameObject.activeSelf) resolutionList.gameObject.SetActive(false);
+            else if (settings.parent.gameObject.activeSelf) ShowSettings(false);
+            else if (quit.parent.gameObject.activeSelf) ShowQuit(false); else ShowQuit(true);
         }
         private void StartGame()
         {
+            if (loading) return;
             string target = Application.CanStreamedLevelBeLoaded("TableSlice") ? "TableSlice" : "SampleScene";
-            if (!Application.CanStreamedLevelBeLoaded(target)) { status.text = "暂时无法开始，请检查场景是否加入构建。"; return; }
-            LockMenu(true); status.text = "正在进入……"; SceneManager.LoadSceneAsync(target);
+            if (!Application.CanStreamedLevelBeLoaded(target)) { status.text = MenuCopy.Get("unavailable"); return; }
+            loading = true; LockMenu(true); status.text = MenuCopy.Get("loading"); SceneManager.LoadSceneAsync(target);
         }
         private void QuitGame()
         {
 #if UNITY_EDITOR
-            ShowQuit(false); status.text = "编辑器测试：请停止 Play。独立程序会正常退出。";
+            ShowQuit(false); status.text = MenuCopy.Get("editorExit");
 #else
             Application.Quit();
 #endif
+        }
+        private void OnDestroy()
+        {
+            if (runtimeFont == null) return;
+            foreach (var texture in runtimeFont.atlasTextures) if (texture != null) Destroy(texture);
+            Destroy(runtimeFont);
         }
     }
 }

@@ -1,5 +1,7 @@
 # 原创 2D 叙事游戏（开发代号待定）
 
+**主界面第二版：** 按钮已融入完整教室画面，设置改为独立音乐 / 音效、分辨率、全屏和简体 / 繁体 / 英语 / 日语，已移除字号选项。程序仍从下方 MenuDemo 入口打开，详见 [第二版说明](docs/ILLUSTRATED_MAIN_MENU_V2.md)。四语目前覆盖菜单，正式剧情翻译另计。
+
 **最新可运行版本（2026-10-31）：** [打开 Windows 主界面演示](Builds/MenuDemo/MenuDemo.exe)。已加入插画主菜单、设置、退出确认，并连接数学讲题 / 英语互助小样。Unity 顶栏 **Tools → Story Prototype → Open Main Menu** 后按 Play 即可查看。游戏名使用“未定名”占位，完整主线制作中。详情与验证范围见 [主界面说明](docs/ILLUSTRATED_MAIN_MENU.md)；下方早期环境记录保留作学习历史。
 
 目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。基础环境、P1-01 主菜单和 P1-02 中文线性对话已完成编辑器与 Windows 本机验收。P1-03 点击触发的基础编辑器流程已获用户确认，下一步专项验证 UI 覆盖物体时不点击穿透，再构建新版本。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。补全列表手测和 URP / 退出资源提示排查仍有后续记录项。
