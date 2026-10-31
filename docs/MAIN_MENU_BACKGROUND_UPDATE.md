@@ -1,5 +1,7 @@
 # 已选主界面背景替换
 
+后续更新：该背景已随第一幕后排片段重新打包进 MenuDemo，并在独立程序实际显示；以下保留最初仅替换资源时的检查记录。见 FIRST_ACT_REAR_ROW.md。
+
 2026-10-31。作者指定使用本轮附件 codex-clipboard-a15aebb4-f194-4330-a9c8-8805f29725fd.png，并要求不做大量测试。
 
 - 原样保存至 art/Menu/MainMenuBackground-selected.png；复制同一文件覆盖 UnityProject/Assets/_Game/Resources/Menu/MainMenuBackground.png。

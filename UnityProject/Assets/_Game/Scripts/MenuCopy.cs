@@ -7,6 +7,12 @@ namespace LoveNarrativeGame.Prototype
         public static readonly string[] LanguageNames = { "简体中文", "繁體中文", "English", "日本語" };
         private static readonly Dictionary<string, string[]> Entries = new Dictionary<string, string[]>
         {
+            { "chooseStory", new[] { "选择故事", "選擇故事", "Choose a story", "物語を選ぶ" } },
+            { "campusStory", new[] { "校园故事（暂名）", "校園故事（暫名）", "A School Story (working title)", "学園物語（仮題）" } },
+            { "actOne", new[] { "第一幕 · 最后一排", "第一幕 · 最後一排", "Act I · The back row", "第一幕 · 最後列" } },
+            { "storyHook", new[] { "一句关于午饭的悄悄话，换了一个座位。", "一句關於午飯的悄悄話，換了一個座位。", "A whisper about lunch. A different seat.", "昼ごはんの話から、席が変わった。" } },
+            { "enterStory", new[] { "进入故事 →", "進入故事 →", "Enter story →", "物語を読む →" } },
+            { "storyList", new[] { "返回故事选择", "返回故事選擇", "Story selection", "物語の選択へ" } },
             { "edition", new[] { "校园叙事 · 开发中", "校園敘事 · 開發中", "A SCHOOL STORY · IN DEVELOPMENT", "学園物語 · 開発中" } },
             { "title", new[] { "未定名", "未定名", "Untitled", "タイトル未定" } },
             { "tagline", new[] { "从一次换座开始的故事", "從一次換座開始的故事", "It began with a change of seats.", "席替えから始まる物語。" } },

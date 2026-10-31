@@ -24,7 +24,7 @@ namespace LoveNarrativeGame.Prototype
         private readonly Color blue = new Color(.34f, .49f, .57f);
         private CanvasGroup entrance;
         private float entered;
-        private bool loading;
+        private bool storyOpen;
 
         public static void TryInstall(SceneNavigation owner)
         {
@@ -101,7 +101,7 @@ namespace LoveNarrativeGame.Prototype
             startButton = MakeButton(stage, new Vector2(345, 443), new Vector2(450, 76), "start", StartGame, false);
             settingsButton = MakeButton(stage, new Vector2(345, 350), new Vector2(450, 76), "settings", () => ShowSettings(true), false);
             quitButton = MakeButton(stage, new Vector2(345, 257), new Vector2(450, 76), "quit", () => ShowQuit(true), false);
-            status = Local(stage, new Vector2(410, 121), new Vector2(540, 44), "demo", 20);
+            status = Local(stage, new Vector2(410, 121), new Vector2(540, 44), "actOne", 20);
             Local(stage, new Vector2(410, 78), new Vector2(540, 36), "storyNote", 17, new Color(.36f, .40f, .39f));
             BuildSettings(); BuildQuit(); Select(startButton);
         }
@@ -217,17 +217,17 @@ namespace LoveNarrativeGame.Prototype
         {
             if (entrance == null) return;
             entered += Time.unscaledDeltaTime; entrance.alpha = Mathf.SmoothStep(0, 1, Mathf.Clamp01(entered / .65f));
-            if (loading || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
+            if (storyOpen || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
             if (resolutionList.gameObject.activeSelf) resolutionList.gameObject.SetActive(false);
             else if (settings.parent.gameObject.activeSelf) ShowSettings(false);
             else if (quit.parent.gameObject.activeSelf) ShowQuit(false); else ShowQuit(true);
         }
         private void StartGame()
         {
-            if (loading) return;
-            string target = Application.CanStreamedLevelBeLoaded("TableSlice") ? "TableSlice" : "SampleScene";
-            if (!Application.CanStreamedLevelBeLoaded(target)) { status.text = MenuCopy.Get("unavailable"); return; }
-            loading = true; LockMenu(true); status.text = MenuCopy.Get("loading"); SceneManager.LoadSceneAsync(target);
+            if (storyOpen) return;
+            if (!StoryScreen.Open(theme, () => { storyOpen = false; stage.gameObject.SetActive(true); Select(startButton); }))
+            { status.text = MenuCopy.Get("unavailable"); return; }
+            storyOpen = true; stage.gameObject.SetActive(false);
         }
         private void QuitGame()
         {
