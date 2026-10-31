@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="850" viewBox="0 0 1200 850">
+ <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#45697c" stroke-width="2"/></marker></defs>
+ <rect width="1200" height="850" fill="#f5f1e8"/>
+ <g font-family="Microsoft YaHei, sans-serif" fill="#293b43">
+ <text x="50" y="55" font-size="30" font-weight="bold">七班 · 座位方位基准（俯视）</text>
+ <text x="50" y="91" font-size="19">“右手边”以凌赫坐着的方向为准；两人面向相差 90°。示意不按比例。</text>
+ <path d="M130 160H485M715 160H1110V715H130Z" fill="none" stroke="#9a9a90" stroke-width="8"/>
+ <rect x="485" y="131" width="230" height="58" rx="4" fill="#d7e7e4" stroke="#45697c" stroke-width="2"/>
+ <text x="600" y="170" font-size="26" text-anchor="middle">前门 / 正门</text>
+ <rect x="105" y="250" width="50" height="300" rx="3" fill="#456355"/>
+ <text x="84" y="360" font-size="24" text-anchor="middle">黑</text><text x="84" y="396" font-size="24" text-anchor="middle">板</text>
+ <rect x="235" y="285" width="160" height="240" rx="8" fill="#c2aa87" stroke="#715f49" stroke-width="3"/>
+ <text x="315" y="410" font-size="27" text-anchor="middle">讲台</text>
+ <rect x="490" y="465" width="220" height="90" rx="4" fill="#cedce4" stroke="#45697c" stroke-width="3"/>
+ <text x="600" y="520" font-size="25" text-anchor="middle">凌赫的桌子</text>
+ <rect x="715" y="320" width="90" height="220" rx="4" fill="#e7d4ce" stroke="#946e64" stroke-width="3"/>
+ <text x="760" y="382" font-size="23" text-anchor="middle">李晚云</text><text x="760" y="417" font-size="23" text-anchor="middle">的桌子</text>
+ <rect x="552" y="602" width="96" height="65" rx="14" fill="#a9c2d2"/>
+ <circle cx="600" cy="624" r="24" fill="#45697c"/>
+ <text x="600" y="702" font-size="26" text-anchor="middle">凌赫</text>
+ <path d="M600 596V570M600 440V210" fill="none" stroke="#45697c" stroke-width="4" marker-end="url(#arrow)"/>
+ <text x="575" y="322" font-size="20" text-anchor="end">面朝前门 ↑</text>
+ <rect x="886" y="382" width="65" height="96" rx="14" fill="#d9b7ac"/>
+ <circle cx="917" cy="430" r="24" fill="#946e64"/>
+ <text x="917" y="519" font-size="26" text-anchor="middle">李晚云</text>
+ <path d="M883 430H824M693 430H416" fill="none" stroke="#45697c" stroke-width="4" marker-end="url(#arrow)"/>
+ <text x="1035" y="585" font-size="20" text-anchor="middle">面朝讲台 / 黑板 ←</text>
+ <path d="M680 560H820V610" fill="none" stroke="#946e64" stroke-width="2" stroke-dasharray="6 6"/>
+ <text x="850" y="651" font-size="19" fill="#946e64">她在凌赫右侧，桌子垂直紧邻</text>
+ <path d="M690 476V497H711" fill="none" stroke="#946e64" stroke-width="3"/>
+ <text x="50" y="785" font-size="21">不是两人并排朝向同一边，也不是隔桌面对面；后排同学与李晚云同向。</text>
+ <text x="50" y="821" font-size="17">图上 / 左仅为示意阅读方向，不另行确定学校真实朝向、尺寸或门窗样式。</text>
+ </g>
+</svg>
