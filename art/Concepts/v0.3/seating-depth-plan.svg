@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800">
+<rect width="1000" height="800" fill="#f7f3e9"/>
+<g font-family="Microsoft YaHei,sans-serif" fill="#293e45">
+<text x="40" y="48" font-size="27">沿画面纵深：凌赫座位 → 讲台 → 前门</text>
+<text x="40" y="84" font-size="19">图下方靠近镜头，图上方远离镜头；不是横向并排。</text>
+<path d="M440 685V115" stroke="#b77256" stroke-width="3" stroke-dasharray="9 7"/>
+<rect x="330" y="110" width="220" height="65" rx="4" fill="#d6e4dc" stroke="#506f61" stroke-width="2"/>
+<text x="440" y="151" text-anchor="middle" font-size="27">前门（远处）</text>
+<rect x="80" y="180" width="48" height="310" fill="#466154"/>
+<text x="104" y="314" text-anchor="middle" fill="white" font-size="22">黑</text><text x="104" y="348" text-anchor="middle" fill="white" font-size="22">板</text>
+<rect x="330" y="230" width="220" height="200" rx="6" fill="#c5ad89" stroke="#806d50" stroke-width="3"/>
+<text x="440" y="340" text-anchor="middle" font-size="29">讲台</text>
+<rect x="330" y="430" width="220" height="110" rx="4" fill="#cadce5" stroke="#486f85" stroke-width="3"/>
+<text x="440" y="492" text-anchor="middle" font-size="25">凌赫的桌子</text>
+<circle cx="440" cy="606" r="35" fill="#486f85"/>
+<text x="440" y="668" text-anchor="middle" font-size="25">凌赫的座位（近处）</text>
+<rect x="550" y="430" width="100" height="200" rx="4" fill="#e1cac1" stroke="#94695b" stroke-width="3"/>
+<text x="600" y="500" text-anchor="middle" font-size="22">李晚云</text><text x="600" y="533" text-anchor="middle" font-size="22">的桌子</text>
+<circle cx="722" cy="530" r="35" fill="#94695b"/>
+<text x="722" y="600" text-anchor="middle" font-size="24">李晚云</text>
+<text x="40" y="735" font-size="20">男主桌紧抵讲台相应端部；女主在其右侧，两桌保持垂直紧邻。</text>
+<text x="40" y="772" font-size="18">排布示意不规定尺寸、真实朝向或摄影机焦距。</text>
+</g></svg>

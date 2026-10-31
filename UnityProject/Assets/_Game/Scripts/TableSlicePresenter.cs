@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace LoveNarrativeGame.Prototype
@@ -43,7 +44,7 @@ namespace LoveNarrativeGame.Prototype
         {
             var go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI)); go.transform.SetParent(parent, false);
             var r = (RectTransform)go.transform; r.anchorMin = r.anchorMax = Vector2.zero; r.anchoredPosition = pos; r.sizeDelta = size;
-            var t = go.GetComponent<TMP_Text>(); t.font = font; t.fontSize = points; t.color = ink; t.text = value;
+            var t = go.GetComponent<TMP_Text>(); t.font = font; t.fontSize = points * MenuPreferences.TextScale; t.color = ink; t.text = value;
             t.alignment = TextAlignmentOptions.MidlineLeft; t.raycastTarget = false; return t;
         }
         private Button Button(string name, Vector2 pos, Vector2 size, string value, UnityEngine.Events.UnityAction action)
@@ -98,6 +99,7 @@ namespace LoveNarrativeGame.Prototype
             next = Button("Continue", new Vector2(1040, 80), new Vector2(260, 55), "继续", Continue);
             Button("Restart", new Vector2(1070, 750), new Vector2(110, 42), "重玩", ResetSlice);
             Button("Pause", new Vector2(1190, 750), new Vector2(100, 42), "暂停", TogglePause);
+            Button("Main menu", new Vector2(1120, 703), new Vector2(240, 42), "返回主菜单", () => SceneManager.LoadScene("MainMenu"));
             pauseShade = Box("Pause overlay", root, new Vector2(640, 400), new Vector2(1280, 800), new Color(.12f, .17f, .18f, .96f)).GetComponent<Image>();
             var pauseText = Label("Pause text", pauseShade.transform, new Vector2(640, 430), new Vector2(900, 180), "已暂停\n点击此处或按 Esc 继续；阅读速度不影响剧情。", 30); pauseText.color = Color.white; pauseText.alignment = TextAlignmentOptions.Center;
             pauseShade.gameObject.AddComponent<Button>().onClick.AddListener(TogglePause); pauseShade.gameObject.SetActive(false);

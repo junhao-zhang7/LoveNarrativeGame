@@ -41,7 +41,7 @@ public static class TableSliceBuilder
     }
     private static void CreateIfMissing()
     {
-        if (File.Exists(ScenePath)) return;
+        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath) != null) return;
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Game/Fonts/NotoSansCJKsc-Regular SDF.asset");
         if (font == null) throw new Exception("Existing Chinese TMP font was not found.");
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);

@@ -11,6 +11,11 @@ namespace LoveNarrativeGame.Prototype
 
         private bool isLoading;
 
+        private void Awake()
+        {
+            MainMenuScreen.TryInstall(this);
+        }
+
         public void StartGame()
         {
             LoadScene(gameplaySceneName);

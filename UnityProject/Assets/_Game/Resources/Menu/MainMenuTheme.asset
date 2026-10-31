@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df83f1f795a66a14fa79ad2ffd78558d, type: 3}
+  m_Name: MainMenuTheme
+  m_EditorClassIdentifier: Assembly-CSharp::LoveNarrativeGame.Prototype.MainMenuTheme
+  chineseFont: {fileID: 11400000, guid: b42222487e16e8d459a645155abe788a, type: 2}
+  background: {fileID: 2800000, guid: e582514b161e62548aaf7585661793f3, type: 3}
