@@ -22,6 +22,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6d3cb6e04de50f2409cf312973354187, type: 2}
   - {fileID: 11400000, guid: b0fa35f318ab79b428e9463a0889680e, type: 2}
   - {fileID: 11400000, guid: 3e05cca0658f1ed489441f8a3a5d66a5, type: 2}
+  - {fileID: 11400000, guid: 4be72cebc92a4b441af772bc5062de9a, type: 2}
   pictures:
   - shot: 0
     texture: {fileID: 2800000, guid: 17dcd84d54f40e84f8ffa9d92cb50305, type: 3}
@@ -59,5 +60,15 @@ MonoBehaviour:
     texture: {fileID: 2800000, guid: e0a41bfaa9e52894b811508339f1a88f, type: 3}
   - shot: 18
     texture: {fileID: 2800000, guid: 15c4d9485d3eeb3499219ca4e0b395e6, type: 3}
-  endingSummary: "\u5979\u8F6C\u56DE\u53BB\uFF0C\u5634\u89D2\u6709\u4E00\u70B9\u7B11\u3002"
-  nextPreview: "\u540E\u7EED \xB7 \u8FD9\u9053\u9898\uFF08\u5236\u4F5C\u4E2D\uFF09"
+  - shot: 19
+    texture: {fileID: 2800000, guid: fb9fc7ff1af51694488faabcca1ffe1f, type: 3}
+  - shot: 20
+    texture: {fileID: 2800000, guid: 576b531ef92cc0141971b620bfa2ee95, type: 3}
+  - shot: 21
+    texture: {fileID: 2800000, guid: 36dd41108cbc84542bbc24764f08d7c0, type: 3}
+  - shot: 22
+    texture: {fileID: 2800000, guid: 0830b2bfb2d1d2f49a74f3b7ed5c1a61, type: 3}
+  - shot: 23
+    texture: {fileID: 2800000, guid: 03c855891dcb06646bf50d331bf4c551, type: 3}
+  endingSummary: "\u4E24\u4EBA\u7B2C\u4E00\u6B21\u5F88\u81EA\u7136\u5730\u7B11\u8D77\u6765\uFF0C\u7EA6\u597D\u4E86\u660E\u5929\u7684\u5348\u996D\u3002"
+  nextPreview: "\u540E\u7EED \xB7 \u9E21\u6392\u996D\u548C\u82F1\u8BED\u9898\uFF08\u5236\u4F5C\u4E2D\uFF09"

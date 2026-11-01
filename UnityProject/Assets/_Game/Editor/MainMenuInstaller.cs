@@ -34,6 +34,8 @@ public static class MainMenuInstaller
             PreparePicture("Assets/_Game/Resources/Story/WaterCup/" + picture + ".png");
         foreach (var picture in PaperCardStoryDraft.Pictures)
             PreparePicture("Assets/_Game/Resources/Story/PaperCard/" + picture + ".png");
+        foreach (var picture in MathHelpStoryDraft.Pictures)
+            PreparePicture("Assets/_Game/Resources/Story/MathHelp/" + picture + ".png");
         var background = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Menu/MainMenuBackground.png");
         if (font == null || background == null) { Debug.LogWarning("Menu art/font not imported yet; use Tools/Story Prototype/Install Main Menu after import."); return; }
         var theme = AssetDatabase.LoadAssetAtPath<MainMenuTheme>(ThemePath);
@@ -76,6 +78,7 @@ public static class MainMenuInstaller
         }
         WaterCupStoryDraft.Install(AssetDatabase.LoadAssetAtPath<StoryBook>(catalog + "/BesideYou.asset"));
         PaperCardStoryDraft.Install(AssetDatabase.LoadAssetAtPath<StoryBook>(catalog + "/BesideYou.asset"));
+        MathHelpStoryDraft.Install(AssetDatabase.LoadAssetAtPath<StoryBook>(catalog + "/BesideYou.asset"));
         AssetDatabase.SaveAssets();
         // Preserve user choices on subsequent imports. Add the existing prototype once.
         var scenes = EditorBuildSettings.scenes.ToList();
@@ -164,7 +167,7 @@ public static class MainMenuInstaller
     public static void CheckBook()
     {
         var book = AssetDatabase.LoadAssetAtPath<StoryBook>("Assets/_Game/Resources/Story/Catalog/BesideYou.asset");
-        if (book == null || book.cover == null || book.chapters.Length < 4) throw new Exception("Story catalog entry is incomplete.");
+        if (book == null || book.cover == null || book.chapters.Length < 5) throw new Exception("Story catalog entry is incomplete.");
         foreach (var chapter in book.chapters) if (chapter == null || !chapter.IsValid()) throw new Exception("Missing chapter.");
         foreach (var picture in book.pictures) if (picture.texture == null) throw new Exception("Missing catalog picture.");
         var expected = new[] { StoryShot.NewSeat, StoryShot.TenMinutes, StoryShot.Schoolbag, StoryShot.Goodbye };
@@ -180,6 +183,11 @@ public static class MainMenuInstaller
             throw new Exception("Fourth-act picture order is invalid.");
         foreach (var shot in PaperCardStoryDraft.Shots)
             if (!book.pictures.Any(p => p.shot == shot && p.texture != null)) throw new Exception("Missing fourth-act picture: " + shot);
+        var fifth = book.chapters.SingleOrDefault(c => c.storyId == "campus-act-05");
+        if (fifth == null || !fifth.beats.Select(b => b.shot).Distinct().SequenceEqual(MathHelpStoryDraft.Shots))
+            throw new Exception("Fifth-act picture order is invalid.");
+        foreach (var shot in MathHelpStoryDraft.Shots)
+            if (!book.pictures.Any(p => p.shot == shot && p.texture != null)) throw new Exception("Missing fifth-act picture: " + shot);
         Debug.Log("STORY_BOOK_CHECK_PASS: " + book.chapters.Length + " chapters; " + book.pictures.Length + " pictures; " + book.chapters.Sum(c => c.beats.Length) + " beats");
     }
 
