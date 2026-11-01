@@ -2,6 +2,11 @@
 
 ## 更新 · 2026-11-01
 
+### 作者提供MP3接入循环背景音乐
+- 原样复制11月1日.MP3至Resources/Audio/BackgroundMusic.mp3，哈希一致，来源台账已登记。新增持久单实例播放器，2D循环，沿用现有音乐音量设置，跨菜单/目录/剧情持续；没有新增配音或音效。
+- 独立脚本编译通过；Unity实际导入并生成音频.meta，Streaming/Vorbis质量1配置核对。未试听，未验证完整循环接缝。
+- 编辑器窗口激活超时，重新查找时进程仍在但未暴露可操作窗口，后台另开构建退出1；没有强制结束用户进程。音乐版exe未生成，上一版仍不含本次音乐。BACKGROUND_MUSIC.md包含恢复编辑器、重新构建和作者试听步骤。
+
 ### 第二幕新版实际构建完成 · 17:41
 - 日志与菜单核对确认此前只执行 Install，未进入 Build。作者许可必要电脑操作后，在已打开的 Unity 菜单选择 Tools → Story Prototype → Build Illustrated Menu，没有启动 Play 或独立游戏测试。
 - 编辑器已识别 Personal 许可证，创建第二幕 / 故事目录 / .meta 并实际编译、构建成功，Console 与日志出现 ILLUSTRATED_MENU_BUILD_PASS。构建辅助检查显示2章、8图、34段有效；新 resources.assets 与 globalgamemanagers 写入时间17:40:53。

@@ -23,6 +23,7 @@ public static class MainMenuInstaller
     public static void Install()
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
+        PrepareMusic();
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Game/Fonts/NotoSansCJKsc-Regular SDF.asset");
         PreparePicture("Assets/_Game/Resources/Menu/MainMenuBackground.png");
         foreach (var picture in new[] { "Whisper", "TeacherArrives", "Caught", "PackBooks" })
@@ -80,6 +81,21 @@ public static class MainMenuInstaller
     private static StoryPicture Picture(StoryShot shot, string key)
     { return new StoryPicture { shot = shot, texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Story/" + key + ".png") }; }
 
+    private static void PrepareMusic()
+    {
+        var importer = AssetImporter.GetAtPath("Assets/_Game/Resources/Audio/BackgroundMusic.mp3") as AudioImporter;
+        if (importer == null) return;
+        var settings = importer.defaultSampleSettings;
+        if (settings.loadType == AudioClipLoadType.Streaming && settings.compressionFormat == AudioCompressionFormat.Vorbis &&
+            settings.quality == 1 && settings.sampleRateSetting == AudioSampleRateSetting.PreserveSampleRate) return;
+        settings.loadType = AudioClipLoadType.Streaming;
+        settings.compressionFormat = AudioCompressionFormat.Vorbis;
+        settings.quality = 1;
+        settings.sampleRateSetting = AudioSampleRateSetting.PreserveSampleRate;
+        importer.defaultSampleSettings = settings;
+        importer.SaveAndReimport();
+    }
+
     private static void PreparePicture(string path)
     {
         var importer = AssetImporter.GetAtPath(path) as TextureImporter;
@@ -110,6 +126,9 @@ public static class MainMenuInstaller
     public static void Build()
     {
         Install(); TestPreferences(); TestStory(); CheckBook();
+        var music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/_Game/Resources/Audio/BackgroundMusic.mp3");
+        if (music == null || music.length <= 0) throw new Exception("Background music failed to import.");
+        Debug.Log("BACKGROUND_MUSIC_IMPORTED: " + music.length.ToString("F2") + " seconds; looping player enabled");
         if (AssetDatabase.LoadAssetAtPath<MainMenuTheme>(ThemePath) == null) throw new Exception("Menu theme is missing.");
         if (AssetDatabase.LoadAssetAtPath<SceneAsset>(TableSliceBuilder.ScenePath) == null) throw new Exception("Open the Table Slice once to create its scene before building.");
         var output = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Builds/MenuDemo/MenuDemo.exe"));
