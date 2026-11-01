@@ -191,28 +191,48 @@ namespace LoveNarrativeGame.Prototype
             float width = Mathf.Min(1, targetAspect / aspect), height = Mathf.Min(1, aspect / targetAspect);
             return new Rect((1 - width) * Mathf.Clamp01(focus), (1 - height) * .6f, width, height);
         }
+        private static bool IsWaterCup(StoryShot shot)
+        { return shot >= StoryShot.EveningStudy && shot <= StoryShot.WetSleeve; }
+        private static Rect PictureView(RawImage image, StoryBeat beat)
+        {
+            // Author's replacement frames include floor actions; keep the whole image above dialogue.
+            bool whole = IsWaterCup(beat.shot);
+            float scale = whole ? Mathf.Min(1920f / image.texture.width, 780f / image.texture.height) : 1f;
+            image.rectTransform.sizeDelta = whole
+                ? new Vector2(image.texture.width * scale, image.texture.height * scale) : new Vector2(1920, 1080);
+            image.rectTransform.anchoredPosition = whole ? new Vector2(960, 690) : new Vector2(960, 540);
+            return whole ? new Rect(0, 0, 1, 1) : Cover(image.texture, beat.focus);
+        }
         private void ShowBeat(bool first = false)
         {
             var beat = beats[progress.Index];
             if (first)
             {
                 currentShot = beat.shot; art.texture = shots[beat.shot];
-                art.uvRect = cameraTarget = Cover(art.texture, beat.focus); dissolve.color = Color.clear; Present(beat);
+                art.uvRect = cameraTarget = PictureView(art, beat); art.color = Color.white; dissolve.color = Color.clear; Present(beat);
             }
             else if (beat.fade || beat.shot != currentShot) StartCoroutine(ChangeShot(beat));
-            else { cameraTarget = Cover(shots[beat.shot], beat.focus); Present(beat); }
+            else { cameraTarget = PictureView(art, beat); Present(beat); }
         }
         private IEnumerator ChangeShot(StoryBeat beat)
         {
             transitioning = true; body.text = ""; speaker.text = "";
-            dissolve.texture = shots[beat.shot]; dissolve.uvRect = Cover(dissolve.texture, beat.focus);
+            dissolve.texture = shots[beat.shot]; dissolve.uvRect = PictureView(dissolve, beat);
+            bool fitTransition = IsWaterCup(currentShot) || IsWaterCup(beat.shot);
             float duration = beat.fade ? .65f : .4f;
             for (float elapsed = 0; elapsed < duration;)
             {
-                if (!paused) { elapsed += Time.unscaledDeltaTime; dissolve.color = new Color(1, 1, 1, Mathf.SmoothStep(0, 1, elapsed / duration)); }
+                if (!paused)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    float alpha = Mathf.SmoothStep(0, 1, elapsed / duration);
+                    dissolve.color = new Color(1, 1, 1, alpha);
+                    if (fitTransition) art.color = new Color(1, 1, 1, 1 - alpha);
+                }
                 yield return null;
             }
             currentShot = beat.shot; art.texture = dissolve.texture; art.uvRect = cameraTarget = dissolve.uvRect;
+            PictureView(art, beat); art.color = Color.white;
             dissolve.color = Color.clear; transitioning = false; Present(beat);
         }
         private void Present(StoryBeat beat)
