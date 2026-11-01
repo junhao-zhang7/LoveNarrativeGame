@@ -24,7 +24,7 @@ namespace LoveNarrativeGame.Prototype
         private RectTransform stage, selection, playback, ending, pause;
         private RawImage art;
         private RawImage dissolve;
-        private TMP_Text speaker, body, nextLabel;
+        private TMP_Text speaker, body, nextLabel, endingSummary, nextPreview;
         private StoryProgress progress;
         private Rect cameraTarget;
         private float typing;
@@ -152,8 +152,8 @@ namespace LoveNarrativeGame.Prototype
             ending = Rect("Act finished", playback, new Vector2(960, 540), new Vector2(1920, 1080));
             Fill("End veil", ending, new Vector2(960, 540), new Vector2(1920, 1080), new Color(.97f, .96f, .92f, .92f));
             Text(ending, new Vector2(960, 680), new Vector2(1200, 110), "当前内容已读完", 50, true);
-            Text(ending, new Vector2(960, 575), new Vector2(1200, 95), "两个人的第一次交谈，到这里暂告一段落。", 29, true, blue);
-            Text(ending, new Vector2(960, 502), new Vector2(1200, 55), "后续 · 水杯（制作中）", 24, true, blue);
+            endingSummary = Text(ending, new Vector2(960, 575), new Vector2(1200, 95), "", 29, true, blue);
+            nextPreview = Text(ending, new Vector2(960, 502), new Vector2(1200, 55), "", 24, true, blue);
             Button(ending, new Vector2(700, 340), new Vector2(300, 80), "从头阅读", Begin);
             Button(ending, new Vector2(1130, 340), new Vector2(360, 80), MenuCopy.Get("storyList"), ShowSelection);
             pause = Rect("Pause", playback, new Vector2(960, 540), new Vector2(1920, 1080));
@@ -178,6 +178,8 @@ namespace LoveNarrativeGame.Prototype
             foreach (var chapter in books[bookIndex].chapters) combined.AddRange(chapter.beats);
             foreach (var picture in books[bookIndex].pictures) shots.Add(picture.shot, picture.texture);
             beats = combined.ToArray();
+            endingSummary.text = string.IsNullOrWhiteSpace(books[bookIndex].endingSummary) ? "当前已制作内容已读完。" : books[bookIndex].endingSummary;
+            nextPreview.text = string.IsNullOrWhiteSpace(books[bookIndex].nextPreview) ? "后续内容制作中" : books[bookIndex].nextPreview;
             progress = new StoryProgress(beats.Length); paused = transitioning = false; reading = true; lastAdvanceFrame = Time.frameCount;
             selection.gameObject.SetActive(false); playback.gameObject.SetActive(true); ending.gameObject.SetActive(false); pause.gameObject.SetActive(false);
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);

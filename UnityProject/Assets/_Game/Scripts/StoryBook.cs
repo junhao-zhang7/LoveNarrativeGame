@@ -21,5 +21,7 @@ namespace LoveNarrativeGame.Prototype
         public Texture2D cover;
         public StorySequence[] chapters;
         public StoryPicture[] pictures;
+        [TextArea] public string endingSummary;
+        public string nextPreview;
     }
 }

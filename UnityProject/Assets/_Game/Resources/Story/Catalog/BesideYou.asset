@@ -20,6 +20,7 @@ MonoBehaviour:
   chapters:
   - {fileID: 11400000, guid: b156ac4cf997d8947970bccc9ea5e762, type: 2}
   - {fileID: 11400000, guid: 6d3cb6e04de50f2409cf312973354187, type: 2}
+  - {fileID: 11400000, guid: b0fa35f318ab79b428e9463a0889680e, type: 2}
   pictures:
   - shot: 0
     texture: {fileID: 2800000, guid: 17dcd84d54f40e84f8ffa9d92cb50305, type: 3}
@@ -37,3 +38,15 @@ MonoBehaviour:
     texture: {fileID: 2800000, guid: ab930dda4c0bfd449920c17c4b35f913, type: 3}
   - shot: 8
     texture: {fileID: 2800000, guid: 46e0b2f2260c8454cb36dafc43d512e5, type: 3}
+  - shot: 9
+    texture: {fileID: 2800000, guid: 1ad4aaf715df6cd4585e68ff8bc644ab, type: 3}
+  - shot: 10
+    texture: {fileID: 2800000, guid: d8ff51d887f7b2d4d880c047c506139a, type: 3}
+  - shot: 11
+    texture: {fileID: 2800000, guid: f4e8eec81a308304eba8a247f335b914, type: 3}
+  - shot: 12
+    texture: {fileID: 2800000, guid: 22cd4e5db1299674fbd596f91143d3ef, type: 3}
+  - shot: 13
+    texture: {fileID: 2800000, guid: 43a521d34def9ca4eab692271ad98c99, type: 3}
+  endingSummary: "\u4ED6\u7FFB\u56DE\u7EC3\u4E60\u518C\uFF0C\u8896\u53E3\u8FD8\u7559\u7740\u4E00\u70B9\u6E7F\u610F\u3002"
+  nextPreview: "\u540E\u7EED \xB7 \u4F60\u7684\u6838\u9178\u7801\uFF08\u5236\u4F5C\u4E2D\uFF09"
