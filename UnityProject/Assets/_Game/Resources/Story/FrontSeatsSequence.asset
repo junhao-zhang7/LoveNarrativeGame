@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a7d561650a7e4e4f951903b0c3f6d18, type: 3}
+  m_Name: FrontSeatsSequence
+  m_EditorClassIdentifier: Assembly-CSharp::LoveNarrativeGame.Prototype.StorySequence
+  storyId: campus-act-02
+  chapterTitle: "\u7B2C\u4E8C\u5E55 \xB7 \u518D\u7B49\u5341\u5206\u949F"
+  sourceNotes: "MAIN_STORY_V0.3 MS-02\uFF1A\u539F\u5BF9\u767D\u4E0D\u53D8\uFF0C\u821E\u53F0\u52A8\u4F5C\u5206\u4E3A\u65C1\u767D\u3002\u56FE\u7247\u7531\u4F5C\u8005\u63D0\u4F9B\uFF0C\u65E0\u65B0\u589E\u73A9\u6CD5\u6216\u97F3\u9891\u3002"
+  beats:
+  - speaker: 
+    text: "\u7B2C\u4E8C\u5E55 \xB7 \u518D\u7B49\u5341\u5206\u949F\n\u51CC\u8D6B\u628A\u4E66\u653E\u5230\u8BB2\u53F0\u65C1\u7684\u65B0\u5EA7\u4F4D\u4E0A\u3002"
+    shot: 5
+    focus: 0.5
+    fade: 1
+  - speaker: "\u73ED\u4E3B\u4EFB"
+    text: "\u5728\u8FD9\u513F\u7ED9\u6211\u8001\u5B9E\u70B9\u3002\u6709\u4E0D\u4F1A\u7684\u82F1\u8BED\u95EE\u665A\u4E91\uFF0C\u522B\u4E00\u5929\u5230\u665A\u53EA\u4F1A\u8BF4\u8BDD\u3002"
+    shot: 5
+    focus: 0.5
+    fade: 0
+  - speaker: "\u51CC\u8D6B"
+    text: "\u77E5\u9053\u4E86\u3002"
+    shot: 5
+    focus: 0.5
+    fade: 0
+  - speaker: "\u73ED\u4E3B\u4EFB"
+    text: "\u665A\u4E91\uFF0C\u6570\u5B66\u6709\u95EE\u9898\u4E5F\u53EF\u4EE5\u95EE\u4ED6\u3002\u4F60\u4EEC\u4E92\u76F8\u5E2E\u4E00\u5E2E\u3002"
+    shot: 5
+    focus: 0.5
+    fade: 0
+  - speaker: "\u674E\u665A\u4E91"
+    text: "\u55EF\u3002"
+    shot: 5
+    focus: 0.5
+    fade: 0
+  - speaker: 
+    text: "\u73ED\u4E3B\u4EFB\u79BB\u5F00\u4E86\u3002\u51CC\u8D6B\u653E\u597D\u6700\u540E\u4E00\u672C\u4E66\uFF0C\u674E\u665A\u4E91\u4F4E\u5934\u7EE7\u7EED\u770B\u3002"
+    shot: 6
+    focus: 0.5
+    fade: 0
+  - speaker: "\u51CC\u8D6B"
+    text: "\u4F60\u4E0D\u53BB\u5403\u996D\uFF1F"
+    shot: 6
+    focus: 0.5
+    fade: 0
+  - speaker: "\u674E\u665A\u4E91"
+    text: "\u73B0\u5728\u4EBA\u592A\u591A\u4E86\u3002\u6211\u7B49\u5341\u5206\u949F\u3002"
+    shot: 6
+    focus: 0.5
+    fade: 0
+  - speaker: "\u51CC\u8D6B"
+    text: "\u90A3\u9E21\u6392\u5C31\u6CA1\u4E86\u3002"
+    shot: 6
+    focus: 0.5
+    fade: 0
+  - speaker: "\u674E\u665A\u4E91"
+    text: "\u522B\u7684\u4E5F\u80FD\u5403\u3002"
+    shot: 6
+    focus: 0.5
+    fade: 0
+  - speaker: "\u51CC\u8D6B"
+    text: "\u2026\u2026\u4E5F\u662F\u3002"
+    shot: 6
+    focus: 0.5
+    fade: 0
+  - speaker: 
+    text: "\u4ED6\u4E60\u60EF\u6027\u5730\u62CE\u8D77\u7A7A\u4E86\u4E00\u534A\u7684\u4E66\u5305\uFF0C\u80CC\u5230\u4E00\u534A\uFF0C\u624D\u505C\u4E0B\u6765\u3002"
+    shot: 7
+    focus: 0.5
+    fade: 0
+  - speaker: 
+    text: "\u53EA\u662F\u53BB\u98DF\u5802\uFF0C\u5DF2\u7ECF\u4E0D\u9700\u8981\u80CC\u4E66\u5305\u4E86\u3002\n\u674E\u665A\u4E91\u770B\u89C1\u4E86\uFF0C\u5634\u89D2\u52A8\u4E86\u4E00\u4E0B\uFF0C\u6CA1\u6709\u7B11\u51FA\u58F0\u3002"
+    shot: 7
+    focus: 0.5
+    fade: 0
+  - speaker: 
+    text: "\u4ED6\u628A\u4E66\u5305\u653E\u56DE\u6905\u8FB9\uFF0C\u8D77\u8EAB\u770B\u4E86\u5979\u4E00\u773C\u3002"
+    shot: 8
+    focus: 0.5
+    fade: 0
+  - speaker: "\u51CC\u8D6B"
+    text: "\u90A3\u6211\u5148\u53BB\u4E86\u3002"
+    shot: 8
+    focus: 0.5
+    fade: 0
+  - speaker: "\u674E\u665A\u4E91"
+    text: "\u55EF\u3002"
+    shot: 8
+    focus: 0.5
+    fade: 0

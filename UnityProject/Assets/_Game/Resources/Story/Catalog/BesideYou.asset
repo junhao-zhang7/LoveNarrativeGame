@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e15b3a98ae58e743ad70e69722cb4df, type: 3}
+  m_Name: BesideYou
+  m_EditorClassIdentifier: Assembly-CSharp::LoveNarrativeGame.Prototype.StoryBook
+  bookId: campus-beside-you
+  title: "\u65C1\u8FB9\u7684\u4F4D\u7F6E"
+  subtitle: "\u51CC\u8D6B\u4E0E\u674E\u665A\u4E91\u7684\u6545\u4E8B"
+  description: "\u4ECE\u4E00\u6B21\u6362\u5EA7\u5F00\u59CB\uFF0C\n\u8D70\u8FC7\u9760\u8FD1\u3001\u8FC1\u5C31\uFF0C\u4EE5\u53CA\u90A3\u4E9B\u6CA1\u8BF4\u51FA\u53E3\u7684\u8BDD\u3002"
+  cover: {fileID: 2800000, guid: ab9be8d36ee2bb14d972e8ca747a5b36, type: 3}
+  chapters:
+  - {fileID: 11400000, guid: b156ac4cf997d8947970bccc9ea5e762, type: 2}
+  - {fileID: 11400000, guid: 6d3cb6e04de50f2409cf312973354187, type: 2}
+  pictures:
+  - shot: 0
+    texture: {fileID: 2800000, guid: 17dcd84d54f40e84f8ffa9d92cb50305, type: 3}
+  - shot: 3
+    texture: {fileID: 2800000, guid: d436c5e13c51d524b87cba424667a0b5, type: 3}
+  - shot: 1
+    texture: {fileID: 2800000, guid: 16a5e9163ff9a7a49a70f7bec7d8dbc2, type: 3}
+  - shot: 4
+    texture: {fileID: 2800000, guid: 6eb2a315f99ff1b48ab24110c4a120cc, type: 3}
+  - shot: 5
+    texture: {fileID: 2800000, guid: 57dbedd9c64688b49a40a3241669df50, type: 3}
+  - shot: 6
+    texture: {fileID: 2800000, guid: ab9be8d36ee2bb14d972e8ca747a5b36, type: 3}
+  - shot: 7
+    texture: {fileID: 2800000, guid: ab930dda4c0bfd449920c17c4b35f913, type: 3}
+  - shot: 8
+    texture: {fileID: 2800000, guid: 46e0b2f2260c8454cb36dafc43d512e5, type: 3}
