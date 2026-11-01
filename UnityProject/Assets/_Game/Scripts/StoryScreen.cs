@@ -142,7 +142,7 @@ namespace LoveNarrativeGame.Prototype
             // The catalog names the whole story; keep the rear doorway unobstructed during playback.
             var back = Paper("Back paper", playback, new Vector2(1702, 1024), new Vector2(300, 60), new Color(.98f, .97f, .93f, .94f));
             Button(back, new Vector2(150, 30), new Vector2(290, 58), MenuCopy.Get("storyList"), ShowSelection, 23);
-            var dialogue = Paper("Dialogue paper", playback, new Vector2(960, 158), new Vector2(1720, 258), new Color(.98f, .97f, .93f, .96f));
+            var dialogue = Paper("Dialogue paper", playback, new Vector2(960, 158), new Vector2(1720, 258), new Color(.98f, .97f, .93f, .55f));
             var hit = Fill("Read next", dialogue, new Vector2(860, 129), new Vector2(1720, 258), Color.clear);
             hit.gameObject.AddComponent<Button>().onClick.AddListener(Next);
             speaker = Text(dialogue, new Vector2(440, 209), new Vector2(700, 42), "", 28, false, blue);
@@ -195,13 +195,10 @@ namespace LoveNarrativeGame.Prototype
         { return shot >= StoryShot.EveningStudy && shot <= StoryShot.WetSleeve; }
         private static Rect PictureView(RawImage image, StoryBeat beat)
         {
-            // Author's replacement frames include floor actions; keep the whole image above dialogue.
-            bool whole = IsWaterCup(beat.shot);
-            float scale = whole ? Mathf.Min(1920f / image.texture.width, 780f / image.texture.height) : 1f;
-            image.rectTransform.sizeDelta = whole
-                ? new Vector2(image.texture.width * scale, image.texture.height * scale) : new Vector2(1920, 1080);
-            image.rectTransform.anchoredPosition = whole ? new Vector2(960, 690) : new Vector2(960, 540);
-            return whole ? new Rect(0, 0, 1, 1) : Cover(image.texture, beat.focus);
+            // Author requests a full 16:9 frame, stretching the third-act images without cropping.
+            image.rectTransform.sizeDelta = new Vector2(1920, 1080);
+            image.rectTransform.anchoredPosition = new Vector2(960, 540);
+            return IsWaterCup(beat.shot) ? new Rect(0, 0, 1, 1) : Cover(image.texture, beat.focus);
         }
         private void ShowBeat(bool first = false)
         {
@@ -218,7 +215,6 @@ namespace LoveNarrativeGame.Prototype
         {
             transitioning = true; body.text = ""; speaker.text = "";
             dissolve.texture = shots[beat.shot]; dissolve.uvRect = PictureView(dissolve, beat);
-            bool fitTransition = IsWaterCup(currentShot) || IsWaterCup(beat.shot);
             float duration = beat.fade ? .65f : .4f;
             for (float elapsed = 0; elapsed < duration;)
             {
@@ -227,7 +223,6 @@ namespace LoveNarrativeGame.Prototype
                     elapsed += Time.unscaledDeltaTime;
                     float alpha = Mathf.SmoothStep(0, 1, elapsed / duration);
                     dissolve.color = new Color(1, 1, 1, alpha);
-                    if (fitTransition) art.color = new Color(1, 1, 1, 1 - alpha);
                 }
                 yield return null;
             }
