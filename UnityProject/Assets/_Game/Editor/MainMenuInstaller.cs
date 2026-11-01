@@ -27,6 +27,8 @@ public static class MainMenuInstaller
         PreparePicture("Assets/_Game/Resources/Menu/MainMenuBackground.png");
         foreach (var picture in new[] { "Whisper", "TeacherArrives", "Caught", "PackBooks" })
             PreparePicture("Assets/_Game/Resources/Story/RearRow/" + picture + ".png");
+        foreach (var picture in new[] { "NewSeat", "TenMinutes", "Schoolbag", "Goodbye" })
+            PreparePicture("Assets/_Game/Resources/Story/FrontSeats/" + picture + ".png");
         var background = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Menu/MainMenuBackground.png");
         if (font == null || background == null) { Debug.LogWarning("Menu art/font not imported yet; use Tools/Story Prototype/Install Main Menu after import."); return; }
         var theme = AssetDatabase.LoadAssetAtPath<MainMenuTheme>(ThemePath);
@@ -42,6 +44,32 @@ public static class MainMenuInstaller
             story.sourceNotes = "来源：MAIN_STORY_V0.3.md MS-01。保留已认可对白，舞台动作转为少量旁白。只演出后排闲聊至下课收书，不含讲台旁初次交谈；无配音、音乐或玩法分支。独立资源，不覆盖 Opening 草稿。";
             AssetDatabase.CreateAsset(story, RearRowStoryDraft.AssetPath); AssetDatabase.SaveAssets();
         }
+        var second = AssetDatabase.LoadAssetAtPath<StorySequence>(FrontSeatsStoryDraft.AssetPath);
+        if (second == null)
+        {
+            second = ScriptableObject.CreateInstance<StorySequence>(); second.storyId = "campus-act-02";
+            second.chapterTitle = "第二幕 · 再等十分钟"; second.beats = FrontSeatsStoryDraft.Create();
+            second.sourceNotes = "MAIN_STORY_V0.3 MS-02：原对白不变，舞台动作分为旁白。图片由作者提供，无新增玩法或音频。";
+            AssetDatabase.CreateAsset(second, FrontSeatsStoryDraft.AssetPath);
+        }
+        const string catalog = "Assets/_Game/Resources/Story/Catalog";
+        if (!AssetDatabase.IsValidFolder(catalog)) AssetDatabase.CreateFolder("Assets/_Game/Resources/Story", "Catalog");
+        if (AssetDatabase.LoadAssetAtPath<StoryBook>(catalog + "/BesideYou.asset") == null)
+        {
+            var book = ScriptableObject.CreateInstance<StoryBook>(); book.bookId = "campus-beside-you";
+            book.title = "旁边的位置"; book.subtitle = "凌赫与李晚云的故事";
+            book.description = "从一次换座开始，\n走过靠近、迁就，以及那些没说出口的话。";
+            book.cover = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Story/FrontSeats/TenMinutes.png");
+            book.chapters = new[] { story, second };
+            book.pictures = new[] {
+                Picture(StoryShot.BackRow, "RearRow/Whisper"), Picture(StoryShot.TeacherArrives, "RearRow/TeacherArrives"),
+                Picture(StoryShot.Caught, "RearRow/Caught"), Picture(StoryShot.PackBooks, "RearRow/PackBooks"),
+                Picture(StoryShot.NewSeat, "FrontSeats/NewSeat"), Picture(StoryShot.TenMinutes, "FrontSeats/TenMinutes"),
+                Picture(StoryShot.Schoolbag, "FrontSeats/Schoolbag"), Picture(StoryShot.Goodbye, "FrontSeats/Goodbye")
+            };
+            AssetDatabase.CreateAsset(book, catalog + "/BesideYou.asset");
+        }
+        AssetDatabase.SaveAssets();
         // Preserve user choices on subsequent imports. Add the existing prototype once.
         var scenes = EditorBuildSettings.scenes.ToList();
         if (AssetDatabase.LoadAssetAtPath<SceneAsset>(TableSliceBuilder.ScenePath) != null && !scenes.Any(s => s.path == TableSliceBuilder.ScenePath))
@@ -49,15 +77,18 @@ public static class MainMenuInstaller
         Debug.Log("ILLUSTRATED_MENU_INSTALLED");
     }
 
+    private static StoryPicture Picture(StoryShot shot, string key)
+    { return new StoryPicture { shot = shot, texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Story/" + key + ".png") }; }
+
     private static void PreparePicture(string path)
     {
         var importer = AssetImporter.GetAtPath(path) as TextureImporter;
         if (importer == null) return;
         if (importer.textureType == TextureImporterType.Default && !importer.mipmapEnabled &&
-            importer.textureCompression == TextureImporterCompression.Uncompressed && importer.maxTextureSize >= 2048) return;
+            importer.textureCompression == TextureImporterCompression.Uncompressed && importer.maxTextureSize >= 4096) return;
         // RawImage uses the texture itself; old sprite rectangles must not crop replacement art.
         importer.textureType = TextureImporterType.Default; importer.mipmapEnabled = false;
-        importer.textureCompression = TextureImporterCompression.Uncompressed; importer.maxTextureSize = 2048;
+        importer.textureCompression = TextureImporterCompression.Uncompressed; importer.maxTextureSize = 4096;
         importer.SaveAndReimport();
     }
 
@@ -78,7 +109,7 @@ public static class MainMenuInstaller
     }
     public static void Build()
     {
-        Install(); TestPreferences(); TestStory();
+        Install(); TestPreferences(); TestStory(); CheckBook();
         if (AssetDatabase.LoadAssetAtPath<MainMenuTheme>(ThemePath) == null) throw new Exception("Menu theme is missing.");
         if (AssetDatabase.LoadAssetAtPath<SceneAsset>(TableSliceBuilder.ScenePath) == null) throw new Exception("Open the Table Slice once to create its scene before building.");
         var output = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Builds/MenuDemo/MenuDemo.exe"));
@@ -103,6 +134,18 @@ public static class MainMenuInstaller
         for (int i = 0; i < 4; i++) if ((int)MenuPreferences.NormalizeLanguage(i) != i) throw new Exception("Invalid supported language.");
         if (!MenuCopy.HasCompleteTranslations()) throw new Exception("Incomplete menu translations.");
         Debug.Log("MENU_PREFERENCES_CHECK_PASS: 12 assertions; 4 complete menu languages");
+    }
+
+    public static void CheckBook()
+    {
+        var book = AssetDatabase.LoadAssetAtPath<StoryBook>("Assets/_Game/Resources/Story/Catalog/BesideYou.asset");
+        if (book == null || book.cover == null || book.chapters.Length != 2) throw new Exception("Story catalog entry is incomplete.");
+        foreach (var chapter in book.chapters) if (chapter == null || !chapter.IsValid()) throw new Exception("Missing chapter.");
+        foreach (var picture in book.pictures) if (picture.texture == null) throw new Exception("Missing catalog picture.");
+        var expected = new[] { StoryShot.NewSeat, StoryShot.TenMinutes, StoryShot.Schoolbag, StoryShot.Goodbye };
+        var actual = book.chapters[1].beats.Select(b => b.shot).Distinct().ToArray();
+        if (!actual.SequenceEqual(expected)) throw new Exception("Second-act shot order is invalid.");
+        Debug.Log("STORY_BOOK_CHECK_PASS: 2 chapters; 8 pictures; " + book.chapters.Sum(c => c.beats.Length) + " beats");
     }
 
     [MenuItem("Tools/Story Prototype/Check First Act")]

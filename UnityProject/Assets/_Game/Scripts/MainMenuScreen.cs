@@ -77,7 +77,7 @@ namespace LoveNarrativeGame.Prototype
             if (theme == null) { enabled = false; return; }
             // Dynamic glyphs belong to this view, avoiding changes to the shared font asset in Play.
             if (theme.chineseFont.sourceFontFile != null)
-            { runtimeFont = TMP_FontAsset.CreateFontAsset(theme.chineseFont.sourceFontFile); if (runtimeFont != null) runtimeFont.hideFlags = HideFlags.DontSave; }
+            { runtimeFont = TMP_FontAsset.CreateFontAsset(theme.chineseFont.sourceFontFile, 120, 12, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 2048, 2048); if (runtimeFont != null) runtimeFont.hideFlags = HideFlags.DontSave; }
             foreach (var old in FindObjectsByType<Canvas>()) if (old.gameObject.scene == gameObject.scene) old.gameObject.SetActive(false);
             if (FindAnyObjectByType<EventSystem>() == null) new GameObject("Menu EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
             MenuPreferences.Apply();
@@ -101,7 +101,7 @@ namespace LoveNarrativeGame.Prototype
             startButton = MakeButton(stage, new Vector2(345, 443), new Vector2(450, 76), "start", StartGame, false);
             settingsButton = MakeButton(stage, new Vector2(345, 350), new Vector2(450, 76), "settings", () => ShowSettings(true), false);
             quitButton = MakeButton(stage, new Vector2(345, 257), new Vector2(450, 76), "quit", () => ShowQuit(true), false);
-            status = Local(stage, new Vector2(410, 121), new Vector2(540, 44), "actOne", 20);
+            status = Local(stage, new Vector2(410, 121), new Vector2(540, 44), "edition", 20);
             Local(stage, new Vector2(410, 78), new Vector2(540, 36), "storyNote", 17, new Color(.36f, .40f, .39f));
             BuildSettings(); BuildQuit(); Select(startButton);
         }
@@ -167,15 +167,10 @@ namespace LoveNarrativeGame.Prototype
         private void BuildResolutionList()
         {
             resolutionList = Fill("Resolution choices", settings, new Vector2(515, 315), new Vector2(300, 196), new Color(.96f, .96f, .92f)).rectTransform;
-            var options = new List<Vector2Int>();
-            int maxWidth = Mathf.Max(1280, Screen.currentResolution.width), maxHeight = Mathf.Max(720, Screen.currentResolution.height);
-            foreach (var size in new[] { new Vector2Int(1280, 720), new Vector2Int(1600, 900), new Vector2Int(1920, 1080), new Vector2Int(2560, 1440), new Vector2Int(3840, 2160) })
-                if (size.x <= maxWidth && size.y <= maxHeight) options.Add(size);
-            var native = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
-            if (native.x >= 640 && native.y >= 360 && !options.Contains(native)) options.Add(native);
-            resolutionList.sizeDelta = new Vector2(300, options.Count * 55 + 12);
+            var options = new[] { new Vector2Int(1280, 720), new Vector2Int(1366, 768), new Vector2Int(1600, 900), new Vector2Int(1760, 990), new Vector2Int(1920, 1080) };
+            resolutionList.sizeDelta = new Vector2(300, options.Length * 55 + 12);
             resolutionList.anchoredPosition = new Vector2(515, 415 - resolutionList.sizeDelta.y / 2);
-            for (int i = 0; i < options.Count; i++)
+            for (int i = 0; i < options.Length; i++)
             {
                 var size = options[i]; var b = MakeButton(resolutionList, new Vector2(150, resolutionList.sizeDelta.y - 34 - i * 55), new Vector2(300, 54), "resolution",
                     () => { MenuPreferences.SetResolution(size.x, size.y); RefreshValues(); resolutionList.gameObject.SetActive(false); });

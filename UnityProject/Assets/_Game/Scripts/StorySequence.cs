@@ -4,7 +4,7 @@ using UnityEngine;
 namespace LoveNarrativeGame.Prototype
 {
     // Keep the original values so earlier draft assets retain their meaning.
-    public enum StoryShot { BackRow = 0, Caught = 1, FrontSeats = 2, TeacherArrives = 3, PackBooks = 4 }
+    public enum StoryShot { BackRow = 0, Caught = 1, FrontSeats = 2, TeacherArrives = 3, PackBooks = 4, NewSeat = 5, TenMinutes = 6, Schoolbag = 7, Goodbye = 8 }
     [Serializable]
     public sealed class StoryBeat
     {

@@ -13,7 +13,10 @@ namespace LoveNarrativeGame.Prototype
     public sealed class StoryScreen : MonoBehaviour
     {
         private MainMenuTheme theme;
-        private StorySequence sequence;
+        private StoryBeat[] beats;
+        private StoryBook[] books;
+        private int bookIndex;
+        private RectTransform cardArea;
         private Dictionary<StoryShot, Texture2D> shots;
         private Texture2D thumbnail;
         private Action closed;
@@ -33,19 +36,23 @@ namespace LoveNarrativeGame.Prototype
 
         public static bool Open(MainMenuTheme theme, Action closed)
         {
-            var sequence = Resources.Load<StorySequence>("Story/RearRow");
-            var pictures = new Dictionary<StoryShot, Texture2D> {
-                { StoryShot.BackRow, Resources.Load<Texture2D>("Story/RearRow/Whisper") },
-                { StoryShot.TeacherArrives, Resources.Load<Texture2D>("Story/RearRow/TeacherArrives") },
-                { StoryShot.Caught, Resources.Load<Texture2D>("Story/RearRow/Caught") },
-                { StoryShot.PackBooks, Resources.Load<Texture2D>("Story/RearRow/PackBooks") }
-            };
-            if (sequence == null || !sequence.IsValid()) return false;
-            foreach (var picture in pictures.Values) if (picture == null) return false;
-            foreach (var beat in sequence.beats) if (!pictures.ContainsKey(beat.shot)) return false;
-            var card = pictures[StoryShot.BackRow];
-            var view = new GameObject("Story selection and first act").AddComponent<StoryScreen>();
-            view.theme = theme; view.sequence = sequence; view.shots = pictures; view.thumbnail = card; view.closed = closed;
+            var catalog = Resources.LoadAll<StoryBook>("Story/Catalog");
+            if (catalog.Length == 0) return false;
+            Array.Sort(catalog, (a, b) => string.CompareOrdinal(a.bookId, b.bookId));
+            foreach (var book in catalog)
+            {
+                if (book.cover == null || book.chapters == null || book.chapters.Length == 0 || book.pictures == null) return false;
+                var available = new Dictionary<StoryShot, Texture2D>();
+                foreach (var picture in book.pictures)
+                { if (picture == null || picture.texture == null || available.ContainsKey(picture.shot)) return false; available.Add(picture.shot, picture.texture); }
+                foreach (var chapter in book.chapters)
+                {
+                    if (chapter == null || !chapter.IsValid()) return false;
+                    foreach (var beat in chapter.beats) if (!available.ContainsKey(beat.shot)) return false;
+                }
+            }
+            var view = new GameObject("Story catalog and playback").AddComponent<StoryScreen>();
+            view.theme = theme; view.books = catalog; view.closed = closed;
             view.Build(); return true;
         }
         private RectTransform Rect(string name, Transform parent, Vector2 pos, Vector2 size)
@@ -78,7 +85,7 @@ namespace LoveNarrativeGame.Prototype
         }
         private void Build()
         {
-            if (theme.chineseFont.sourceFontFile != null) font = TMP_FontAsset.CreateFontAsset(theme.chineseFont.sourceFontFile);
+            if (theme.chineseFont.sourceFontFile != null) font = TMP_FontAsset.CreateFontAsset(theme.chineseFont.sourceFontFile, 120, 12, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 2048, 2048);
             if (font != null) font.hideFlags = HideFlags.DontSave;
             var canvas = gameObject.AddComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 20;
             var scaler = gameObject.AddComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -92,30 +99,47 @@ namespace LoveNarrativeGame.Prototype
             Text(selection, new Vector2(960, 945), new Vector2(1000, 100), MenuCopy.Get("chooseStory"), 48, true, blue);
             Text(selection, new Vector2(960, 865), new Vector2(1000, 45), MenuCopy.Get("storyNote"), 20, true, blue);
             Button(selection, new Vector2(1680, 955), new Vector2(300, 64), MenuCopy.Get("back"), Close);
-            var shadow = Paper("Card shadow", selection, new Vector2(970, 451), new Vector2(650, 730), new Color(.23f, .33f, .37f, .15f));
-            var card = Paper("Campus story card", selection, new Vector2(960, 462), new Vector2(650, 730), new Color(.99f, .98f, .95f));
+            cardArea = Rect("Whole story cards", selection, new Vector2(960, 540), new Vector2(1920, 1080));
+            BuildCard();
+            if (books.Length > 1)
+            {
+                Button(selection, new Vector2(400, 460), new Vector2(180, 70), "←", () => ChangeBook(-1));
+                Button(selection, new Vector2(1520, 460), new Vector2(180, 70), "→", () => ChangeBook(1));
+            }
+            BuildPlayback(); ShowSelection();
+        }
+        private void ChangeBook(int delta)
+        {
+            bookIndex = (bookIndex + delta + books.Length) % books.Length;
+            foreach (Transform child in cardArea) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
+            BuildCard();
+        }
+        private void BuildCard()
+        {
+            var book = books[bookIndex]; thumbnail = book.cover;
+            var shadow = Paper("Card shadow", cardArea, new Vector2(970, 451), new Vector2(650, 730), new Color(.23f, .33f, .37f, .15f));
+            var card = Paper("Campus story card", cardArea, new Vector2(960, 462), new Vector2(650, 730), new Color(.99f, .98f, .95f));
             // One real story is available; do not invent other routes or unlockable chapters.
             var hit = Fill("Enter campus story", card, new Vector2(325, 365), new Vector2(650, 730), new Color(1, 1, 1, 0));
             var entry = hit.gameObject.AddComponent<Button>(); entry.targetGraphic = hit; entry.onClick.AddListener(Begin);
-            var title = Text(card, new Vector2(325, 666), new Vector2(560, 65), MenuCopy.Get("campusStory"), 33, true);
-            var picture = Rect("Story picture", card, new Vector2(325, 416), new Vector2(550, 385));
-            var raw = picture.gameObject.AddComponent<RawImage>(); raw.texture = thumbnail; raw.uvRect = Cover(thumbnail, .5f, 550f / 385); raw.raycastTarget = false;
-            Text(card, new Vector2(325, 169), new Vector2(570, 60), MenuCopy.Get("actOne"), 29, true, blue);
-            Text(card, new Vector2(325, 112), new Vector2(570, 60), MenuCopy.Get("storyHook"), 23, true);
+            var title = Text(card, new Vector2(325, 666), new Vector2(560, 65), book.title, 33, true);
+            var picture = Rect("Story picture", card, new Vector2(325, 427), new Vector2(570, 321));
+            var raw = picture.gameObject.AddComponent<RawImage>(); raw.texture = thumbnail; raw.uvRect = new Rect(0, 0, 1, 1); raw.raycastTarget = false;
+            Text(card, new Vector2(325, 169), new Vector2(570, 60), book.subtitle, 29, true, blue);
+            Text(card, new Vector2(325, 123), new Vector2(570, 100), book.description, 22, true);
             var enter = Text(card, new Vector2(325, 47), new Vector2(400, 45), MenuCopy.Get("enterStory"), 26, true, blue);
             var hoverLine = Rect("Card underline", card, new Vector2(220, 23), new Vector2(210, 4)); hoverLine.pivot = new Vector2(0, .5f);
             var g = hoverLine.gameObject.AddComponent<MenuInkGraphic>(); g.kind = MenuInkGraphic.Shape.Stroke; g.color = blue; g.raycastTarget = false;
             var hover = hit.gameObject.AddComponent<MenuHoverInk>(); hover.stroke = hoverLine; hover.label = enter; hover.resting = blue; hover.active = ink;
-            BuildPlayback(); ShowSelection();
         }
         private void BuildPlayback()
         {
-            playback = Rect("Linear first act", stage, new Vector2(960, 540), new Vector2(1920, 1080));
+            playback = Rect("Linear story playback", stage, new Vector2(960, 540), new Vector2(1920, 1080));
             var background = Rect("Cinematic background", playback, new Vector2(960, 540), new Vector2(1920, 1080));
             art = background.gameObject.AddComponent<RawImage>(); art.raycastTarget = false;
             var overlay = Rect("Scene dissolve", playback, new Vector2(960, 540), new Vector2(1920, 1080));
             dissolve = overlay.gameObject.AddComponent<RawImage>(); dissolve.color = Color.clear; dissolve.raycastTarget = false;
-            // The card already names the chapter; keep the rear doorway unobstructed during playback.
+            // The catalog names the whole story; keep the rear doorway unobstructed during playback.
             var back = Paper("Back paper", playback, new Vector2(1702, 1024), new Vector2(300, 60), new Color(.98f, .97f, .93f, .94f));
             Button(back, new Vector2(150, 30), new Vector2(290, 58), MenuCopy.Get("storyList"), ShowSelection, 23);
             var dialogue = Paper("Dialogue paper", playback, new Vector2(960, 158), new Vector2(1720, 258), new Color(.98f, .97f, .93f, .96f));
@@ -127,10 +151,10 @@ namespace LoveNarrativeGame.Prototype
             var next = Button(dialogue, new Vector2(1540, 37), new Vector2(250, 60), "继续 →", Next, 25); nextLabel = next.GetComponentInChildren<TMP_Text>();
             ending = Rect("Act finished", playback, new Vector2(960, 540), new Vector2(1920, 1080));
             Fill("End veil", ending, new Vector2(960, 540), new Vector2(1920, 1080), new Color(.97f, .96f, .92f, .92f));
-            Text(ending, new Vector2(960, 680), new Vector2(1200, 110), "最后一排 · 本段结束", 50, true);
-            Text(ending, new Vector2(960, 575), new Vector2(1200, 95), "凌赫抱起书，朝讲台旁走去。", 29, true, blue);
-            Text(ending, new Vector2(960, 502), new Vector2(1200, 55), "下一段 · 讲台旁的位置（制作中）", 24, true, blue);
-            Button(ending, new Vector2(700, 340), new Vector2(300, 80), "重看本段", Begin);
+            Text(ending, new Vector2(960, 680), new Vector2(1200, 110), "当前内容已读完", 50, true);
+            Text(ending, new Vector2(960, 575), new Vector2(1200, 95), "两个人的第一次交谈，到这里暂告一段落。", 29, true, blue);
+            Text(ending, new Vector2(960, 502), new Vector2(1200, 55), "后续 · 水杯（制作中）", 24, true, blue);
+            Button(ending, new Vector2(700, 340), new Vector2(300, 80), "从头阅读", Begin);
             Button(ending, new Vector2(1130, 340), new Vector2(360, 80), MenuCopy.Get("storyList"), ShowSelection);
             pause = Rect("Pause", playback, new Vector2(960, 540), new Vector2(1920, 1080));
             Fill("Pause veil", pause, new Vector2(960, 540), new Vector2(1920, 1080), new Color(.12f, .18f, .21f, .85f));
@@ -149,7 +173,12 @@ namespace LoveNarrativeGame.Prototype
         }
         private void Begin()
         {
-            StopAllCoroutines(); progress = new StoryProgress(sequence.beats.Length); paused = transitioning = false; reading = true; lastAdvanceFrame = Time.frameCount;
+            StopAllCoroutines();
+            var combined = new List<StoryBeat>(); shots = new Dictionary<StoryShot, Texture2D>();
+            foreach (var chapter in books[bookIndex].chapters) combined.AddRange(chapter.beats);
+            foreach (var picture in books[bookIndex].pictures) shots.Add(picture.shot, picture.texture);
+            beats = combined.ToArray();
+            progress = new StoryProgress(beats.Length); paused = transitioning = false; reading = true; lastAdvanceFrame = Time.frameCount;
             selection.gameObject.SetActive(false); playback.gameObject.SetActive(true); ending.gameObject.SetActive(false); pause.gameObject.SetActive(false);
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
             ShowBeat(true);
@@ -162,7 +191,7 @@ namespace LoveNarrativeGame.Prototype
         }
         private void ShowBeat(bool first = false)
         {
-            var beat = sequence.beats[progress.Index];
+            var beat = beats[progress.Index];
             if (first)
             {
                 currentShot = beat.shot; art.texture = shots[beat.shot];

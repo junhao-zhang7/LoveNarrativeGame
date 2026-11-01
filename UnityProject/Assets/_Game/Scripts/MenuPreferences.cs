@@ -12,19 +12,19 @@ namespace LoveNarrativeGame.Prototype
         public static float Sound => NormalizeVolume(PlayerPrefs.GetFloat(Prefix + "Sound", .8f));
         public static bool Fullscreen => PlayerPrefs.GetInt(Prefix + "Fullscreen", 1) == 1;
         public static MenuLanguage Language => NormalizeLanguage(PlayerPrefs.GetInt(Prefix + "Language", 0));
-        public static int Width => Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Width", Screen.currentResolution.width), 640, 7680);
-        public static int Height => Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Height", Screen.currentResolution.height), 360, 4320);
+        public static int Width => Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Width", 1920), 640, 7680);
+        public static int Height => Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Height", 1080), 360, 4320);
         public static float NormalizeVolume(float value) => float.IsNaN(value) || float.IsInfinity(value) ? .8f : Mathf.Clamp01(value);
         public static MenuLanguage NormalizeLanguage(int value) => value >= 0 && value < 4 ? (MenuLanguage)value : MenuLanguage.SimplifiedChinese;
         public static void Apply()
         {
             // One-time migration requested by the author. Later player choices remain persistent.
-            if (PlayerPrefs.GetInt(Prefix + "FullscreenDefaultV3", 0) == 0)
+            if (PlayerPrefs.GetInt(Prefix + "DisplayDefaultV4", 0) == 0)
             {
                 PlayerPrefs.SetInt(Prefix + "Fullscreen", 1);
-                PlayerPrefs.SetInt(Prefix + "Width", Screen.currentResolution.width);
-                PlayerPrefs.SetInt(Prefix + "Height", Screen.currentResolution.height);
-                PlayerPrefs.SetInt(Prefix + "FullscreenDefaultV3", 1); PlayerPrefs.Save();
+                PlayerPrefs.SetInt(Prefix + "Width", 1920);
+                PlayerPrefs.SetInt(Prefix + "Height", 1080);
+                PlayerPrefs.SetInt(Prefix + "DisplayDefaultV4", 1); PlayerPrefs.Save();
             }
             AudioListener.volume = 1;
             AudioChanged?.Invoke();
@@ -55,7 +55,7 @@ namespace LoveNarrativeGame.Prototype
         {
             // Keep the selected language so the player can still read the page after resetting.
             PlayerPrefs.SetFloat(Prefix + "Music", .8f); PlayerPrefs.SetFloat(Prefix + "Sound", .8f);
-            PlayerPrefs.SetInt(Prefix + "Fullscreen", 1); PlayerPrefs.SetInt(Prefix + "Width", Screen.currentResolution.width); PlayerPrefs.SetInt(Prefix + "Height", Screen.currentResolution.height);
+            PlayerPrefs.SetInt(Prefix + "Fullscreen", 1); PlayerPrefs.SetInt(Prefix + "Width", 1920); PlayerPrefs.SetInt(Prefix + "Height", 1080);
             PlayerPrefs.DeleteKey(Prefix + "LargeText"); PlayerPrefs.DeleteKey(Prefix + "Volume"); PlayerPrefs.Save(); Apply();
         }
     }
