@@ -51,6 +51,7 @@ public static class MainMenuInstaller
             story.sourceNotes = "来源：MAIN_STORY_V0.3.md MS-01。保留已认可对白，舞台动作转为少量旁白。只演出后排闲聊至下课收书，不含讲台旁初次交谈；无配音、音乐或玩法分支。独立资源，不覆盖 Opening 草稿。";
             AssetDatabase.CreateAsset(story, RearRowStoryDraft.AssetPath); AssetDatabase.SaveAssets();
         }
+        RearRowStoryDraft.UpgradeExisting();
         var second = AssetDatabase.LoadAssetAtPath<StorySequence>(FrontSeatsStoryDraft.AssetPath);
         if (second == null)
         {
@@ -134,7 +135,7 @@ public static class MainMenuInstaller
     }
     public static void Build()
     {
-        Install(); TestPreferences(); TestStory(); CheckBook(); StoryReadingChecks.Run(); StoryMathChecks.Run();
+        Install(); TestPreferences(); TestStory(); CheckBook(); StoryReadingChecks.Run(); StoryMathChecks.Run(); StoryRouteChecks.Run();
         var music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/_Game/Resources/Audio/BackgroundMusic.mp3");
         if (music == null || music.length <= 0) throw new Exception("Background music failed to import.");
         Debug.Log("BACKGROUND_MUSIC_IMPORTED: " + music.length.ToString("F2") + " seconds; looping player enabled");

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace LoveNarrativeGame.Prototype
 {
-    public sealed class StoryScreen : MonoBehaviour
+    public sealed partial class StoryScreen : MonoBehaviour
     {
         private MainMenuTheme theme;
         private StoryBeat[] beats;
@@ -162,6 +162,7 @@ namespace LoveNarrativeGame.Prototype
             Text(dialogue, new Vector2(430, 36), new Vector2(680, 35), "点击 / 空格：补全文字或继续", 18, false, blue);
             var next = Button(dialogue, new Vector2(1540, 37), new Vector2(250, 60), "继续 →", Next, 25); nextLabel = next.GetComponentInChildren<TMP_Text>();
             BuildMathInput();
+            BuildRouteInput();
             ending = Rect("Act finished", playback, new Vector2(960, 540), new Vector2(1920, 1080));
             Fill("End veil", ending, new Vector2(960, 540), new Vector2(1920, 1080), new Color(.97f, .96f, .92f, .92f));
             Text(ending, new Vector2(960, 680), new Vector2(1200, 110), "当前内容已读完", 50, true);
@@ -224,6 +225,8 @@ namespace LoveNarrativeGame.Prototype
                         }
                         else if (data.contentVersion < 2 && data.chapterId == "campus-act-05" && data.beat >= 10)
                             data.beat = 10; // Old fifth-act bookmarks return to the revised reading/answer segment.
+                        else if (data.contentVersion < 3 && data.chapterId == "campus-act-01" && data.beat >= 8)
+                            data.beat = 8;
                     }
             }
             var ids = new string[chapters.Length]; var counts = new int[chapters.Length];
@@ -235,7 +238,7 @@ namespace LoveNarrativeGame.Prototype
             if (saved == null) return;
             try
             {
-                var data = saved.Capture(); data.contentVersion = 2;
+                var data = saved.Capture(); data.contentVersion = 3;
                 data.beatId = books[bookIndex].chapters[saved.Chapter].beats[saved.Beat].id;
                 PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data)); PlayerPrefs.Save(); saveFailed = false;
             }
@@ -347,7 +350,9 @@ namespace LoveNarrativeGame.Prototype
         private void Present(StoryBeat beat)
         {
             mathPanel.gameObject.SetActive(beat.requiresMathAnswer);
-            dialoguePanel.gameObject.SetActive(!beat.requiresMathAnswer);
+            routePanel.gameObject.SetActive(beat.requiresRoute);
+            dialoguePanel.gameObject.SetActive(!beat.requiresMathAnswer && !beat.requiresRoute);
+            if (beat.requiresRoute) { routeState.Reset(); RefreshRoute(); routeFeedback.text = "把你知道的小道指给同桌看：点击相连的地点，走到食堂后门。"; }
             if (beat.requiresMathAnswer)
             {
                 mathFeedback.text = ""; mathInput.text = "";
@@ -361,7 +366,7 @@ namespace LoveNarrativeGame.Prototype
         }
         private void Next()
         {
-            if (!reading || paused || transitioning || progress.Complete || mathPanel.gameObject.activeSelf) return;
+            if (!reading || paused || transitioning || progress.Complete || mathPanel.gameObject.activeSelf || routePanel.gameObject.activeSelf) return;
             if (lastAdvanceFrame == Time.frameCount) return;
             lastAdvanceFrame = Time.frameCount;
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
@@ -391,7 +396,7 @@ namespace LoveNarrativeGame.Prototype
             }
             if (Keyboard.current == null) return;
             if (Keyboard.current.escapeKey.wasPressedThisFrame) { if (selection.gameObject.activeSelf) Close(); else if (chapterMenu != null && chapterMenu.gameObject.activeSelf) ShowSelection(); else TogglePause(); return; }
-            if (mathPanel.gameObject.activeInHierarchy) return;
+            if (mathPanel.gameObject.activeInHierarchy || routePanel.gameObject.activeInHierarchy) return;
             if (reading && (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame)) Next();
         }
         private void Close() { closed?.Invoke(); Destroy(gameObject); }

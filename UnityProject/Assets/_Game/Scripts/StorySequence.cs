@@ -10,6 +10,7 @@ namespace LoveNarrativeGame.Prototype
     {
         public string id;
         public bool requiresMathAnswer;
+        public bool requiresRoute;
         public string speaker;
         [TextArea(2, 5)] public string text;
         public StoryShot shot;
@@ -26,7 +27,7 @@ namespace LoveNarrativeGame.Prototype
         public bool IsValid()
         {
             if (beats == null || beats.Length == 0) return false;
-            foreach (var beat in beats) if (beat == null || string.IsNullOrWhiteSpace(beat.text)) return false;
+            foreach (var beat in beats) if (beat == null || string.IsNullOrWhiteSpace(beat.text) || (beat.requiresMathAnswer && beat.requiresRoute)) return false;
             return true;
         }
     }

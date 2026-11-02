@@ -14,94 +14,164 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoveNarrativeGame.Prototype.StorySequence
   storyId: campus-act-01
   chapterTitle: "\u7B2C\u4E00\u5E55 \xB7 \u6700\u540E\u4E00\u6392"
-  sourceNotes: "\u6765\u6E90\uFF1AMAIN_STORY_V0.3.md MS-01\u3002\u4FDD\u7559\u5DF2\u8BA4\u53EF\u5BF9\u767D\uFF0C\u821E\u53F0\u52A8\u4F5C\u8F6C\u4E3A\u5C11\u91CF\u65C1\u767D\u3002\u53EA\u6F14\u51FA\u540E\u6392\u95F2\u804A\u81F3\u4E0B\u8BFE\u6536\u4E66\uFF0C\u4E0D\u542B\u8BB2\u53F0\u65C1\u521D\u6B21\u4EA4\u8C08\uFF1B\u65E0\u914D\u97F3\u3001\u97F3\u4E50\u6216\u73A9\u6CD5\u5206\u652F\u3002\u72EC\u7ACB\u8D44\u6E90\uFF0C\u4E0D\u8986\u76D6 Opening \u8349\u7A3F\u3002"
+  sourceNotes: "2026-11-02\u4F5C\u8005\u7B2C\u4E00\u5E55\u4E92\u52A8\u8BBE\u8BA1\uFF1A\u5C0F\u9053\u8BDD\u53E5\u540E\u63D2\u5165\u7EC3\u4E60\u672C\u6821\u56ED\u793A\u610F\u56FE\uFF0C\u6700\u77ED\u8DEF\u7EBF\u5B8C\u6210\u540E\u63A5\u4ECE\u540E\u9762\u7ED5\u53CA\u8001\u5E08\u6253\u65AD\u3002\u6821\u56ED\u5E03\u5C40/\u8DDD\u79BB\u548C\u91CD\u8BD5\u53CD\u9988\u4E3A\u53EF\u66FF\u6362\u539F\u521B\u8865\u5145\u3002"
   beats:
-  - speaker: 
+  - id: rear-v2-00
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: 
     text: "\u9AD8\u4E00\u4E03\u73ED\u3002\n\u5348\u524D\u7684\u6700\u540E\u4E00\u8282\u6570\u5B66\u8BFE\u3002"
     shot: 0
     focus: 0.5
     fade: 0
-  - speaker: "\u6570\u5B66\u8001\u5E08"
+  - id: rear-v2-01
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u6570\u5B66\u8001\u5E08"
     text: "\u5947\u53D8\u5076\u4E0D\u53D8\uFF0C\u7B26\u53F7\u770B\u8C61\u9650\u3002\u5148\u770B\u8FD9\u4E2A\u89D2\u2014\u2014"
     shot: 0
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: rear-v2-02
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: 
     text: "\u540C\u684C\u538B\u4F4E\u58F0\u97F3\uFF0C\u7528\u7B14\u5E3D\u8F7B\u8F7B\u78B0\u4E86\u78B0\u51CC\u8D6B\u7684\u80F3\u818A\u3002"
     shot: 0
     focus: 0.5
     fade: 0
-  - speaker: "\u540C\u684C"
+  - id: rear-v2-03
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u540C\u684C"
     text: "\u4E2D\u5348\u5403\u4EC0\u4E48\uFF1F"
     shot: 0
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B"
+  - id: rear-v2-04
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u51CC\u8D6B"
     text: "\u7167\u70E7\u9E21\u6392\u996D\u3002"
     shot: 0
     focus: 0.5
     fade: 0
-  - speaker: "\u540C\u684C"
+  - id: rear-v2-05
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u540C\u684C"
     text: "\u53C8\u662F\u8FD9\u4E2A\uFF1F"
     shot: 0
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B"
+  - id: rear-v2-06
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u51CC\u8D6B"
     text: "\u5403\u4E00\u8F88\u5B50\u90FD\u5403\u4E0D\u817B\u3002"
     shot: 0
     focus: 0.5
     fade: 0
-  - speaker: "\u540C\u684C"
+  - id: rear-v2-07
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u540C\u684C"
     text: "\u90A3\u4E00\u4E0B\u8BFE\u5C31\u8D70\u3002\u6628\u5929\u5230\u6211\u4EEC\u5C31\u5269\u6C64\u4E86\u3002"
     shot: 0
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B"
-    text: "\u6211\u53D1\u73B0\u4E00\u6761\u5C0F\u9053\uFF0C\u4ECE\u540E\u9762\u7ED5\u2014\u2014"
+  - id: rear-v2-08
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u51CC\u8D6B"
+    text: "\u6211\u53D1\u73B0\u4E00\u6761\u5C0F\u9053\u3002"
+    shot: 0
+    focus: 0.5
+    fade: 0
+  - id: rear-v2-09
+    requiresMathAnswer: 0
+    requiresRoute: 1
+    speaker: 
+    text: "\u51CC\u8D6B\u628A\u7EC3\u4E60\u672C\u5F80\u4E2D\u95F4\u632A\u4E86\u632A\uFF0C\u6307\u5C16\u505C\u5728\u7EB8\u4E0A\u3002"
+    shot: 0
+    focus: 0.5
+    fade: 0
+  - id: rear-v2-10
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u51CC\u8D6B"
+    text: "\u4ECE\u540E\u9762\u7ED5\u2014\u2014"
     shot: 3
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: rear-v2-11
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: 
     text: "\u4ED6\u7684\u624B\u6307\u521A\u5212\u5230\u7EB8\u8FB9\uFF0C\u8EAB\u540E\u4F20\u6765\u58F0\u97F3\u3002"
     shot: 3
     focus: 0.5
     fade: 0
-  - speaker: "\u73ED\u4E3B\u4EFB"
+  - id: rear-v2-12
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u73ED\u4E3B\u4EFB"
     text: "\u7ED5\u54EA\u513F\u53BB\uFF1F"
     shot: 1
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: rear-v2-13
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: 
     text: "\u4E24\u4EBA\u7684\u7B14\u540C\u65F6\u843D\u56DE\u9898\u76EE\u4E0A\u3002"
     shot: 1
     focus: 0.5
     fade: 0
-  - speaker: "\u73ED\u4E3B\u4EFB"
+  - id: rear-v2-14
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u73ED\u4E3B\u4EFB"
     text: "\u51CC\u8D6B\uFF0C\u4E0B\u8BFE\u642C\u5230\u8BB2\u53F0\u65C1\u8FB9\u3002\u5148\u6362\u597D\u5EA7\u4F4D\uFF0C\u518D\u53BB\u5403\u996D\u3002"
     shot: 1
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: rear-v2-15
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: 
     text: "\u4E0B\u8BFE\u94C3\u54CD\u4E86\u3002\u6905\u5B50\u54CD\u6210\u4E00\u7247\u3002\n\u540C\u684C\u62FF\u7740\u996D\u5361\u7AD9\u8D77\u6765\uFF0C\u770B\u770B\u4ED6\u3002"
     shot: 4
     focus: 0.5
     fade: 1
-  - speaker: "\u540C\u684C"
+  - id: rear-v2-16
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u540C\u684C"
     text: "\u6211\u7ED9\u4F60\u770B\u770B\u8FD8\u6709\u6CA1\u6709\u3002"
     shot: 4
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B"
+  - id: rear-v2-17
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u51CC\u8D6B"
     text: "\u5E2E\u6211\u5B88\u4F4F\u6700\u540E\u4E00\u4EFD\u3002"
     shot: 4
     focus: 0.5
     fade: 0
-  - speaker: "\u540C\u684C"
+  - id: rear-v2-18
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: "\u540C\u684C"
     text: "\u8FD9\u6211\u53EF\u4E0D\u6562\u7B54\u5E94\u3002"
     shot: 4
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: rear-v2-19
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    speaker: 
     text: "\u51CC\u8D6B\u62B1\u8D77\u4E66\uFF0C\u6700\u4E0A\u9762\u7684\u7EC3\u4E60\u518C\u5F80\u5916\u6ED1\u4E86\u4E00\u622A\u3002\n\u4ED6\u7528\u4E0B\u5DF4\u62B5\u4F4F\uFF0C\u5411\u8BB2\u53F0\u65C1\u8FB9\u8D70\u53BB\u3002"
     shot: 4
     focus: 0.5
