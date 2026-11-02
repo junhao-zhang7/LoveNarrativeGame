@@ -182,7 +182,7 @@ namespace LoveNarrativeGame.Prototype
         }
         private void Begin()
         { BeginChapter(0); }
-        private void BeginChapter(int chapter, int line = 0)
+        private void BeginChapter(int chapter, int line = 0, bool flowing = false)
         {
             if (saved == null) LoadReading();
             if (!saved.Enter(chapter, line)) return;
@@ -198,7 +198,7 @@ namespace LoveNarrativeGame.Prototype
             if (chapterMenu != null) chapterMenu.gameObject.SetActive(false);
             selection.gameObject.SetActive(false); playback.gameObject.SetActive(true); ending.gameObject.SetActive(false); pause.gameObject.SetActive(false);
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
-            ShowBeat(true);
+            ShowBeat(!flowing);
             SaveReading();
         }
         private void LoadReading()
@@ -324,7 +324,8 @@ namespace LoveNarrativeGame.Prototype
         {
             speaker.text = string.IsNullOrEmpty(beat.speaker) ? "" : beat.speaker;
             body.text = beat.text; typing = 0; body.maxVisibleCharacters = 0;
-            nextLabel.text = progress.Index == progress.Count - 1 ? "本段结束 →" : "继续 →";
+            nextLabel.text = progress.Index == progress.Count - 1
+                ? (chapterIndex + 1 < books[bookIndex].chapters.Length ? "下一幕 →" : "本幕结束 →") : "继续 →";
         }
         private void Next()
         {
@@ -337,7 +338,9 @@ namespace LoveNarrativeGame.Prototype
             else
             {
                 saved.Finish(); SaveReading();
-                ShowChapters(saved.AllComplete ? "当前已制作章节已读完，后续剧情制作中" : books[bookIndex].chapters[chapterIndex].chapterTitle + " · 已完成，下一幕已解锁");
+                int nextChapter = chapterIndex + 1;
+                if (nextChapter < books[bookIndex].chapters.Length) BeginChapter(nextChapter, 0, true);
+                else ShowChapters("当前已制作章节已读完，后续剧情制作中");
             }
         }
         private void TogglePause() { if (!reading) return; paused = !paused; pause.gameObject.SetActive(paused); lastAdvanceFrame = Time.frameCount; }

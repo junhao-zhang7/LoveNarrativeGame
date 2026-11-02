@@ -44,6 +44,15 @@ public static class StoryReadingChecks
         bool threw = false;
         try { new StoryReadingState(new[] { "a", "a" }, new[] { 1, 1 }); } catch (ArgumentException) { threw = true; }
         Require(threw, "duplicate chapter identity rejected");
+        var flow = new StoryReadingState(ids, counts);
+        for (int chapter = 0; chapter < ids.Length; chapter++)
+        {
+            Require(flow.Enter(chapter), "sequential playback entry");
+            flow.Bookmark(counts[chapter] - 1); Require(flow.Finish(), "sequential playback finish");
+            var restart = new StoryReadingState(ids, counts, flow.Capture());
+            Require(chapter == ids.Length - 1 ? restart.AllComplete : restart.Chapter == chapter + 1 && restart.Beat == 0, "chapter boundary resume");
+        }
+        Require(flow.Enter(0, 2) && flow.Finish() && flow.Enter(1, 0) && flow.IsComplete(2), "replay continues to adjacent chapter without losing completion");
     }
     private static void Require(bool ok, string message) { if (!ok) throw new Exception("Reading check failed: " + message); }
 }
