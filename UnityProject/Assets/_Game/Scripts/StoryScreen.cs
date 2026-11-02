@@ -21,6 +21,9 @@ namespace LoveNarrativeGame.Prototype
         private RectTransform chapterMenu;
         private ScrollRect chapterScroll;
         private TMP_Text saveNotice;
+        private RectTransform dialoguePanel, mathPanel;
+        private TMP_InputField mathInput;
+        private TMP_Text mathFeedback;
         private bool saveFailed;
         private string SaveKey => "SchoolPrototype.Reading.V1." + books[bookIndex].bookId;
         private RectTransform cardArea;
@@ -151,12 +154,14 @@ namespace LoveNarrativeGame.Prototype
             var back = Paper("Back paper", playback, new Vector2(1702, 1024), new Vector2(300, 60), new Color(.98f, .97f, .93f, .94f));
             Button(back, new Vector2(150, 30), new Vector2(290, 58), "章节目录", () => ShowChapters(), 23);
             var dialogue = Paper("Dialogue paper", playback, new Vector2(960, 158), new Vector2(1720, 258), new Color(.98f, .97f, .93f, .55f));
+            dialoguePanel = dialogue;
             var hit = Fill("Read next", dialogue, new Vector2(860, 129), new Vector2(1720, 258), Color.clear);
             hit.gameObject.AddComponent<Button>().onClick.AddListener(Next);
             speaker = Text(dialogue, new Vector2(440, 209), new Vector2(700, 42), "", 28, false, blue);
             body = Text(dialogue, new Vector2(860, 127), new Vector2(1540, 110), "", 33);
             Text(dialogue, new Vector2(430, 36), new Vector2(680, 35), "点击 / 空格：补全文字或继续", 18, false, blue);
             var next = Button(dialogue, new Vector2(1540, 37), new Vector2(250, 60), "继续 →", Next, 25); nextLabel = next.GetComponentInChildren<TMP_Text>();
+            BuildMathInput();
             ending = Rect("Act finished", playback, new Vector2(960, 540), new Vector2(1920, 1080));
             Fill("End veil", ending, new Vector2(960, 540), new Vector2(1920, 1080), new Color(.97f, .96f, .92f, .92f));
             Text(ending, new Vector2(960, 680), new Vector2(1200, 110), "当前内容已读完", 50, true);
@@ -207,6 +212,20 @@ namespace LoveNarrativeGame.Prototype
             try { if (PlayerPrefs.HasKey(SaveKey)) data = JsonUtility.FromJson<StoryReadingSave>(PlayerPrefs.GetString(SaveKey)); }
             catch (Exception e) { Debug.LogWarning("Reading save could not be loaded: " + e.Message); }
             var chapters = books[bookIndex].chapters;
+            if (data != null)
+            {
+                foreach (var chapter in chapters)
+                    if (chapter.storyId == data.chapterId)
+                    {
+                        if (!string.IsNullOrEmpty(data.beatId))
+                        {
+                            int found = Array.FindIndex(chapter.beats, b => b.id == data.beatId);
+                            if (found >= 0) data.beat = found;
+                        }
+                        else if (data.contentVersion < 2 && data.chapterId == "campus-act-05" && data.beat >= 10)
+                            data.beat = 10; // Old fifth-act bookmarks return to the revised reading/answer segment.
+                    }
+            }
             var ids = new string[chapters.Length]; var counts = new int[chapters.Length];
             for (int i = 0; i < chapters.Length; i++) { ids[i] = chapters[i].storyId; counts[i] = chapters[i].beats.Length; }
             saved = new StoryReadingState(ids, counts, data);
@@ -214,7 +233,12 @@ namespace LoveNarrativeGame.Prototype
         private void SaveReading()
         {
             if (saved == null) return;
-            try { PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(saved.Capture())); PlayerPrefs.Save(); saveFailed = false; }
+            try
+            {
+                var data = saved.Capture(); data.contentVersion = 2;
+                data.beatId = books[bookIndex].chapters[saved.Chapter].beats[saved.Beat].id;
+                PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data)); PlayerPrefs.Save(); saveFailed = false;
+            }
             catch (Exception e) { saveFailed = true; Debug.LogWarning("Reading save failed: " + e.Message); }
             if (saveNotice != null) saveNotice.text = saveFailed ? "进度保存失败，请稍后重试" : "阅读进度已自动保存到本机";
         }
@@ -322,6 +346,14 @@ namespace LoveNarrativeGame.Prototype
         }
         private void Present(StoryBeat beat)
         {
+            mathPanel.gameObject.SetActive(beat.requiresMathAnswer);
+            dialoguePanel.gameObject.SetActive(!beat.requiresMathAnswer);
+            if (beat.requiresMathAnswer)
+            {
+                mathFeedback.text = ""; mathInput.text = "";
+                if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(mathInput.gameObject);
+                mathInput.ActivateInputField();
+            }
             speaker.text = string.IsNullOrEmpty(beat.speaker) ? "" : beat.speaker;
             body.text = beat.text; typing = 0; body.maxVisibleCharacters = 0;
             nextLabel.text = progress.Index == progress.Count - 1
@@ -329,11 +361,15 @@ namespace LoveNarrativeGame.Prototype
         }
         private void Next()
         {
-            if (!reading || paused || transitioning || progress.Complete) return;
+            if (!reading || paused || transitioning || progress.Complete || mathPanel.gameObject.activeSelf) return;
             if (lastAdvanceFrame == Time.frameCount) return;
             lastAdvanceFrame = Time.frameCount;
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
             if (body.maxVisibleCharacters < body.text.Length) { typing = body.text.Length; body.maxVisibleCharacters = int.MaxValue; return; }
+            AdvanceBeat();
+        }
+        private void AdvanceBeat()
+        {
             if (progress.Advance()) { saved.Bookmark(progress.Index); SaveReading(); ShowBeat(); }
             else
             {
@@ -355,9 +391,50 @@ namespace LoveNarrativeGame.Prototype
             }
             if (Keyboard.current == null) return;
             if (Keyboard.current.escapeKey.wasPressedThisFrame) { if (selection.gameObject.activeSelf) Close(); else if (chapterMenu != null && chapterMenu.gameObject.activeSelf) ShowSelection(); else TogglePause(); return; }
+            if (mathPanel.gameObject.activeInHierarchy) return;
             if (reading && (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame)) Next();
         }
         private void Close() { closed?.Invoke(); Destroy(gameObject); }
+        private void BuildMathInput()
+        {
+            mathPanel = Paper("Math answer paper", playback, new Vector2(960, 190), new Vector2(1720, 330), new Color(.98f, .97f, .93f, .88f));
+            Text(mathPanel, new Vector2(650, 281), new Vector2(1160, 42), "凌赫在草稿上写了几行，很快算出了结果。", 27, false, blue);
+            Text(mathPanel, new Vector2(620, 185), new Vector2(1100, 128),
+                "f(x)=x²-12x-2，x∈[2,14]，M为区间最大值。\nm、n为正实数，m+n=26，mn=91。求 M+m²+n²。", 26);
+            Text(mathPanel, new Vector2(1370, 232), new Vector2(480, 48), "写下整道题的最终结果", 25, true, blue);
+            var field = Fill("Final answer", mathPanel, new Vector2(1300, 155), new Vector2(300, 66), new Color(.91f, .94f, .93f));
+            mathInput = field.gameObject.AddComponent<TMP_InputField>();
+            var viewport = Rect("Answer viewport", field.transform, Vector2.zero, Vector2.zero);
+            viewport.anchorMin = Vector2.zero; viewport.anchorMax = Vector2.one;
+            viewport.offsetMin = new Vector2(12, 5); viewport.offsetMax = new Vector2(-12, -5);
+            viewport.gameObject.AddComponent<RectMask2D>();
+            var inputText = Text(viewport, Vector2.zero, Vector2.zero, "", 32);
+            inputText.rectTransform.anchorMin = Vector2.zero; inputText.rectTransform.anchorMax = Vector2.one;
+            inputText.rectTransform.offsetMin = inputText.rectTransform.offsetMax = Vector2.zero;
+            var placeholder = Text(viewport, Vector2.zero, Vector2.zero, "输入答案", 27, false, blue);
+            placeholder.rectTransform.anchorMin = Vector2.zero; placeholder.rectTransform.anchorMax = Vector2.one;
+            placeholder.rectTransform.offsetMin = placeholder.rectTransform.offsetMax = Vector2.zero;
+            mathInput.textViewport = viewport; mathInput.textComponent = inputText; mathInput.placeholder = placeholder;
+            mathInput.fontAsset = inputText.font; mathInput.pointSize = 32;
+            mathInput.lineType = TMP_InputField.LineType.SingleLine; mathInput.characterLimit = 16;
+            mathInput.onSubmit.AddListener(_ => SubmitMath());
+            Button(mathPanel, new Vector2(1560, 155), new Vector2(180, 66), "确认", SubmitMath, 27);
+            mathFeedback = Text(mathPanel, new Vector2(860, 57), new Vector2(1580, 70), "", 25, false, blue);
+            mathPanel.gameObject.SetActive(false);
+        }
+        private void SubmitMath()
+        {
+            if (!reading || paused || transitioning || !mathPanel.gameObject.activeInHierarchy || !beats[progress.Index].requiresMathAnswer) return;
+            if (!StoryMathAnswer.IsCorrect(mathInput.text))
+            {
+                mathFeedback.text = string.IsNullOrWhiteSpace(mathInput.text) ? "李晚云：你还没写呢。再看看？" : "李晚云：是这个答案吗？好像不太对，你再算算？";
+                mathInput.ActivateInputField(); return;
+            }
+            mathPanel.gameObject.SetActive(false); dialoguePanel.gameObject.SetActive(true);
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+            lastAdvanceFrame = Time.frameCount;
+            AdvanceBeat();
+        }
         private void OnApplicationPause(bool value) { if (value) SaveReading(); }
         private void OnDestroy()
         {

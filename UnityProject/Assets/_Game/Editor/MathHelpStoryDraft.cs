@@ -7,9 +7,10 @@ using UnityEngine;
 public static class MathHelpStoryDraft
 {
     public const string AssetPath = "Assets/_Game/Resources/Story/MathHelpSequence.asset";
+    private const string Notes = "2026-11-02作者修订：题目特写默读/发现最大值、520输入、错误重试后回讲解。原27段扩为29段，保留后续对白。";
     public static readonly string[] Pictures = { "Invitation", "StayAndExplain", "ProblemNotebook", "WritingAnswer", "LunchAgreement" };
     public static readonly StoryShot[] Shots = { StoryShot.Invitation, StoryShot.StayAndExplain, StoryShot.ProblemNotebook, StoryShot.WritingAnswer, StoryShot.LunchAgreement };
-    public static StoryBeat[] Create()
+    private static StoryBeat[] CreateLegacy()
     {
         return new[] {
             B("", "第五幕 · 这道题\n同日晚自习，七班。", StoryShot.Invitation, true),
@@ -41,6 +42,26 @@ public static class MathHelpStoryDraft
             B("", "两人第一次很自然地笑起来。", StoryShot.LunchAgreement)
         };
     }
+    public static StoryBeat[] Create()
+    {
+        var old = CreateLegacy(); var beats = new List<StoryBeat>();
+        beats.AddRange(old.Take(10));
+        beats.Add(B("凌赫（心声）", "f(x) = x² - 12x - 2，x∈[2,14]……", StoryShot.ProblemNotebook));
+        beats.Add(B("凌赫（心声）", "M 是区间内的最大值……最大值。\n她把顶点代进去了，算成了最小值。", StoryShot.ProblemNotebook));
+        beats.Add(B("凌赫（心声）", "m+n=26，mn=91，求 M+m²+n²。\n先看两端，再算后面这一项。", StoryShot.ProblemNotebook));
+        var gate = B("", "凌赫在草稿上写了几行，很快算出了结果。", StoryShot.ProblemNotebook);
+        gate.requiresMathAnswer = true; beats.Add(gate);
+        var explanation = old[10]; explanation.shot = StoryShot.ProblemNotebook; beats.Add(explanation);
+        beats.AddRange(old.Skip(13));
+        for (int i = 0; i < beats.Count; i++) beats[i].id = "math-v2-" + i.ToString("D2");
+        return beats.ToArray();
+    }
+    private static bool MatchesLegacy(StoryBeat[] actual)
+    {
+        var old = CreateLegacy();
+        return actual != null && actual.Length == old.Length && actual.Zip(old, (a,b) =>
+            a != null && a.text == b.text && a.speaker == b.speaker && a.shot == b.shot && a.fade == b.fade && a.focus == b.focus && !a.requiresMathAnswer).All(v => v);
+    }
     private static StoryBeat B(string speaker, string text, StoryShot shot, bool fade = false)
     { return new StoryBeat { speaker = speaker, text = text, shot = shot, focus = .5f, fade = fade }; }
 
@@ -53,8 +74,14 @@ public static class MathHelpStoryDraft
         {
             chapter = ScriptableObject.CreateInstance<StorySequence>();
             chapter.storyId = "campus-act-05"; chapter.chapterTitle = "第五幕 · 这道题";
-            chapter.sourceNotes = "MAIN_STORY_V0.3 MS-05。保留17句角色对白；6段旁白及4段题面/解题笔记。先做线性演出，不加入解题输入、分支和纸页操作。朋友侧背影为暂用演出。";
+            chapter.sourceNotes = Notes;
             chapter.beats = Create(); AssetDatabase.CreateAsset(chapter, AssetPath);
+        }
+        else if (MatchesLegacy(chapter.beats))
+        {
+            chapter.beats = Create();
+            chapter.sourceNotes = Notes;
+            EditorUtility.SetDirty(chapter);
         }
         bool changed = false;
         var chapters = new List<StorySequence>(book.chapters ?? new StorySequence[0]);

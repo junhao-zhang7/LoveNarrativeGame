@@ -8,6 +8,8 @@ namespace LoveNarrativeGame.Prototype
     [Serializable]
     public sealed class StoryBeat
     {
+        public string id;
+        public bool requiresMathAnswer;
         public string speaker;
         [TextArea(2, 5)] public string text;
         public StoryShot shot;

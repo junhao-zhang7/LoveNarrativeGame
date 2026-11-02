@@ -10,6 +10,8 @@ namespace LoveNarrativeGame.Prototype
         public string[] completed = new string[0];
         public string chapterId;
         public int beat;
+        public string beatId;
+        public int contentVersion;
     }
 
     // Chapter identity survives additions; completion and the current bookmark are independent.

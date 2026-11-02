@@ -134,7 +134,7 @@ public static class MainMenuInstaller
     }
     public static void Build()
     {
-        Install(); TestPreferences(); TestStory(); CheckBook(); StoryReadingChecks.Run();
+        Install(); TestPreferences(); TestStory(); CheckBook(); StoryReadingChecks.Run(); StoryMathChecks.Run();
         var music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/_Game/Resources/Audio/BackgroundMusic.mp3");
         if (music == null || music.length <= 0) throw new Exception("Background music failed to import.");
         Debug.Log("BACKGROUND_MUSIC_IMPORTED: " + music.length.ToString("F2") + " seconds; looping player enabled");
