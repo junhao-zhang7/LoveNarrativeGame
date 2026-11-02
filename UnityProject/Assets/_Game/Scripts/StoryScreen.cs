@@ -360,7 +360,7 @@ namespace LoveNarrativeGame.Prototype
             routePanel.gameObject.SetActive(beat.requiresRoute);
             dialoguePanel.gameObject.SetActive(!beat.requiresMathAnswer && !beat.requiresRoute && beat.interaction==StoryInteraction.None);
             PresentGentle(beat);
-            if (beat.requiresRoute) { routeState.Reset(); RefreshRoute(); routeFeedback.text = "把你知道的小道指给同桌看：点击相连的地点，走到食堂后门。"; }
+            if (beat.requiresRoute) BeginRoute();
             if (beat.requiresMathAnswer)
             {
                 mathFeedback.text = ""; mathInput.text = "";
@@ -402,6 +402,7 @@ namespace LoveNarrativeGame.Prototype
                 var r = art.uvRect; float t = 1 - Mathf.Exp(-Time.unscaledDeltaTime * 2.4f);
                 art.uvRect = new Rect(Mathf.Lerp(r.x, cameraTarget.x, t), Mathf.Lerp(r.y, cameraTarget.y, t), Mathf.Lerp(r.width, cameraTarget.width, t), Mathf.Lerp(r.height, cameraTarget.height, t));
                 TickMop();
+                TickRoute();
             }
             if (Keyboard.current == null) return;
             if (Keyboard.current.escapeKey.wasPressedThisFrame) { if (selection.gameObject.activeSelf) Close(); else if (chapterMenu != null && chapterMenu.gameObject.activeSelf) ShowSelection(); else TogglePause(); return; }
@@ -452,6 +453,7 @@ namespace LoveNarrativeGame.Prototype
         private void OnApplicationPause(bool value) { if (value) SaveReading(); }
         private void OnDestroy()
         {
+            if (routeScratch != null) Destroy(routeScratch);
             if (font == null) return;
             foreach (var texture in font.atlasTextures) if (texture != null) Destroy(texture); Destroy(font);
         }
