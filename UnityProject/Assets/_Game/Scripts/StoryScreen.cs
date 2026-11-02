@@ -16,6 +16,13 @@ namespace LoveNarrativeGame.Prototype
         private StoryBeat[] beats;
         private StoryBook[] books;
         private int bookIndex;
+        private int chapterIndex;
+        private StoryReadingState saved;
+        private RectTransform chapterMenu;
+        private ScrollRect chapterScroll;
+        private TMP_Text saveNotice;
+        private bool saveFailed;
+        private string SaveKey => "SchoolPrototype.Reading.V1." + books[bookIndex].bookId;
         private RectTransform cardArea;
         private Dictionary<StoryShot, Texture2D> shots;
         private Texture2D thumbnail;
@@ -111,6 +118,7 @@ namespace LoveNarrativeGame.Prototype
         private void ChangeBook(int delta)
         {
             bookIndex = (bookIndex + delta + books.Length) % books.Length;
+            saved = null; // Do not save another story's bookmark under the newly selected book key.
             foreach (Transform child in cardArea) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
             BuildCard();
         }
@@ -121,7 +129,7 @@ namespace LoveNarrativeGame.Prototype
             var card = Paper("Campus story card", cardArea, new Vector2(960, 462), new Vector2(650, 730), new Color(.99f, .98f, .95f));
             // One real story is available; do not invent other routes or unlockable chapters.
             var hit = Fill("Enter campus story", card, new Vector2(325, 365), new Vector2(650, 730), new Color(1, 1, 1, 0));
-            var entry = hit.gameObject.AddComponent<Button>(); entry.targetGraphic = hit; entry.onClick.AddListener(Begin);
+            var entry = hit.gameObject.AddComponent<Button>(); entry.targetGraphic = hit; entry.onClick.AddListener(() => ShowChapters());
             var title = Text(card, new Vector2(325, 666), new Vector2(560, 65), book.title, 33, true);
             var picture = Rect("Story picture", card, new Vector2(325, 427), new Vector2(570, 321));
             var raw = picture.gameObject.AddComponent<RawImage>(); raw.texture = thumbnail; raw.uvRect = new Rect(0, 0, 1, 1); raw.raycastTarget = false;
@@ -141,7 +149,7 @@ namespace LoveNarrativeGame.Prototype
             dissolve = overlay.gameObject.AddComponent<RawImage>(); dissolve.color = Color.clear; dissolve.raycastTarget = false;
             // The catalog names the whole story; keep the rear doorway unobstructed during playback.
             var back = Paper("Back paper", playback, new Vector2(1702, 1024), new Vector2(300, 60), new Color(.98f, .97f, .93f, .94f));
-            Button(back, new Vector2(150, 30), new Vector2(290, 58), MenuCopy.Get("storyList"), ShowSelection, 23);
+            Button(back, new Vector2(150, 30), new Vector2(290, 58), "章节目录", () => ShowChapters(), 23);
             var dialogue = Paper("Dialogue paper", playback, new Vector2(960, 158), new Vector2(1720, 258), new Color(.98f, .97f, .93f, .55f));
             var hit = Fill("Read next", dialogue, new Vector2(860, 129), new Vector2(1720, 258), Color.clear);
             hit.gameObject.AddComponent<Button>().onClick.AddListener(Next);
@@ -160,31 +168,113 @@ namespace LoveNarrativeGame.Prototype
             Fill("Pause veil", pause, new Vector2(960, 540), new Vector2(1920, 1080), new Color(.12f, .18f, .21f, .85f));
             Text(pause, new Vector2(960, 660), new Vector2(900, 90), "已暂停", 48, true, Color.white);
             var resume = Button(pause, new Vector2(960, 490), new Vector2(380, 80), "继续阅读", TogglePause);
-            var list = Button(pause, new Vector2(960, 360), new Vector2(380, 80), MenuCopy.Get("storyList"), ShowSelection);
+            var list = Button(pause, new Vector2(960, 360), new Vector2(380, 80), "章节目录", () => ShowChapters());
             foreach (var button in new[] { resume, list })
             { var tint = button.GetComponent<MenuHoverInk>(); tint.resting = Color.white; tint.active = new Color(.72f, .85f, .88f); }
         }
         private void ShowSelection()
         {
             StopAllCoroutines(); reading = paused = transitioning = false;
+            if (chapterMenu != null) chapterMenu.gameObject.SetActive(false);
             dissolve.color = Color.clear;
             playback.gameObject.SetActive(false); selection.gameObject.SetActive(true);
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(selection.GetComponentInChildren<Button>().gameObject);
         }
         private void Begin()
+        { BeginChapter(0); }
+        private void BeginChapter(int chapter, int line = 0)
         {
+            if (saved == null) LoadReading();
+            if (!saved.Enter(chapter, line)) return;
+            chapterIndex = chapter;
             StopAllCoroutines();
-            var combined = new List<StoryBeat>(); shots = new Dictionary<StoryShot, Texture2D>();
-            foreach (var chapter in books[bookIndex].chapters) combined.AddRange(chapter.beats);
+            shots = new Dictionary<StoryShot, Texture2D>();
             foreach (var picture in books[bookIndex].pictures) shots.Add(picture.shot, picture.texture);
-            beats = combined.ToArray();
+            beats = books[bookIndex].chapters[chapter].beats;
             endingSummary.text = string.IsNullOrWhiteSpace(books[bookIndex].endingSummary) ? "当前已制作内容已读完。" : books[bookIndex].endingSummary;
             nextPreview.text = string.IsNullOrWhiteSpace(books[bookIndex].nextPreview) ? "后续内容制作中" : books[bookIndex].nextPreview;
             progress = new StoryProgress(beats.Length); paused = transitioning = false; reading = true; lastAdvanceFrame = Time.frameCount;
+            for (int i = 0; i < saved.Beat; i++) progress.Advance();
+            if (chapterMenu != null) chapterMenu.gameObject.SetActive(false);
             selection.gameObject.SetActive(false); playback.gameObject.SetActive(true); ending.gameObject.SetActive(false); pause.gameObject.SetActive(false);
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
             ShowBeat(true);
+            SaveReading();
         }
+        private void LoadReading()
+        {
+            StoryReadingSave data = null;
+            try { if (PlayerPrefs.HasKey(SaveKey)) data = JsonUtility.FromJson<StoryReadingSave>(PlayerPrefs.GetString(SaveKey)); }
+            catch (Exception e) { Debug.LogWarning("Reading save could not be loaded: " + e.Message); }
+            var chapters = books[bookIndex].chapters;
+            var ids = new string[chapters.Length]; var counts = new int[chapters.Length];
+            for (int i = 0; i < chapters.Length; i++) { ids[i] = chapters[i].storyId; counts[i] = chapters[i].beats.Length; }
+            saved = new StoryReadingState(ids, counts, data);
+        }
+        private void SaveReading()
+        {
+            if (saved == null) return;
+            try { PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(saved.Capture())); PlayerPrefs.Save(); saveFailed = false; }
+            catch (Exception e) { saveFailed = true; Debug.LogWarning("Reading save failed: " + e.Message); }
+            if (saveNotice != null) saveNotice.text = saveFailed ? "进度保存失败，请稍后重试" : "阅读进度已自动保存到本机";
+        }
+        private void ShowChapters(string message = "")
+        {
+            StopAllCoroutines(); reading = paused = transitioning = false;
+            playback.gameObject.SetActive(false); selection.gameObject.SetActive(false);
+            LoadReading();
+            if (chapterMenu != null) { chapterMenu.gameObject.SetActive(false); Destroy(chapterMenu.gameObject); }
+            chapterMenu = Rect("Chapter flow", stage, new Vector2(960, 540), new Vector2(1920, 1080));
+            Text(chapterMenu, new Vector2(960, 960), new Vector2(1100, 80), books[bookIndex].title, 46, true, blue);
+            Text(chapterMenu, new Vector2(960, 877), new Vector2(1400, 70), string.IsNullOrEmpty(message) ? "章节目录 · 沿着那段时光，继续往前" : message, 28, true);
+            Button(chapterMenu, new Vector2(1700, 970), new Vector2(290, 65), "返回故事", ShowSelection, 23);
+            var sheet = Paper("Chapter paper", chapterMenu, new Vector2(960, 555), new Vector2(1820, 490), new Color(.91f, .91f, .88f));
+            var view = Rect("Horizontal chapters", sheet, new Vector2(910, 245), new Vector2(1740, 390));
+            view.gameObject.AddComponent<Image>().color = Color.clear; view.gameObject.AddComponent<RectMask2D>();
+            chapterScroll = view.gameObject.AddComponent<ScrollRect>(); chapterScroll.viewport = view;
+            chapterScroll.horizontal = true; chapterScroll.vertical = false; chapterScroll.movementType = ScrollRect.MovementType.Clamped;
+            chapterScroll.scrollSensitivity = 35;
+            int count = books[bookIndex].chapters.Length;
+            var content = Rect("Chapter nodes", view, Vector2.zero, new Vector2(Mathf.Max(1740, count * 340), 390));
+            content.anchorMin = content.anchorMax = new Vector2(0, .5f); content.pivot = new Vector2(0, .5f);
+            chapterScroll.content = content;
+            for (int i = 0; i < count; i++)
+            {
+                int index = i; bool unlocked = saved.IsUnlocked(i), done = saved.IsComplete(i);
+                if (i + 1 < count)
+                    Text(content, new Vector2(340 + i * 340, 195), new Vector2(36, 50), "→", 28, true, blue);
+                var node = Paper("Chapter " + (i + 1), content, new Vector2(170 + i * 340, 195), new Vector2(300, 320), unlocked ? new Color(.99f,.98f,.95f) : new Color(.85f,.85f,.82f));
+                Text(node, new Vector2(150, 287), new Vector2(270, 40), (i + 1).ToString("00"), 26, true, blue);
+                if (unlocked)
+                {
+                    Texture2D picture = null;
+                    var shot = books[bookIndex].chapters[i].beats[0].shot;
+                    foreach (var p in books[bookIndex].pictures) if (p.shot == shot) { picture = p.texture; break; }
+                    var frame = Rect("Chapter thumbnail", node, new Vector2(150, 190), new Vector2(264, 149));
+                    var raw = frame.gameObject.AddComponent<RawImage>(); raw.texture = picture; raw.raycastTarget = false;
+                }
+                else Text(node, new Vector2(150, 190), new Vector2(270, 140), "尚未解锁\n完成前一幕后开启", 22, true, blue);
+                Text(node, new Vector2(150, 87), new Vector2(280, 60), unlocked ? books[bookIndex].chapters[i].chapterTitle : "第" + (i+1) + "幕", 23, true);
+                int line = i == saved.Chapter && !done ? saved.Beat : 0;
+                string label = done ? "已完成 · 重看" : unlocked ? (line > 0 ? "继续本幕" : "进入剧情") : "未解锁";
+                if (unlocked) Button(node, new Vector2(150, 33), new Vector2(265, 52), label, () => BeginChapter(index, line), 21);
+                else Text(node, new Vector2(150,33), new Vector2(265,52),label,21,true,blue);
+            }
+            Canvas.ForceUpdateCanvases();
+            chapterScroll.horizontalNormalizedPosition = count <= 5 ? 0 : Mathf.Clamp01(saved.Chapter / (float)(count - 1));
+            if (count > 5)
+            {
+                Button(chapterMenu, new Vector2(100, 270), new Vector2(130, 65), "←", () => MoveChapterFlow(-1));
+                Button(chapterMenu, new Vector2(1820, 270), new Vector2(130, 65), "→", () => MoveChapterFlow(1));
+            }
+            int resumeChapter = saved.Chapter, resumeBeat = saved.AllComplete ? 0 : saved.Beat;
+            Button(chapterMenu, new Vector2(960, 220), new Vector2(610, 85), saved.AllComplete ? "重温最后阅读的章节 →" : "继续阅读 → " + books[bookIndex].chapters[resumeChapter].chapterTitle,
+                () => BeginChapter(resumeChapter, resumeBeat), 29);
+            saveNotice = Text(chapterMenu, new Vector2(960, 135), new Vector2(1300, 45), saveFailed ? "进度保存失败，请稍后重试" : "阅读位置自动保存到本机 · 已完成章节可随时重看", 21, true, blue);
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+        }
+        private void MoveChapterFlow(int direction)
+        { chapterScroll.horizontalNormalizedPosition = Mathf.Clamp01(chapterScroll.horizontalNormalizedPosition + direction * .4f); }
         private static Rect Cover(Texture texture, float focus, float targetAspect = 16f / 9)
         {
             float aspect = texture.width / (float)texture.height;
@@ -243,7 +333,12 @@ namespace LoveNarrativeGame.Prototype
             lastAdvanceFrame = Time.frameCount;
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
             if (body.maxVisibleCharacters < body.text.Length) { typing = body.text.Length; body.maxVisibleCharacters = int.MaxValue; return; }
-            if (progress.Advance()) ShowBeat(); else { ending.gameObject.SetActive(true); reading = false; }
+            if (progress.Advance()) { saved.Bookmark(progress.Index); SaveReading(); ShowBeat(); }
+            else
+            {
+                saved.Finish(); SaveReading();
+                ShowChapters(saved.AllComplete ? "当前已制作章节已读完，后续剧情制作中" : books[bookIndex].chapters[chapterIndex].chapterTitle + " · 已完成，下一幕已解锁");
+            }
         }
         private void TogglePause() { if (!reading) return; paused = !paused; pause.gameObject.SetActive(paused); lastAdvanceFrame = Time.frameCount; }
         private void Update()
@@ -256,10 +351,11 @@ namespace LoveNarrativeGame.Prototype
                 art.uvRect = new Rect(Mathf.Lerp(r.x, cameraTarget.x, t), Mathf.Lerp(r.y, cameraTarget.y, t), Mathf.Lerp(r.width, cameraTarget.width, t), Mathf.Lerp(r.height, cameraTarget.height, t));
             }
             if (Keyboard.current == null) return;
-            if (Keyboard.current.escapeKey.wasPressedThisFrame) { if (selection.gameObject.activeSelf) Close(); else if (ending.gameObject.activeSelf) ShowSelection(); else TogglePause(); return; }
+            if (Keyboard.current.escapeKey.wasPressedThisFrame) { if (selection.gameObject.activeSelf) Close(); else if (chapterMenu != null && chapterMenu.gameObject.activeSelf) ShowSelection(); else TogglePause(); return; }
             if (reading && (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame)) Next();
         }
         private void Close() { closed?.Invoke(); Destroy(gameObject); }
+        private void OnApplicationPause(bool value) { if (value) SaveReading(); }
         private void OnDestroy()
         {
             if (font == null) return;
