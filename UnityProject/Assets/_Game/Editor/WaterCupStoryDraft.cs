@@ -7,9 +7,9 @@ using UnityEngine;
 public static class WaterCupStoryDraft
 {
     public const string AssetPath = "Assets/_Game/Resources/Story/WaterCupSequence.asset";
-    public static readonly string[] Pictures = { "EveningStudy", "SpilledWater", "EyeContact", "Mopping", "WetSleeve" };
-    public static readonly StoryShot[] Shots = { StoryShot.EveningStudy, StoryShot.SpilledWater, StoryShot.EyeContact, StoryShot.Mopping, StoryShot.WetSleeve };
-    public static StoryBeat[] Create()
+    public static readonly string[] Pictures = { "EveningStudy", "SpilledWater", "EyeContact", "EyeContactCloseup", "Mopping", "WetSleeve" };
+    public static readonly StoryShot[] Shots = { StoryShot.EveningStudy, StoryShot.SpilledWater, StoryShot.EyeContact, StoryShot.EyeContactCloseup, StoryShot.Mopping, StoryShot.WetSleeve };
+    private static StoryBeat[] CreatePrevious()
     {
         return new[] {
             B("", "第三幕 · 水杯\n当日晚自习，七班。", StoryShot.EveningStudy, true),
@@ -32,6 +32,20 @@ public static class WaterCupStoryDraft
             B("", "他低下头，拿干的那只手把袖口卷了上去。", StoryShot.WetSleeve)
         };
     }
+    public static StoryBeat[] Create()
+    {
+        var old=CreatePrevious();var list=new List<StoryBeat>();
+        for(int i=0;i<old.Length;i++)
+        {
+            if(i==13||i==14)continue;var b=old[i];b.id="water-v2-"+i.ToString("D2");
+            if(i==7){b.shot=StoryShot.EyeContactCloseup;b.text="视线碰上了一瞬，两人的脸都有些发热，又各自移开。";}
+            if(i==12)b.interaction=StoryInteraction.Mop;
+            list.Add(b);
+        }
+        return list.ToArray();
+    }
+    private static bool MatchesPrevious(StoryBeat[] actual)
+    {var old=CreatePrevious();return actual!=null&&actual.Length==old.Length&&actual.Zip(old,(a,b)=>a!=null&&a.text==b.text&&a.speaker==b.speaker&&a.shot==b.shot&&a.fade==b.fade&&a.focus==b.focus&&a.interaction==StoryInteraction.None&&!a.requiresMathAnswer&&!a.requiresRoute).All(v=>v);}
     private static StoryBeat B(string speaker, string text, StoryShot shot, bool fade = false)
     { return new StoryBeat { speaker = speaker, text = text, shot = shot, focus = .5f, fade = fade }; }
 
@@ -48,6 +62,8 @@ public static class WaterCupStoryDraft
             chapter.sourceNotes = "MAIN_STORY_V0.3 MS-03。保留9句角色对白，舞台动作改为旁白；线性图片演出，不含杯盖点击或拖地玩法。";
             chapter.beats = Create(); AssetDatabase.CreateAsset(chapter, AssetPath);
         }
+        else if(MatchesPrevious(chapter.beats))
+        {chapter.beats=Create();chapter.sourceNotes="2026-11-02作者修订：脸红对视特写、拖把擦水，两句补擦对白进入小游戏；16段正文。";EditorUtility.SetDirty(chapter);}
         bool changed = false;
         var chapters = new List<StorySequence>(book.chapters ?? new StorySequence[0]);
         if (!chapters.Any(c => c != null && c.storyId == chapter.storyId))

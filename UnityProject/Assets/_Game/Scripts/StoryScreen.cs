@@ -163,6 +163,7 @@ namespace LoveNarrativeGame.Prototype
             var next = Button(dialogue, new Vector2(1540, 37), new Vector2(250, 60), "继续 →", Next, 25); nextLabel = next.GetComponentInChildren<TMP_Text>();
             BuildMathInput();
             BuildRouteInput();
+            BuildGentleInput();
             ending = Rect("Act finished", playback, new Vector2(960, 540), new Vector2(1920, 1080));
             Fill("End veil", ending, new Vector2(960, 540), new Vector2(1920, 1080), new Color(.97f, .96f, .92f, .92f));
             Text(ending, new Vector2(960, 680), new Vector2(1200, 110), "当前内容已读完", 50, true);
@@ -213,6 +214,7 @@ namespace LoveNarrativeGame.Prototype
             try { if (PlayerPrefs.HasKey(SaveKey)) data = JsonUtility.FromJson<StoryReadingSave>(PlayerPrefs.GetString(SaveKey)); }
             catch (Exception e) { Debug.LogWarning("Reading save could not be loaded: " + e.Message); }
             var chapters = books[bookIndex].chapters;
+            readingCardStyle = data!=null && data.cardStyle>=1 && data.cardStyle<=2 ? (CardReturnStyle)data.cardStyle : CardReturnStyle.Unchosen;
             if (data != null)
             {
                 foreach (var chapter in chapters)
@@ -227,6 +229,11 @@ namespace LoveNarrativeGame.Prototype
                             data.beat = 10; // Old fifth-act bookmarks return to the revised reading/answer segment.
                         else if (data.contentVersion < 3 && data.chapterId == "campus-act-01" && data.beat >= 8)
                             data.beat = 8;
+                        else if (data.contentVersion < 4 && data.chapterId == "campus-act-03" && data.beat >= 6)
+                            data.beat = 6;
+                        else if (data.contentVersion < 4 && data.chapterId == "campus-act-04" && data.beat >= 7)
+                            data.beat = 7;
+                        if(data.chapterId=="campus-act-04" && readingCardStyle==CardReturnStyle.Unchosen && data.beat>=12)data.beat=11;
                     }
             }
             var ids = new string[chapters.Length]; var counts = new int[chapters.Length];
@@ -238,7 +245,7 @@ namespace LoveNarrativeGame.Prototype
             if (saved == null) return;
             try
             {
-                var data = saved.Capture(); data.contentVersion = 3;
+                var data = saved.Capture(); data.contentVersion = 4; data.cardStyle=(int)readingCardStyle;
                 data.beatId = books[bookIndex].chapters[saved.Chapter].beats[saved.Beat].id;
                 PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data)); PlayerPrefs.Save(); saveFailed = false;
             }
@@ -319,7 +326,7 @@ namespace LoveNarrativeGame.Prototype
         }
         private void ShowBeat(bool first = false)
         {
-            var beat = beats[progress.Index];
+            var beat = ResolveCardBeat(beats[progress.Index]);
             if (first)
             {
                 currentShot = beat.shot; art.texture = shots[beat.shot];
@@ -351,7 +358,8 @@ namespace LoveNarrativeGame.Prototype
         {
             mathPanel.gameObject.SetActive(beat.requiresMathAnswer);
             routePanel.gameObject.SetActive(beat.requiresRoute);
-            dialoguePanel.gameObject.SetActive(!beat.requiresMathAnswer && !beat.requiresRoute);
+            dialoguePanel.gameObject.SetActive(!beat.requiresMathAnswer && !beat.requiresRoute && beat.interaction==StoryInteraction.None);
+            PresentGentle(beat);
             if (beat.requiresRoute) { routeState.Reset(); RefreshRoute(); routeFeedback.text = "把你知道的小道指给同桌看：点击相连的地点，走到食堂后门。"; }
             if (beat.requiresMathAnswer)
             {
@@ -366,7 +374,7 @@ namespace LoveNarrativeGame.Prototype
         }
         private void Next()
         {
-            if (!reading || paused || transitioning || progress.Complete || mathPanel.gameObject.activeSelf || routePanel.gameObject.activeSelf) return;
+            if (!reading || paused || transitioning || progress.Complete || mathPanel.gameObject.activeSelf || routePanel.gameObject.activeSelf || GentleActive) return;
             if (lastAdvanceFrame == Time.frameCount) return;
             lastAdvanceFrame = Time.frameCount;
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
@@ -393,10 +401,11 @@ namespace LoveNarrativeGame.Prototype
                 body.maxVisibleCharacters = Mathf.Min(body.text.Length, Mathf.FloorToInt(typing));
                 var r = art.uvRect; float t = 1 - Mathf.Exp(-Time.unscaledDeltaTime * 2.4f);
                 art.uvRect = new Rect(Mathf.Lerp(r.x, cameraTarget.x, t), Mathf.Lerp(r.y, cameraTarget.y, t), Mathf.Lerp(r.width, cameraTarget.width, t), Mathf.Lerp(r.height, cameraTarget.height, t));
+                TickMop();
             }
             if (Keyboard.current == null) return;
             if (Keyboard.current.escapeKey.wasPressedThisFrame) { if (selection.gameObject.activeSelf) Close(); else if (chapterMenu != null && chapterMenu.gameObject.activeSelf) ShowSelection(); else TogglePause(); return; }
-            if (mathPanel.gameObject.activeInHierarchy || routePanel.gameObject.activeInHierarchy) return;
+            if (mathPanel.gameObject.activeInHierarchy || routePanel.gameObject.activeInHierarchy || GentleActive) return;
             if (reading && (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame)) Next();
         }
         private void Close() { closed?.Invoke(); Destroy(gameObject); }
@@ -429,7 +438,7 @@ namespace LoveNarrativeGame.Prototype
         }
         private void SubmitMath()
         {
-            if (!reading || paused || transitioning || !mathPanel.gameObject.activeInHierarchy || !beats[progress.Index].requiresMathAnswer) return;
+            if (!reading || paused || transitioning || !mathPanel.gameObject.activeInHierarchy || (!beats[progress.Index].requiresMathAnswer && beats[progress.Index].interaction!=StoryInteraction.CooperateMath)) return;
             if (!StoryMathAnswer.IsCorrect(mathInput.text))
             {
                 mathFeedback.text = string.IsNullOrWhiteSpace(mathInput.text) ? "李晚云：你还没写呢。再看看？" : "李晚云：是这个答案吗？好像不太对，你再算算？";

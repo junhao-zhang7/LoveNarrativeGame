@@ -1,0 +1,5 @@
+# 自然递卡候选 · 2026-11-02
+
+工具：内置image_gen，编辑04-CardReturn.png，原图不覆盖。
+
+Use case: identity-preserve / precise-object-edit. Input1 is the existing game CG to edit. Keep the entire 16:9 composition, all identities, teacher, girl, gym background, crowd, blue-white uniforms, bags, book, paper card, window lighting and painterly detail unchanged. Change only Ling He's gesture and the girl's reaction to a plain, considerate return of her forgotten paper card. The boy's hand currently touching his forehead must instead rest naturally down by his own side; his card-holding arm extends gently toward her at a natural lower chest height. No two-finger theatrical pose, no wink or smug performance; relaxed sincere expression. Li Wanyun accepts with an ordinary small grateful smile, subtle relief, not exaggerated blushing or startled pose. Preserve normal personal distance, plausible hands and one single card with the existing abstract blue symbol. This is the 'hand it directly to her' version of exactly the same moment, not a new scene. Do not add or remove people, furniture or text. No caption, UI, watermark or panel. High quality crisp landscape 16:9.

@@ -9,7 +9,7 @@ public static class PaperCardStoryDraft
     public const string AssetPath = "Assets/_Game/Resources/Story/PaperCardSequence.asset";
     public static readonly string[] Pictures = { "ForgottenCards", "GymQueue", "MissingCard", "CardReturn", "LookBack" };
     public static readonly StoryShot[] Shots = { StoryShot.ForgottenCards, StoryShot.GymQueue, StoryShot.MissingCard, StoryShot.CardReturn, StoryShot.LookBack };
-    public static StoryBeat[] Create()
+    private static StoryBeat[] CreatePrevious()
     {
         return new[] {
             B("", "第四幕 · 你的核酸码\n之后的某一天。", StoryShot.ForgottenCards, true),
@@ -34,6 +34,18 @@ public static class PaperCardStoryDraft
             B("", "她转回去，嘴角有一点笑。", StoryShot.LookBack)
         };
     }
+    public static StoryBeat[] Create()
+    {
+        var beats=CreatePrevious();
+        for(int i=0;i<beats.Length;i++)beats[i].id="card-v2-"+i.ToString("D2");
+        beats[7].text="凌赫看了看手里的码，往前靠近了一点。";
+        beats[8].text="还好一起带来了。";
+        beats[11].text="她的纸卡就在手里。凌赫想了想，准备递过去。";
+        beats[11].shot=StoryShot.MissingCard;beats[11].interaction=StoryInteraction.CardChoice;
+        return beats;
+    }
+    private static bool MatchesPrevious(StoryBeat[] actual)
+    {var old=CreatePrevious();return actual!=null&&actual.Length==old.Length&&actual.Zip(old,(a,b)=>a!=null&&a.text==b.text&&a.speaker==b.speaker&&a.shot==b.shot&&a.fade==b.fade&&a.focus==b.focus&&a.interaction==StoryInteraction.None&&!a.requiresMathAnswer&&!a.requiresRoute).All(v=>v);}
     private static StoryBeat B(string speaker, string text, StoryShot shot, bool fade = false)
     { return new StoryBeat { speaker = speaker, text = text, shot = shot, focus = .5f, fade = fade }; }
 
@@ -49,6 +61,8 @@ public static class PaperCardStoryDraft
             chapter.sourceNotes = "MAIN_STORY_V0.3 MS-04。保留7句角色对白与2句凌赫心声，舞台动作转为旁白；虚构纸卡，固定事件，暂不加入取卡/递卡玩法。";
             chapter.beats = Create(); AssetDatabase.CreateAsset(chapter, AssetPath);
         }
+        else if(MatchesPrevious(chapter.beats))
+        {chapter.beats=Create();chapter.sourceNotes="2026-11-02：直接递卡或故作从容，两者均正常归还，不设关系分数；20段正文，表达差异由播放器分开呈现。";EditorUtility.SetDirty(chapter);}
         bool changed = false;
         var chapters = new List<StorySequence>(book.chapters ?? new StorySequence[0]);
         if (!chapters.Any(c => c != null && c.storyId == chapter.storyId))
@@ -61,6 +75,9 @@ public static class PaperCardStoryDraft
         for (int i = 0; i < Shots.Length; i++)
             if (!pictures.Any(p => p != null && p.shot == Shots[i]))
             { pictures.Add(new StoryPicture { shot = Shots[i], texture = textures[i] }); changed = true; }
+        var direct=AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Story/PaperCard/DirectCardReturn.png");
+        if(direct!=null&&!pictures.Any(p=>p.shot==StoryShot.DirectCardReturn))
+        {pictures.Add(new StoryPicture{shot=StoryShot.DirectCardReturn,texture=direct});changed=true;}
         if (changed) { book.pictures = pictures.ToArray(); EditorUtility.SetDirty(book); }
     }
 }

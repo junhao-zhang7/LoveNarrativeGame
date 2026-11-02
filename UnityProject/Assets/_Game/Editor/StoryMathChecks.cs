@@ -12,8 +12,8 @@ public static class StoryMathChecks
         CheckAnswers();
         var actual = AssetDatabase.LoadAssetAtPath<StorySequence>(MathHelpStoryDraft.AssetPath);
         if (actual == null || actual.beats.Length != 29) throw new Exception("Fifth-act interactive content was not migrated; author edits preserved.");
-        var beats = actual.beats; int gate = Array.FindIndex(beats, b => b.requiresMathAnswer);
-        if (gate != 13 || beats.Count(b => b.requiresMathAnswer) != 1 || beats.Select(b => b.id).Distinct().Count() != beats.Length)
+        var beats = actual.beats; int gate = Array.FindIndex(beats, b => b.interaction==StoryInteraction.CooperateMath);
+        if (gate != 13 || beats.Any(b=>b.requiresMathAnswer) || beats.Count(b => b.interaction==StoryInteraction.CooperateMath) != 1 || beats.Select(b => b.id).Distinct().Count() != beats.Length)
             throw new Exception("Invalid answer gate or stable beat identities.");
         if (beats.Skip(10).Take(gate - 10).Any(b => b.shot != StoryShot.ProblemNotebook || b.speaker != "凌赫（心声）") ||
             beats[gate + 1].shot != StoryShot.ProblemNotebook || beats[gate + 1].text != "你找的是最小值。它问的是最大值，还给了区间。")
@@ -24,7 +24,7 @@ public static class StoryMathChecks
         var roundtrip = JsonUtility.FromJson<StoryReadingSave>(JsonUtility.ToJson(save));
         if (roundtrip.beatId != beats[gate].id || roundtrip.contentVersion != 2 || roundtrip.beat != gate)
             throw new Exception("Answer bookmark serialization failed.");
-        Debug.Log("STORY_MATH_CHECK_PASS: input normalization, wrong/empty values, gate order, no early reveal and bookmark JSON; no player saves changed");
+        Debug.Log("STORY_MATH_CHECK_PASS: cooperative route without forced input, optional answer validation, story order and bookmark JSON; no player saves changed");
     }
     public static void CheckAnswers()
     {

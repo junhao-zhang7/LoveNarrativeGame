@@ -70,5 +70,9 @@ MonoBehaviour:
     texture: {fileID: 2800000, guid: 0830b2bfb2d1d2f49a74f3b7ed5c1a61, type: 3}
   - shot: 23
     texture: {fileID: 2800000, guid: 03c855891dcb06646bf50d331bf4c551, type: 3}
+  - shot: 24
+    texture: {fileID: 2800000, guid: b1bd33892ad13f74c942037f4ad1c989, type: 3}
+  - shot: 25
+    texture: {fileID: 2800000, guid: 2fda79217c473704480130de38135445, type: 3}
   endingSummary: "\u4E24\u4EBA\u7B2C\u4E00\u6B21\u5F88\u81EA\u7136\u5730\u7B11\u8D77\u6765\uFF0C\u7EA6\u597D\u4E86\u660E\u5929\u7684\u5348\u996D\u3002"
   nextPreview: "\u540E\u7EED \xB7 \u9E21\u6392\u996D\u548C\u82F1\u8BED\u9898\uFF08\u5236\u4F5C\u4E2D\uFF09"

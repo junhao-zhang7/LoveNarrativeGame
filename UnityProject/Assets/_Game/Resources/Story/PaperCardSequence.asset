@@ -14,104 +14,184 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoveNarrativeGame.Prototype.StorySequence
   storyId: campus-act-04
   chapterTitle: "\u7B2C\u56DB\u5E55 \xB7 \u4F60\u7684\u6838\u9178\u7801"
-  sourceNotes: "MAIN_STORY_V0.3 MS-04\u3002\u4FDD\u75597\u53E5\u89D2\u8272\u5BF9\u767D\u4E0E2\u53E5\u51CC\u8D6B\u5FC3\u58F0\uFF0C\u821E\u53F0\u52A8\u4F5C\u8F6C\u4E3A\u65C1\u767D\uFF1B\u865A\u6784\u7EB8\u5361\uFF0C\u56FA\u5B9A\u4E8B\u4EF6\uFF0C\u6682\u4E0D\u52A0\u5165\u53D6\u5361/\u9012\u5361\u73A9\u6CD5\u3002"
+  sourceNotes: "2026-11-02\uFF1A\u76F4\u63A5\u9012\u5361\u6216\u6545\u4F5C\u4ECE\u5BB9\uFF0C\u4E24\u8005\u5747\u6B63\u5E38\u5F52\u8FD8\uFF0C\u4E0D\u8BBE\u5173\u7CFB\u5206\u6570\uFF1B20\u6BB5\u6B63\u6587\uFF0C\u8868\u8FBE\u5DEE\u5F02\u7531\u64AD\u653E\u5668\u5206\u5F00\u5448\u73B0\u3002"
   beats:
-  - speaker: 
+  - id: card-v2-00
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u7B2C\u56DB\u5E55 \xB7 \u4F60\u7684\u6838\u9178\u7801\n\u4E4B\u540E\u7684\u67D0\u4E00\u5929\u3002"
     shot: 14
     focus: 0.5
     fade: 1
-  - speaker: "\u540C\u5B66"
+  - id: card-v2-01
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u540C\u5B66"
     text: "\u5E26\u4E0A\u6838\u9178\u7801\uFF0C\u4F53\u80B2\u9986\uFF01"
     shot: 14
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B"
+  - id: card-v2-02
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u51CC\u8D6B"
     text: "\u6765\u4E86\u3002"
     shot: 14
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: card-v2-03
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u51CC\u8D6B\u4ECE\u81EA\u5DF1\u7684\u4E66\u4E0B\u62BD\u51FA\u7EB8\u5361\uFF0C\u53D1\u73B0\u674E\u665A\u4E91\u7684\u8FD8\u5728\u684C\u9762\u3002\n\u5979\u7684\u5EA7\u4F4D\u5DF2\u7ECF\u7A7A\u4E86\u3002"
     shot: 14
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B\u5FC3\u58F0"
+  - id: card-v2-04
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u51CC\u8D6B\u5FC3\u58F0"
     text: "\u8FD9\u90FD\u80FD\u5FD8\u3002"
     shot: 14
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: card-v2-05
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u4ED6\u628A\u4E24\u5F20\u7EB8\u5361\u4E00\u8D77\u62FF\u4E0A\u3002"
     shot: 14
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: card-v2-06
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u4F53\u80B2\u9986\u91CC\uFF0C\u961F\u4F0D\u7F13\u7F13\u5F80\u524D\u632A\u3002\u674E\u665A\u4E91\u7AD9\u5728\u524D\u9762\u770B\u4E66\u3002"
     shot: 15
     focus: 0.5
     fade: 1
-  - speaker: 
-    text: "\u51CC\u8D6B\u770B\u4E86\u770B\u624B\u91CC\u7684\u7801\uFF0C\u6CA1\u6709\u53EB\u5979\u3002"
+  - id: card-v2-07
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
+    text: "\u51CC\u8D6B\u770B\u4E86\u770B\u624B\u91CC\u7684\u7801\uFF0C\u5F80\u524D\u9760\u8FD1\u4E86\u4E00\u70B9\u3002"
     shot: 15
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B\u5FC3\u58F0"
-    text: "\u7B49\u4F1A\u513F\u518D\u7ED9\u3002"
+  - id: card-v2-08
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u51CC\u8D6B\u5FC3\u58F0"
+    text: "\u8FD8\u597D\u4E00\u8D77\u5E26\u6765\u4E86\u3002"
     shot: 15
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: card-v2-09
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u8F6E\u5230\u5979\u4E86\u3002\u5979\u628A\u4E66\u5939\u5230\u814B\u4E0B\uFF0C\u6478\u6821\u670D\u53E3\u888B\uFF0C\u53C8\u6478\u53E6\u4E00\u8FB9\u3002\n\u8EAB\u540E\u7684\u4EBA\u5411\u524D\u632A\u4E86\u4E00\u6B65\u3002"
     shot: 16
     focus: 0.5
     fade: 0
-  - speaker: "\u73ED\u4E3B\u4EFB"
+  - id: card-v2-10
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u73ED\u4E3B\u4EFB"
     text: "\u665A\u4E91\uFF0C\u4F60\u7684\u7801\u2014\u2014"
     shot: 16
     focus: 0.5
     fade: 0
-  - speaker: 
-    text: "\u51CC\u8D6B\u7528\u53CC\u6307\u5939\u8D77\u7EB8\u5361\uFF0C\u53E6\u4E00\u53EA\u624B\u62B5\u7740\u989D\u5934\uFF0C\u6545\u4F5C\u4ECE\u5BB9\u3002"
-    shot: 17
+  - id: card-v2-11
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 2
+    speaker: 
+    text: "\u5979\u7684\u7EB8\u5361\u5C31\u5728\u624B\u91CC\u3002\u51CC\u8D6B\u60F3\u4E86\u60F3\uFF0C\u51C6\u5907\u9012\u8FC7\u53BB\u3002"
+    shot: 16
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B"
+  - id: card-v2-12
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u51CC\u8D6B"
     text: "\u5C0F\u59D0\uFF0C\u4F60\u7684\u6838\u9178\u7801\u3002"
     shot: 17
     focus: 0.5
     fade: 0
-  - speaker: "\u674E\u665A\u4E91"
+  - id: card-v2-13
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u674E\u665A\u4E91"
     text: "\u8C22\u2026\u2026\u8C22\u8C22\u3002"
     shot: 17
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: card-v2-14
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u5979\u63A5\u5F97\u5F88\u5FEB\uFF0C\u8138\u6DA8\u7EA2\u4E86\u3002\u5B8C\u6210\u68C0\u6D4B\u540E\uFF0C\u5979\u5C0F\u6B65\u8D70\u5F00\u3002"
     shot: 18
     focus: 0.5
     fade: 0
-  - speaker: "\u73ED\u4E3B\u4EFB"
+  - id: card-v2-15
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u73ED\u4E3B\u4EFB"
     text: "\u4F60\u81EA\u5DF1\u7684\u5462\uFF1F\u522B\u5149\u987E\u7740\u800D\u5B9D\u3002"
     shot: 18
     focus: 0.5
     fade: 0
-  - speaker: "\u51CC\u8D6B"
+  - id: card-v2-16
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: "\u51CC\u8D6B"
     text: "\u5728\uFF0C\u5728\u3002"
     shot: 18
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: card-v2-17
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u4ED6\u8D76\u7D27\u6478\u4E86\u6478\u53E3\u888B\uFF0C\u6536\u56DE\u6446\u59FF\u52BF\u7684\u624B\uFF0C\u8DDF\u4E0A\u961F\u4F0D\u3002"
     shot: 18
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: card-v2-18
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u79BB\u5F00\u4F53\u80B2\u9986\u65F6\uFF0C\u674E\u665A\u4E91\u56DE\u5934\u770B\u4E86\u4ED6\u4E00\u773C\u3002\n\u4ED6\u6B63\u628A\u7EB8\u5361\u91CD\u65B0\u6298\u8FDB\u515C\u91CC\u3002"
     shot: 18
     focus: 0.5
     fade: 0
-  - speaker: 
+  - id: card-v2-19
+    requiresMathAnswer: 0
+    requiresRoute: 0
+    interaction: 0
+    speaker: 
     text: "\u5979\u8F6C\u56DE\u53BB\uFF0C\u5634\u89D2\u6709\u4E00\u70B9\u7B11\u3002"
     shot: 18
     focus: 0.5

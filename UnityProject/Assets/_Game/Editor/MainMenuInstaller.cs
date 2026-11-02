@@ -34,6 +34,7 @@ public static class MainMenuInstaller
             PreparePicture("Assets/_Game/Resources/Story/WaterCup/" + picture + ".png");
         foreach (var picture in PaperCardStoryDraft.Pictures)
             PreparePicture("Assets/_Game/Resources/Story/PaperCard/" + picture + ".png");
+        PreparePicture("Assets/_Game/Resources/Story/PaperCard/DirectCardReturn.png");
         foreach (var picture in MathHelpStoryDraft.Pictures)
             PreparePicture("Assets/_Game/Resources/Story/MathHelp/" + picture + ".png");
         var background = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Menu/MainMenuBackground.png");
@@ -135,7 +136,7 @@ public static class MainMenuInstaller
     }
     public static void Build()
     {
-        Install(); TestPreferences(); TestStory(); CheckBook(); StoryReadingChecks.Run(); StoryMathChecks.Run(); StoryRouteChecks.Run();
+        Install(); TestPreferences(); TestStory(); CheckBook(); StoryReadingChecks.Run(); StoryMathChecks.Run(); StoryRouteChecks.Run(); StoryGentleChecks.Run();
         var music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/_Game/Resources/Audio/BackgroundMusic.mp3");
         if (music == null || music.length <= 0) throw new Exception("Background music failed to import.");
         Debug.Log("BACKGROUND_MUSIC_IMPORTED: " + music.length.ToString("F2") + " seconds; looping player enabled");

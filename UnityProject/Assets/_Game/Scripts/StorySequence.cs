@@ -4,13 +4,14 @@ using UnityEngine;
 namespace LoveNarrativeGame.Prototype
 {
     // Keep the original values so earlier draft assets retain their meaning.
-    public enum StoryShot { BackRow = 0, Caught = 1, FrontSeats = 2, TeacherArrives = 3, PackBooks = 4, NewSeat = 5, TenMinutes = 6, Schoolbag = 7, Goodbye = 8, EveningStudy = 9, SpilledWater = 10, EyeContact = 11, Mopping = 12, WetSleeve = 13, ForgottenCards = 14, GymQueue = 15, MissingCard = 16, CardReturn = 17, LookBack = 18, Invitation = 19, StayAndExplain = 20, ProblemNotebook = 21, WritingAnswer = 22, LunchAgreement = 23 }
+    public enum StoryShot { BackRow = 0, Caught = 1, FrontSeats = 2, TeacherArrives = 3, PackBooks = 4, NewSeat = 5, TenMinutes = 6, Schoolbag = 7, Goodbye = 8, EveningStudy = 9, SpilledWater = 10, EyeContact = 11, Mopping = 12, WetSleeve = 13, ForgottenCards = 14, GymQueue = 15, MissingCard = 16, CardReturn = 17, LookBack = 18, Invitation = 19, StayAndExplain = 20, ProblemNotebook = 21, WritingAnswer = 22, LunchAgreement = 23, EyeContactCloseup = 24, DirectCardReturn = 25 }
     [Serializable]
     public sealed class StoryBeat
     {
         public string id;
         public bool requiresMathAnswer;
         public bool requiresRoute;
+        public StoryInteraction interaction;
         public string speaker;
         [TextArea(2, 5)] public string text;
         public StoryShot shot;
@@ -27,7 +28,7 @@ namespace LoveNarrativeGame.Prototype
         public bool IsValid()
         {
             if (beats == null || beats.Length == 0) return false;
-            foreach (var beat in beats) if (beat == null || string.IsNullOrWhiteSpace(beat.text) || (beat.requiresMathAnswer && beat.requiresRoute)) return false;
+            foreach (var beat in beats) if (beat == null || string.IsNullOrWhiteSpace(beat.text) || ((beat.requiresMathAnswer ? 1 : 0) + (beat.requiresRoute ? 1 : 0) + (beat.interaction != StoryInteraction.None ? 1 : 0) > 1)) return false;
             return true;
         }
     }

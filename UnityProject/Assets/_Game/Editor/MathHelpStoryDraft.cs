@@ -7,7 +7,7 @@ using UnityEngine;
 public static class MathHelpStoryDraft
 {
     public const string AssetPath = "Assets/_Game/Resources/Story/MathHelpSequence.asset";
-    private const string Notes = "2026-11-02作者修订：题目特写默读/发现最大值、520输入、错误重试后回讲解。原27段扩为29段，保留后续对白。";
+    private const string Notes = "2026-11-02：默认两人合作推导，数值输入为可选且可随时返回合作；保留29段正文与后续对白。";
     public static readonly string[] Pictures = { "Invitation", "StayAndExplain", "ProblemNotebook", "WritingAnswer", "LunchAgreement" };
     public static readonly StoryShot[] Shots = { StoryShot.Invitation, StoryShot.StayAndExplain, StoryShot.ProblemNotebook, StoryShot.WritingAnswer, StoryShot.LunchAgreement };
     private static StoryBeat[] CreateLegacy()
@@ -42,7 +42,7 @@ public static class MathHelpStoryDraft
             B("", "两人第一次很自然地笑起来。", StoryShot.LunchAgreement)
         };
     }
-    public static StoryBeat[] Create()
+    private static StoryBeat[] CreateMandatory()
     {
         var old = CreateLegacy(); var beats = new List<StoryBeat>();
         beats.AddRange(old.Take(10));
@@ -56,6 +56,15 @@ public static class MathHelpStoryDraft
         for (int i = 0; i < beats.Count; i++) beats[i].id = "math-v2-" + i.ToString("D2");
         return beats.ToArray();
     }
+    public static StoryBeat[] Create()
+    {
+        var beats=CreateMandatory();beats[13].requiresMathAnswer=false;
+        beats[13].interaction=StoryInteraction.CooperateMath;
+        beats[13].text="凌赫把练习本转到两人中间。先一起看看，也可以自己试着算。";
+        return beats;
+    }
+    private static bool MatchesMandatory(StoryBeat[] actual)
+    {var old=CreateMandatory();return actual!=null&&actual.Length==old.Length&&actual.Zip(old,(a,b)=>a!=null&&a.text==b.text&&a.speaker==b.speaker&&a.shot==b.shot&&a.fade==b.fade&&a.focus==b.focus&&a.requiresMathAnswer==b.requiresMathAnswer&&a.interaction==StoryInteraction.None).All(v=>v);}
     private static bool MatchesLegacy(StoryBeat[] actual)
     {
         var old = CreateLegacy();
@@ -77,7 +86,7 @@ public static class MathHelpStoryDraft
             chapter.sourceNotes = Notes;
             chapter.beats = Create(); AssetDatabase.CreateAsset(chapter, AssetPath);
         }
-        else if (MatchesLegacy(chapter.beats))
+        else if (MatchesLegacy(chapter.beats) || MatchesMandatory(chapter.beats))
         {
             chapter.beats = Create();
             chapter.sourceNotes = Notes;
