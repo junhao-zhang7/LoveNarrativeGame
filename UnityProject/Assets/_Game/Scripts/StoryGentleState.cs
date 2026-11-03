@@ -2,7 +2,7 @@ using System;
 
 namespace LoveNarrativeGame.Prototype
 {
-    public enum StoryInteraction { None, Mop, CardChoice, CooperateMath }
+    public enum StoryInteraction { None, Mop, CardChoice, CooperateMath, FoldNote }
     public enum CardReturnStyle { Unchosen, Direct, Playful }
     public sealed class StoryMopState
     {

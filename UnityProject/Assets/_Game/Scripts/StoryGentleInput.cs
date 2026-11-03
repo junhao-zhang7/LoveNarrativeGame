@@ -15,12 +15,13 @@ namespace LoveNarrativeGame.Prototype
         private Button mopAck,mopDone,mopAlternative;
         private bool mopPrevious; private Vector2 mopLast;
         private CardReturnStyle readingCardStyle;
-        private bool GentleActive => mopPanel.gameObject.activeInHierarchy||cardPanel.gameObject.activeInHierarchy||coopPanel.gameObject.activeInHierarchy;
+        private bool GentleActive => mopPanel.gameObject.activeInHierarchy||cardPanel.gameObject.activeInHierarchy||coopPanel.gameObject.activeInHierarchy||notePanel.gameObject.activeInHierarchy;
         private bool CanGentle(RectTransform panel) => reading&&!paused&&!transitioning&&panel.gameObject.activeInHierarchy;
         private void BuildGentleInput()
         {
             BuildMop();
             BuildCardAndNotebook();
+            BuildNote();
         }
         private void PresentGentle(StoryBeat beat)
         {
@@ -32,6 +33,7 @@ namespace LoveNarrativeGame.Prototype
             if(beat.interaction==StoryInteraction.CardChoice){readingCardStyle=CardReturnStyle.Unchosen;cardCanvas.interactable=true;cardPrompt.text="她在找的纸卡，就在凌赫手里。";}
             if(beat.interaction==StoryInteraction.CooperateMath){coopState.Reset();independentMath=false;RefreshCoop();}
             PresentNotebookForBeat(beat);
+            PresentNote(beat);
         }
         private void ChooseCard(CardReturnStyle style)
         {

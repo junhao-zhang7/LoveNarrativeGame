@@ -213,6 +213,7 @@ namespace LoveNarrativeGame.Prototype
             StoryReadingSave data = null;
             try { if (PlayerPrefs.HasKey(SaveKey)) data = JsonUtility.FromJson<StoryReadingSave>(PlayerPrefs.GetString(SaveKey)); }
             catch (Exception e) { Debug.LogWarning("Reading save could not be loaded: " + e.Message); }
+            readingNoteGiven=data!=null&&data.noteGiven;
             var chapters = books[bookIndex].chapters;
             readingCardStyle = data!=null && data.cardStyle>=1 && data.cardStyle<=2 ? (CardReturnStyle)data.cardStyle : CardReturnStyle.Unchosen;
             if (data != null)
@@ -245,7 +246,7 @@ namespace LoveNarrativeGame.Prototype
             if (saved == null) return;
             try
             {
-                var data = saved.Capture(); data.contentVersion = 4; data.cardStyle=(int)readingCardStyle;
+                var data = saved.Capture(); data.contentVersion = 4; data.cardStyle=(int)readingCardStyle; data.noteGiven=readingNoteGiven;
                 data.beatId = books[bookIndex].chapters[saved.Chapter].beats[saved.Beat].id;
                 PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data)); PlayerPrefs.Save(); saveFailed = false;
             }
@@ -278,7 +279,7 @@ namespace LoveNarrativeGame.Prototype
                 if (i + 1 < count)
                     Text(content, new Vector2(340 + i * 340, 195), new Vector2(36, 50), "→", 28, true, blue);
                 var node = Paper("Chapter " + (i + 1), content, new Vector2(170 + i * 340, 195), new Vector2(300, 320), unlocked ? new Color(.99f,.98f,.95f) : new Color(.85f,.85f,.82f));
-                Text(node, new Vector2(150, 287), new Vector2(270, 40), (i + 1).ToString("00"), 26, true, blue);
+                Text(node, new Vector2(150, 287), new Vector2(270, 40), ChapterDisplayNumber(books[bookIndex].chapters[i],i+1).ToString("00"), 26, true, blue);
                 if (unlocked)
                 {
                     Texture2D picture = null;
@@ -288,7 +289,7 @@ namespace LoveNarrativeGame.Prototype
                     var raw = frame.gameObject.AddComponent<RawImage>(); raw.texture = picture; raw.raycastTarget = false;
                 }
                 else Text(node, new Vector2(150, 190), new Vector2(270, 140), "尚未解锁\n完成前一幕后开启", 22, true, blue);
-                Text(node, new Vector2(150, 87), new Vector2(280, 60), unlocked ? books[bookIndex].chapters[i].chapterTitle : "第" + (i+1) + "幕", 23, true);
+                Text(node, new Vector2(150, 87), new Vector2(280, 60), unlocked ? books[bookIndex].chapters[i].chapterTitle : "第" + ChapterDisplayNumber(books[bookIndex].chapters[i],i+1) + "幕", 23, true);
                 int line = i == saved.Chapter && !done ? saved.Beat : 0;
                 string label = done ? "已完成 · 重看" : unlocked ? (line > 0 ? "继续本幕" : "进入剧情") : "未解锁";
                 if (unlocked) Button(node, new Vector2(150, 33), new Vector2(265, 52), label, () => BeginChapter(index, line), 21);
@@ -306,6 +307,11 @@ namespace LoveNarrativeGame.Prototype
                 () => BeginChapter(resumeChapter, resumeBeat), 29);
             saveNotice = Text(chapterMenu, new Vector2(960, 135), new Vector2(1300, 45), saveFailed ? "进度保存失败，请稍后重试" : "阅读位置自动保存到本机 · 已完成章节可随时重看", 21, true, blue);
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+        }
+        private static int ChapterDisplayNumber(StorySequence chapter,int fallback)
+        {
+            if(chapter!=null&&chapter.storyId!=null){int n;int dash=chapter.storyId.LastIndexOf('-');if(dash>=0&&int.TryParse(chapter.storyId.Substring(dash+1),out n)&&n>0)return n;}
+            return fallback;
         }
         private void MoveChapterFlow(int direction)
         { chapterScroll.horizontalNormalizedPosition = Mathf.Clamp01(chapterScroll.horizontalNormalizedPosition + direction * .4f); }
@@ -405,6 +411,7 @@ namespace LoveNarrativeGame.Prototype
                 TickRoute();
                 TickCardPerformance();
                 TickNotebookInk();
+                TickNote();
             }
             if (Keyboard.current == null) return;
             if (Keyboard.current.escapeKey.wasPressedThisFrame) { if (selection.gameObject.activeSelf) Close(); else if (chapterMenu != null && chapterMenu.gameObject.activeSelf) ShowSelection(); else TogglePause(); return; }

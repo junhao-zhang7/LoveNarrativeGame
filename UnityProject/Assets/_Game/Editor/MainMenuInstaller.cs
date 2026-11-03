@@ -87,6 +87,8 @@ public static class MainMenuInstaller
         WaterCupStoryDraft.Install(AssetDatabase.LoadAssetAtPath<StoryBook>(catalog + "/BesideYou.asset"));
         PaperCardStoryDraft.Install(AssetDatabase.LoadAssetAtPath<StoryBook>(catalog + "/BesideYou.asset"));
         MathHelpStoryDraft.Install(AssetDatabase.LoadAssetAtPath<StoryBook>(catalog + "/BesideYou.asset"));
+        foreach(var n in NoteStoryDraft.Pictures)PreparePicture("Assets/_Game/Resources/Story/Note/"+n+".png");
+        NoteStoryDraft.Install(AssetDatabase.LoadAssetAtPath<StoryBook>(catalog + "/BesideYou.asset"));
         AssetDatabase.SaveAssets();
         // Preserve user choices on subsequent imports. Add the existing prototype once.
         var scenes = EditorBuildSettings.scenes.ToList();
@@ -142,7 +144,7 @@ public static class MainMenuInstaller
     }
     public static void Build()
     {
-        Install(); TestPreferences(); TestStory(); CheckBook(); StoryReadingChecks.Run(); StoryMathChecks.Run(); StoryRouteChecks.Run(); StoryGentleChecks.Run();
+        Install(); TestPreferences(); TestStory(); CheckBook(); StoryReadingChecks.Run(); StoryMathChecks.Run(); StoryRouteChecks.Run(); StoryGentleChecks.Run(); NoteStoryDraft.Check();
         var music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/_Game/Resources/Audio/BackgroundMusic.mp3");
         if (music == null || music.length <= 0) throw new Exception("Background music failed to import.");
         Debug.Log("BACKGROUND_MUSIC_IMPORTED: " + music.length.ToString("F2") + " seconds; looping player enabled");

@@ -13,6 +13,7 @@ namespace LoveNarrativeGame.Prototype
         public string beatId;
         public int contentVersion;
         public int cardStyle;
+        public bool noteGiven;
     }
 
     // Chapter identity survives additions; completion and the current bookmark are independent.
