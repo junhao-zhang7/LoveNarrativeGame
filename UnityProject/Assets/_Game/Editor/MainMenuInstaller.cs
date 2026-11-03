@@ -37,6 +37,10 @@ public static class MainMenuInstaller
         PreparePicture("Assets/_Game/Resources/Story/PaperCard/DirectCardReturn.png");
         PreparePicture("Assets/_Game/Resources/Story/WaterCup/MopFloorPlate.png");
         PreparePicture("Assets/_Game/Resources/Story/WaterCup/MopTool.png");
+        PreparePicture("Assets/_Game/Resources/Story/WaterCup/MopOverheadDry.png");
+        PreparePicture("Assets/_Game/Resources/Story/WaterCup/MopOverheadWet.png");
+        PreparePicture("Assets/_Game/Resources/Story/WaterCup/MopOverheadTool.png");
+
         foreach (var picture in MathHelpStoryDraft.Pictures)
             PreparePicture("Assets/_Game/Resources/Story/MathHelp/" + picture + ".png");
         var background = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Menu/MainMenuBackground.png");

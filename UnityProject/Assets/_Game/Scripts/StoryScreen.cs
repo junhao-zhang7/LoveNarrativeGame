@@ -454,6 +454,7 @@ namespace LoveNarrativeGame.Prototype
         private void OnDestroy()
         {
             if (routeScratch != null) Destroy(routeScratch);
+            if (mopCutoutMaterial != null) Destroy(mopCutoutMaterial);
             if (font == null) return;
             foreach (var texture in font.atlasTextures) if (texture != null) Destroy(texture); Destroy(font);
         }

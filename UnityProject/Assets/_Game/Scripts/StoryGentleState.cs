@@ -15,6 +15,15 @@ namespace LoveNarrativeGame.Prototype
         public bool IsClean(int i) => clean[i];
         public bool Visible(int i) => !clean[i] && (i < 45 || Current == Stage.LastSpot);
         public int Cleaned { get { int n=0;foreach(bool v in clean)if(v)n++;return n; } }
+        // Presentation may place patches on an irregular illustrated puddle instead of the original grid.
+        public bool CleanPatch(int i)
+        {
+            if(i<0||i>=clean.Length||!Visible(i)||Current==Stage.Notice||Current==Stage.Complete)return false;
+            clean[i]=true;
+            if(Current==Stage.Cleaning&&Cleaned==45)Current=Stage.Notice;
+            if(Current==Stage.LastSpot&&Cleaned==49)Current=Stage.Complete;
+            return true;
+        }
         public bool Wipe(double ax,double ay,double bx,double by)
         {
             if (Current == Stage.Notice || Current == Stage.Complete || double.IsNaN(ax+ay+bx+by) || double.IsInfinity(ax+ay+bx+by)) return false;

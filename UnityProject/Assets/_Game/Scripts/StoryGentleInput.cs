@@ -11,7 +11,6 @@ namespace LoveNarrativeGame.Prototype
         private RectTransform mopPanel,mopArea,mopTool,cardPanel,coopPanel;
         private StoryMopState mopState=new StoryMopState();
         private StoryCoopMathState coopState=new StoryCoopMathState();
-        private GameObject[] wetSpots;
         private TMP_Text mopFeedback,coopText,coopNextText;
         private Button mopAck,mopDone,mopAlternative;
         private bool mopPrevious; private Vector2 mopLast;
