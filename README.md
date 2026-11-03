@@ -1,99 +1,96 @@
-# 原创 2D 叙事游戏（开发代号待定）
+# LoveNarrativeGame · 原创 2D 叙事游戏半成品
 
-**第七幕《回宿舍再看》已接入（2026-11-03）：** 按作者要求暂缓第六幕，新增四图、25段对白和折纸后递出互动；宿舍按原稿线性演出。当前五幕后直接进入第七幕，目录保留07，旧档可接续。[打开新版游戏](Builds/MenuDemo/MenuDemo.exe)，按[第七幕步骤](docs/SEVENTH_ACT.md)验收。以下为历史记录。
+> **这是我在学习 Unity 的过程中，使用 OpenAI Codex 辅助制作的原创校园情感叙事游戏半成品。**
+> 当前是持续开发中的可运行原型，主线故事尚未全部接入，画面和交互也在继续打磨。
 
-**第四、五幕表现已统一（2026-11-03）：** 还卡选择融入正文对白纸，直接递卡/故作从容有不同停顿后接各自原图与回应；第五幕四步推导逐行落到左页，答案栏也在纸页上，可随时回合作。原题、主线和存档保留，验收见[两幕说明](docs/ACTS_4_5_PRESENTATION.md)。以下为历史记录。
+`LoveNarrativeGame` 是工作目录与仓库名称，正式游戏名称尚未确定。当前制作的故事暂用名为 **《旁边的位置》**，讲述凌赫与李晚云从一次换座开始，在日常相处、互相帮助与人生选择中逐渐靠近的经历。
 
-**第三幕拖地改为俯视特写（2026-11-03）：** 按作者反馈替换平视版，使用明显的插画水渍与配套干地面，俯视拖把头扫过后逐步露出干地面；保留晚云提醒补擦、回座位和原存档。试玩见[俯视版说明](docs/THIRD_ACT_MOP_TOPDOWN.md)。以下旧版记录保留历史。
+我希望玩家通过一些细小的动作感受人物的情绪：在练习本上找一条小路、把地上的水擦干、决定怎样递还一张卡、和对方一起算一道题，以及把一句没有直说的话折进纸条里。
 
-**第三幕拖地已融入教室画面（2026-11-03）：** 参考作者原图另做干燥地面背景和透明拖把，水渍直接叠在教室地面，擦过后淡去并短暂留下湿痕，桌椅前景遮挡拖把；晚云提醒时椅脚旁水光闪动。原剧情和存档保留，试玩见[第三幕打磨说明](docs/THIRD_ACT_MOP_POLISH.md)。
+![开发中画面：第七幕递纸条](art/Story/Act7/Note/Delivery.png)
 
-**第一幕寻路表现已打磨（2026-11-03）：** 地图改为双页练习本特写，简笔地标、逐段笔迹、右页路线记录与轻纸笔声；完成后收起本子再接老师打断。最短判定、剧情和存档保留，Unity编译与Windows构建通过，未代做游玩验收。验证与试玩步骤见[第一幕说明](docs/FIRST_ACT_ROUTE.md)。以下为历史记录。
+*开发中的故事插画；画面、人物细节与正式呈现仍可能调整。*
 
-**第三至第五幕互动已修订（2026-11-02）：** 第三幕新增脸红对视特写与拖把擦水；第四幕可选择直接递卡或装酷，两者都归还；第五幕默认合作推导，自主解题可选且可随时返回。保留连续播放和解锁存档，编辑器检查与Windows构建通过，[打开新版](Builds/MenuDemo/MenuDemo.exe)，按[本轮测试步骤](docs/ACTS_3_4_5_INTERACTIONS.md)验收。以下为历史记录。
+## 我与 Codex 怎样完成这个项目
 
-**第一幕小道寻路已接入（2026-11-02）：** “我发现一条小道”后进入练习本校园图，找到最短路线再接“从后面绕——”与老师打断。可撤回/重画，保留连续播放和存档。独立编译、路径/资源检查与Unity构建通过，[打开新版](Builds/MenuDemo/MenuDemo.exe)，按[第一幕测试步骤](docs/FIRST_ACT_ROUTE.md)验收。校园布局为可替换原创示意，以下为历史记录。
+- **我负责**原始故事创作、人物与情绪方向、玩法和美术取舍、素材提供与修改，以及实际试玩和反馈。
+- **Codex 协助**把想法整理为交互设计与场景稿、辅助对白润色，编写与修改 C# 和界面逻辑，接入资源、排查问题、执行编译和构建，并记录开发过程。
+- 部分插画使用 AI 工具辅助生成，再根据我的反馈修订；部分素材由我提供。具体来源与待确认事项记录在[素材台账](docs/ASSET_LICENSES.csv)。
 
-**第五幕答案交互已接入（2026-11-02）：** 题目特写加入凌赫默读/发现最大值的心声，玩家输入520后才接原讲解；答错由李晚云提醒重算，不能用继续跳过。保留连续播放与解锁存档，五幕101段。独立编译、输入/资源检查和Unity构建通过，[打开新版](Builds/MenuDemo/MenuDemo.exe)，按[交互测试步骤](docs/FIFTH_ACT_ANSWER.md)验收。以下为历史记录。
+这个仓库记录的是我借助 Codex 从零学习、逐步做出作品的过程。代码、设计与素材都有迭代痕迹，欢迎结合提交记录和开发文档了解实际完成的工作。
 
-**连续播放与第五幕新图已更新（2026-11-02）：** 幕末继续会自动解锁并淡入相邻下一幕，不再中途返回目录；续读保存和手动选章保留。第五幕使用作者资产包五张新图，Unity实际编译与Windows构建通过，[打开新版游戏](Builds/MenuDemo/MenuDemo.exe)。未代做游玩测试。以下为历史记录。
+## 目前做到哪里了
 
-**章节目录、解锁与续读已接入（2026-11-02）：** 进入故事卡后先显示横向五幕目录；首次只开放第一幕，读完解锁下一幕，已完成可重看。自动保存到本机，重启后可继续上次那一段。独立编译、状态检查及Unity构建成功，[打开新版游戏](Builds/MenuDemo/MenuDemo.exe)，按[章节验收步骤](docs/CHAPTER_READING.md)检查。旧版没有存档，首次从第一幕开始。以下为历史记录。
+**截至 2026-11-03：已接入第一至第五幕，以及第七幕，共六个可玩章节、126 段对白/旁白、29 个剧情图片映射。** 第六幕按开发安排暂缓，当前第五幕结束后直接进入标为“07”的第七幕，保留故事中的时间跨度。
 
-**第三幕宽屏原图已更新（2026-11-02 17:41）：** 作者最新五张1672×941图片已原样接入，保留全屏画面、半透明对白框与原剧情。Unity实际导入及Windows构建成功，[打开新版游戏](Builds/MenuDemo/MenuDemo.exe)查看；未代做游玩测试。以下为历史记录。
-
-**第三幕显示调整（2026-11-02）：** 作者新版五图改为直接拉伸铺满16:9，不裁切、不留白；全故事对白框改为55%不透明度，文字保持不透明。独立编译与Unity实际编译通过，Windows新版构建成功，详见[第三幕说明](docs/THIRD_ACT.md)。未代做游玩测试，以下为历史记录。
-
-**第三幕作者新版图片已替换（2026-11-01）：** 五张图片已原样更新到工程，第三幕等比完整显示于对话框上方，保留18段剧情及其他四幕。独立C#编译通过；本次后台Unity启动退出1，未生成新版Windows包，现有exe仍为20:41的旧图版。请从Hub打开工程，选择Tools → Story Prototype → Build Illustrated Menu后查看。见[第三幕说明](docs/THIRD_ACT.md)。
-
-**第五幕《这道题》已构建（2026-11-01 20:41）：** [打开 Windows 新版](Builds/MenuDemo/MenuDemo.exe)，《旁边的位置》连续五幕，共99段、23图。新增留下讲题、清晰题面与解法、520结果及次日约饭的线性演出；数学已核对，背景音乐保留。Unity实际编译与Windows构建通过，阅读验收请按[第五幕测试步骤](docs/FIFTH_ACT.md)。解题输入等互动后补，第六幕待制作。以下为历史记录。
-
-**第四幕《你的核酸码》已构建（2026-11-01 19:59）：** [打开 Windows 新版](Builds/MenuDemo/MenuDemo.exe)，同一《旁边的位置》故事卡连续播放四幕，共72段、18图；新增教室取卡与体育馆递卡演出，保留循环背景音乐。独立编译、Unity实际编译和Windows构建通过；未代做剧情阅读测试，请按[第四幕测试步骤](docs/FOURTH_ACT.md)验收。第五幕《这道题》尚未制作，以下保留历史。
-
-**第三幕《水杯》已构建（2026-11-01 19:24）：** [打开 Windows 新版](Builds/MenuDemo/MenuDemo.exe)，开始游戏 →《旁边的位置》→ 前两幕后连续进入晚自习第三幕。三幕共52段、13图，包含作者提供的循环背景音乐；独立编译、Unity实际编译和Windows构建成功。未代做游戏阅读或试听，按[第三幕测试步骤](docs/THIRD_ACT.md)验收。原图及实际生成提示在 art/Story/Act3/WaterCup。以下为历史记录。
-
-**第二幕新版已构建（2026-11-01 17:41）：** [打开 Windows 新版](Builds/MenuDemo/MenuDemo.exe)，开始游戏 →《旁边的位置》→ 依次阅读两幕。Unity 实际编译和构建成功，2章 / 8图 / 34段资源检查通过；运行与清晰度由作者按[测试步骤](docs/SECOND_ACT.md)验收。下方许可证阻塞为本次成功构建之前的历史记录。
-
-**第二幕与故事目录（2026-11-01）：** 已编写《旁边的位置》整部故事入口与第一幕→第二幕连续演出，使用作者最终四图，共34段；新增五档分辨率，默认全屏1920×1080及更高精度字体。独立脚本编译通过；Unity 后台打包被许可证阻止，当前 exe 仍是旧版。请先按[第二幕制作与测试步骤](docs/SECOND_ACT.md)从 Hub 打开工程并构建，再验收。以下保留历史记录。
-
-**第一幕后排片段已接入：** [打开更新后的 Windows 游戏](Builds/MenuDemo/MenuDemo.exe)，依次选择“开始游戏 → 校园故事 → 进入故事”。四张后排图片配合18段对白 / 旁白，以淡入衔接到下课收书；无配音和音乐。已在本机独立程序走通、重看并返回主界面，详见 [本段说明](docs/FIRST_ACT_REAR_ROW.md)。讲台旁初次交谈尚待下一段制作。
-
-**教室布局更新：** 已按作者确定的 8 列 × 6 行、两列并桌、晚云第 6 列第 1 行建立[统一空间基准](docs/CLASSROOM_SPACE.md)。讲台贴近第一排，凌赫的垂直桌同时紧贴讲台与晚云桌；前后门都在学生右侧墙。当前交付结构参考，第一幕手绘背景和接入验证仍在制作。
-
-**主界面第二版：** 按钮已融入完整教室画面，设置改为独立音乐 / 音效、分辨率、全屏和简体 / 繁体 / 英语 / 日语，已移除字号选项。程序仍从下方 MenuDemo 入口打开，详见 [第二版说明](docs/ILLUSTRATED_MAIN_MENU_V2.md)。四语目前覆盖菜单，正式剧情翻译另计。
-
-**最新可运行版本（2026-10-31）：** [打开 Windows 主界面演示](Builds/MenuDemo/MenuDemo.exe)。已加入插画主菜单、设置、退出确认，并连接数学讲题 / 英语互助小样。Unity 顶栏 **Tools → Story Prototype → Open Main Menu** 后按 Play 即可查看。游戏名使用“未定名”占位，完整主线制作中。详情与验证范围见 [主界面说明](docs/ILLUSTRATED_MAIN_MENU.md)；下方早期环境记录保留作学习历史。
-
-目标：制作可商业发行的原创短篇单机游戏，并积累能够独立讲解的工程作品。优先 Windows / Steam，移动版在 Windows 稳定后评估。基础环境、P1-01 主菜单和 P1-02 中文线性对话已完成编辑器与 Windows 本机验收。P1-03 点击触发的基础编辑器流程已获用户确认，下一步专项验证 UI 覆盖物体时不点击穿透，再构建新版本。实际交互场景是 Assets/Scenes/SampleScene.unity；Bootstrap 是此前的静态测试场景。补全列表手测和 URP / 退出资源提示排查仍有后续记录项。
-
-## 首轮环境检查 · 2026-10-29
-
-| 项目 | 实际发现 |
+| 部分 | 当前状态 |
 | --- | --- |
-| 工作目录 | 初始为空，无既有 Unity 工程、Git 仓库或 AGENTS.md |
-| Git | 2.53.0.windows.1；已有本机提交身份 |
-| 编辑器 | VS Code 命令可用；C# 补全、调试尚未验证 |
-| .NET | 有运行库 7.0.20、9.0.5；无独立 SDK |
-| Unity | 已检查常见目录、卸载注册表、Hub 配置与进程，未发现安装；用户确认尚未安装 |
-| 可投入时间 | 用户确认每周 10 小时以上 |
+| 游戏入口 | 插画主菜单、开始游戏、设置、退出确认 |
+| 故事与章节目录 | 整部故事卡片入口、横向章节流程、依次解锁、已完成章节重看 |
+| 阅读体验 | 图片切换与淡入、逐字对白、半透明对白框、暂停、连续播放 |
+| 本机进度 | 自动保存阅读位置与章节完成状态，下次进入可接着读 |
+| 第一幕《最后一排》 | 剧情接入；练习本上的校园寻路互动，可撤回和重画 |
+| 第二幕《再等十分钟》 | 换座及两人初次交谈的图文演出 |
+| 第三幕《水杯》 | 剧情接入；俯视擦水小游戏，含提醒补擦与替代操作 |
+| 第四幕《你的核酸码》 | 可选择直接递还或故作从容，以不同停顿和回应表现人物 |
+| 第五幕《这道题》 | 默认合作推导，计算逐步写在练习本上；自主输入答案可选 |
+| 第七幕《回宿舍再看》 | 四张新图、25 段对白/旁白；折好并递出纸条，再接宿舍演出 |
+| 设置与声音 | 音乐/音效音量、五档分辨率、全屏；新用户默认 1920×1080 全屏，已接循环背景音乐 |
+| 语言 | 菜单提供简体中文、繁体中文、英语、日语；当前剧情正文为简体中文 |
 
-Unity 自带自己的脚本编译工具链；独立 .NET SDK 不是编辑器内编译的替代品。VS Code 的 C# 工具若提示缺 SDK，再按其官方要求配置；暂不为此安装多个环境。
+**验证范围：** 已通过当前版本的 Unity 编译、章节/互动状态与资源检查，并生成 Windows 开发构建；部分界面做过静态排版检查。最新第七幕的实际点击、暂停、重启续读与听感仍待我继续试玩验收，尚未完成完整回归和多设备测试。详细证据见[开发进度](docs/PROGRESS.md)。
 
-### 后续环境更新 · 2026-10-29
+## 如何打开项目
 
-用户已独立安装 Unity 6.6（6000.6.7f1），实际路径为 `D:\zachary\Editor\Unity.exe`，已通过 Hub 的“选择位置”添加。后续已完成工程创建、编辑器点击测试和首次 Windows 构建；下方保留初始化操作顺序，最新验收结果见 PROGRESS。
+1. 克隆或下载本仓库。
+2. 在 Unity Hub 中添加仓库里的 **`UnityProject/`** 文件夹。
+3. 使用 **Unity 6.6 / 6000.6.7f1** 打开，等待资源与包导入完成。版本以 [ProjectVersion.txt](UnityProject/ProjectSettings/ProjectVersion.txt) 为准，依赖以 [manifest.json](UnityProject/Packages/manifest.json) 和锁文件为准。
+4. 在 Unity 顶部菜单选择 **Tools → Story Prototype → Open Main Menu**，然后点击 Play。
+5. 从“开始游戏”进入《旁边的位置》，再进入章节目录。首次只开放第一幕，完成后依次解锁。
 
-## 你现在需要执行的操作
+需要生成 Windows 版本时，退出 Play，选择 **Tools → Story Prototype → Build Illustrated Menu**，输出到仓库根目录 `Builds/MenuDemo/`。构建目录不纳入 Git；本仓库当前提供工程源码和开发资源，没有随仓库附带可下载的正式发行包。
 
-1. 从 [Unity 官方下载页](https://unity.com/download)安装 Unity Hub，登录并完成适用的许可证激活。账号步骤由你操作。
-2. 使用已添加的 Unity **6.6（6000.6.7f1）**，无需重复安装。先满足 Windows 编辑器与 Windows 构建需求；当前不安装 Android / iOS 模块。首个测试构建使用 Mono；如切换 IL2CPP，再检查对应 Windows 构建模块与 C++ 工具链要求。
-3. 已使用 **Universal 2D** 模板创建工程；继续使用其 URP / 2D Renderer 配置，无需重新创建或切换渲染管线。
-4. 项目名称填 `UnityProject`，Location 填 `C:\Users\张俊豪\Desktop\LoveNarrativeGame`，确保最终路径为 `...\LoveNarrativeGame\UnityProject`。当前仓库已有文档，不要让 Hub 覆盖它；无需额外启用 Unity Version Control。
-5. 等首次导入结束，确认 Console 无红色错误。把完整版本号与任何错误原文带回；随后共同检查 Packages/manifest.json 和 packages-lock.json，再确定官方包的实际兼容版本。
-6. 在 Project Settings 中检查 Version Control 为 Visible Meta Files、Asset Serialization 为 Force Text。将 VS Code 设为 External Script Editor；后续用一个小脚本验证补全、编译与断点。
-7. 在编辑器 Project 窗口创建 `Assets/_Game/Scenes`、`Scripts`、`Prefabs`。把测试场景另存为 `Assets/_Game/Scenes/Bootstrap.unity`。暂不创建尚无用途的大量目录。
-8. 给场景添加一个 Square Sprite，摆到正交相机可见处，保存。进入 Play，确认 Game 视图可见方块，退出 Play 后场景仍保留，Console 无红色错误。此时只验证渲染流程，不宣称有玩法。
-9. File → Build Profiles（Ctrl+Shift+B），使用已创建的 Windows 配置，Intel 64-bit、Development Build。Scene List 当前为实际含点击脚本的 `Assets/Scenes/SampleScene.unity`；不要误换成尚无点击脚本的 Bootstrap。构建输出选择仓库根目录 `Builds/Windows/`。首轮预期使用 Mono，构建后检查实际后端与日志。退出编辑器 Play 后单独启动 exe，确认显示一致；分发时必须保留构建生成的配套文件。
-10. 记录实际结果到 docs/PROGRESS.md，检查 `git status`：场景及 .meta、Packages、ProjectSettings 应出现；Library、Temp、Builds 应不出现。之后才建立 Unity 工程的初始化提交。
+实际试玩步骤可参考[章节与续读](docs/CHAPTER_READING.md)、[第一幕寻路](docs/FIRST_ACT_ROUTE.md)、[第三幕擦水](docs/THIRD_ACT_MOP_TOPDOWN.md)、[第四/五幕互动](docs/ACTS_4_5_PRESENTATION.md)、[第七幕](docs/SEVENTH_ACT.md)。
 
-如出现 Hub 安装、许可证、包下载、中文路径或编译错误，先记录错误及日志位置，再决定是否调整；没有证据时不迁移项目或重复安装。
+## 技术与目录
 
-## 项目导航
+采用 **C#、Unity 2D / URP、UGUI、TextMeshPro、Input System**。剧情通过 ScriptableObject 配置，小型状态机管理互动条件，本机保存章节与阅读书签。游戏运行不依赖在线生成式 AI 服务。
 
-- [执行计划与验收](docs/ROADMAP.md)
-- [进度、决策与验证记录](docs/PROGRESS.md)
-- [素材来源与授权台账](docs/ASSET_LICENSES.csv)
-- [C# 编辑器与断点验收](docs/DEBUGGING.md)
-- [主菜单搭建与验收](docs/MAIN_MENU.md)
-- [对话原型搭建与验收](docs/DIALOGUE.md)
-- [点击物体触发对话](docs/INTERACTION.md)
-- [长期协作规则](AGENTS.md)
+```text
+UnityProject/
+  Assets/_Game/Scripts/      阅读、菜单、进度与互动逻辑
+  Assets/_Game/Editor/       内容安装、资源检查与构建工具
+  Assets/_Game/Resources/    剧情配置、图片、字体引用与音频
+  Packages/                 Unity 包清单与锁文件
+  ProjectSettings/          工程配置
+art/                        插画原稿、部分生成提示与美术迭代
+docs/                      设计、进度、验收与素材来源说明
+```
 
-后续才按实际需要新增 GDD、模块设计、DEVLOG 和 PORTFOLIO；现在的决策及工作记录集中在 PROGRESS，避免空文档堆积。项目暂未授予公共开源许可证，也未创建远程仓库。
+关键入口：[StoryScreen](UnityProject/Assets/_Game/Scripts/StoryScreen.cs) 组织阅读与章节，[StoryReadingState](UnityProject/Assets/_Game/Scripts/StoryReadingState.cs) 管理解锁/书签，各互动拆成相应的状态与表现脚本。当前结构以完成短篇原型和便于学习为目标，后续会随实际需要整理。
 
-## 官方核验入口
+## 接下来期待什么
 
-- [Unity 6 支持策略](https://unity.com/releases/unity-6/support)：已确认 6.3 LTS 分支存在；安装后锁定实际补丁。
-- [Unity 6.3 工程配置](https://docs.unity.com/en-us/engine/6000.3/manual/get-started/project-configuration)
-- [Hub 模板说明](https://docs.unity.com/en-us/hub/templates)：以本机所选版本的模板描述为准。
-- [Unity 6.3 Windows 构建说明](https://docs.unity.com/en-us/engine/6000.3/manual/platform-specific/windows/standalone-binaries)
+- 补回第六幕，并继续完成后续主线，把整段故事演绎连贯。
+- 让互动与画面更自然地连接，继续打磨节奏、动作反馈和人物情绪，减少“离开故事去做小游戏”的感觉。
+- 统一人物、教室空间和美术质量，替换或完善临时素材。
+- 完善音效、环境声和音乐衔接，再根据制作能力决定是否加入角色配音。
+- 继续评估具有不同理解价值的二周目体验；目前尚未制作完整双周目。
+- 补齐正式翻译、存档升级与兼容性测试，逐步达到可公开试玩的质量。
+- 长期目标是完成一款原创、短篇、买断制、离线的纯 2D 叙事游戏，优先面向 Windows，未来争取在 Steam 发行。移动端放在 Windows 版本稳定之后评估。
+
+这些是开发愿望与方向，目前没有承诺发售日期、售价或最终规模。
+
+## 素材与使用说明
+
+仓库中有原创故事与代码、作者提供素材、AI 辅助插画、字体及 Unity 模板/包资源，来源与适用条件各不相同。项目目前**未统一授予开源许可证**；公开展示或可查看源码不等于全部素材可自由复用或商业使用。字体附带的许可文件予以保留，背景音乐与部分图像参考的发行授权仍待核实，详见[素材台账](docs/ASSET_LICENSES.csv)。
+
+## 开发记录
+
+- [进度与验证证据](docs/PROGRESS.md)
+- [路线图](docs/ROADMAP.md)
+- [当前主线互动设计](docs/INTERACTION_MAINLINE_V0.4.md)
+- [完整主线剧情稿（含剧透）](docs/MAIN_STORY_V0.3.md)
+- [README 历史开发记录](docs/README_HISTORY.md)
+
+我希望这个项目最终能成为一部让人记住人物与情绪的作品，也能真实记录：一个初学者如何借助 Codex，把自己写下的故事一点点做成可以亲手体验的游戏。

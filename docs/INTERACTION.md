@@ -1,6 +1,6 @@
 # P1-03 点击物体启动对话
 
-当前状态：点击触发基础流程已获用户编辑器运行确认，保存的单个 BeginDialogue 事件与 CanvasGroup 正确。真实 UI 覆盖专项与新 Windows 构建尚未验收。P1-02 自动开始的中文对话版本已完成本机 Windows 验收，检查点 1bcde8f；它不包含本轮行为。
+当前状态：点击触发基础流程与真实 UI 覆盖专项已获用户确认，保存的单个 BeginDialogue 事件与 CanvasGroup 正确，Square 测试位置已恢复为 Y 0。新 Windows 构建尚未验收。P1-02 自动开始的中文对话版本已完成本机 Windows 验收，检查点 1bcde8f；它不包含本轮行为。
 
 ## 本轮方案
 
@@ -30,9 +30,11 @@ ClickableSquare 保留 Input System 鼠标单帧输入、UI 遮挡、相机范�
 4. 再连续点击刚才方块中心的同一屏幕位置 3 次，不点 Next。此时该位置被显示的面板覆盖；方块颜色应保持不变，对话仍是第一句。若方块被面板颜色遮得看不清，在 Hierarchy 选 Square，检查 Sprite Renderer → Color 是否不变。比较的是方块颜色，单看对话不重置不足以证明没有穿透，因为 hasStarted 本身也会拦截重复开始。
 5. 再点击 Next，确认正常推进。停止 Play，检查 Square Position Y 自动恢复 0，不将 -3.5 测试位置另存到场景。若未恢复，手工还原为原值再保存。
 
-面板暂时盖住方块是测试布置；测试后恢复正常布局，不需要改脚本、输入模式或取消面板 Raycast Target。当前尚待用户反馈实际结果。
+面板暂时盖住方块是测试布置；测试后恢复正常布局，不需要改脚本、输入模式或取消面板 Raycast Target。用户已于 2026-10-30 明确反馈专项完成，记录通过；保存位置为 Y 0。
 
-基础和遮挡验收后再生成 Windows 新构建，检查点击启动、快速点击、进行中不重置、结束不重启与菜单重进。当前该专项与构建均未执行。进入分支选择前先完成这些输入边界。
+基础和遮挡已验收，接下来生成 Windows 新构建，检查点击启动、快速点击、进行中不重置、结束不重启与菜单重进。当前新构建未执行；不把 P1-02 的旧构建当作点击触发版本。
+
+Windows 回归：停止 Play 并保存场景 / Project；关闭旧 exe；File → Build Profiles → 既有 Windows（Development Build），Scene List 保持 MainMenu 0 / SampleScene 1，Build 到仓库根 Builds/Windows。打开新 exe，Start 后对话初始隐藏；空白不触发，点击方块显示中文；到第二句再点方块不重置，结束后不重启；Back / Start 恢复等待点击，Quit 与重新启动正常。通过后再标记 P1-03 完成，并据用户提供的剧情推进下一项。
 
 ## 代码讲解与练习
 
@@ -42,4 +44,4 @@ ClickableSquare 保留 Input System 鼠标单帧输入、UI 遮挡、相机范�
 
 动手练习：Next 到第二句后点击方块三次，预测内容和颜色的变化，然后实际观察。面试问题：为什么把 CanvasGroup.alpha 设为 0 后，还要设置 blocksRaycasts 和 interactable？
 
-验证边界：独立 csc 编译 exit 0，随后用户确认 Unity 基础运行通过；保存事件与组件检查通过。未执行自动化测试；真实遮挡专项、新 Windows 构建仍待用户验收。
+验证边界：独立 csc 编译 exit 0，随后用户确认 Unity 基础运行与真实 UI 遮挡通过；保存事件与组件检查通过。未执行自动化测试；新 Windows 构建仍待用户验收。
