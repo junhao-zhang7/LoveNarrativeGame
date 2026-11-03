@@ -37,7 +37,7 @@ public static class StoryGentleChecks
         Require(mop.Cleaned==49&&!mop.Wipe(0,0,1,1),"full cleanup and repeated completion");
         mop.Reset();Require(mop.Cleaned==0&&mop.Current==StoryMopState.Stage.Cleaning,"mop replay");
         for(int i=0;i<60;i++)mop.CleanNext();Require(mop.Cleaned==45,"button alternative respects late patch");
-        var coop=new StoryCoopMathState();Require(coop.Advance()&&coop.Advance()&&coop.Advance()&&coop.Complete&&!coop.Advance(),"cooperation completes without answer input");
+        var coop=new StoryCoopMathState();Require(coop.Advance()&&coop.Advance()&&coop.Advance()&&!coop.Complete&&coop.Advance()&&coop.Complete&&!coop.Advance(),"cooperation completes without answer input");
         coop.Reset();Require(coop.Step==0&&!coop.Complete,"cooperation replay");
         Require((int)CardReturnStyle.Direct==1&&(int)CardReturnStyle.Playful==2,"two expressions remain distinct");
     }

@@ -20,19 +20,7 @@ namespace LoveNarrativeGame.Prototype
         private void BuildGentleInput()
         {
             BuildMop();
-            cardPanel=Paper("Return card choice",playback,new Vector2(960,185),new Vector2(1720,310),new Color(.98f,.97f,.93f,.86f));
-            Text(cardPanel,new Vector2(860,245),new Vector2(1400,55),"她在找的纸卡，就在你手里。",30,true,blue);
-            Button(cardPanel,new Vector2(450,135),new Vector2(700,80),"叫她一声，直接递过去",()=>ChooseCard(CardReturnStyle.Direct),29);
-            Button(cardPanel,new Vector2(1270,135),new Vector2(700,80),"夹起纸卡，故作从容",()=>ChooseCard(CardReturnStyle.Playful),29);
-            Text(cardPanel,new Vector2(860,55),new Vector2(1300,40),"怎样把纸卡递给她？",23,true,blue);
-            cardPanel.gameObject.SetActive(false);
-            coopPanel=Paper("Shared maths notebook",playback,new Vector2(960,230),new Vector2(1720,400),new Color(.98f,.97f,.93f,.87f));
-            Text(coopPanel,new Vector2(860,350),new Vector2(1300,50),"把练习本转到两人中间",30,true,blue);
-            coopText=Text(coopPanel,new Vector2(860,220),new Vector2(1510,180),"",29);
-            var next=Button(coopPanel,new Vector2(700,65),new Vector2(1020,70),"一起看区间两端",AdvanceCoop,28);coopNextText=next.GetComponentInChildren<TMP_Text>();
-            Button(coopPanel,new Vector2(1430,65),new Vector2(390,70),"我想自己算",OpenOptionalMath,25);
-            coopPanel.gameObject.SetActive(false);
-            Button(mathPanel,new Vector2(1370,288),new Vector2(500,50),"先不填了，一起推导",ReturnToCoop,23);
+            BuildCardAndNotebook();
         }
         private void PresentGentle(StoryBeat beat)
         {
@@ -40,11 +28,19 @@ namespace LoveNarrativeGame.Prototype
             cardPanel.gameObject.SetActive(beat.interaction==StoryInteraction.CardChoice);
             coopPanel.gameObject.SetActive(beat.interaction==StoryInteraction.CooperateMath);
             if(beat.interaction==StoryInteraction.Mop) BeginMop();
-            if(beat.interaction==StoryInteraction.CardChoice)readingCardStyle=CardReturnStyle.Unchosen;
-            if(beat.interaction==StoryInteraction.CooperateMath){coopState.Reset();RefreshCoop();}
+            cardPerforming=false;
+            if(beat.interaction==StoryInteraction.CardChoice){readingCardStyle=CardReturnStyle.Unchosen;cardCanvas.interactable=true;cardPrompt.text="她在找的纸卡，就在凌赫手里。";}
+            if(beat.interaction==StoryInteraction.CooperateMath){coopState.Reset();independentMath=false;RefreshCoop();}
+            PresentNotebookForBeat(beat);
         }
         private void ChooseCard(CardReturnStyle style)
-        {if(!CanGentle(cardPanel)||style==CardReturnStyle.Unchosen)return;readingCardStyle=style;FinishGentle();}
+        {
+            if(!CanGentle(cardPanel)||style==CardReturnStyle.Unchosen||cardPerforming)return;
+            readingCardStyle=style;cardPerforming=true;cardWait=0;cardCanvas.interactable=false;
+            cardPrompt.text=style==CardReturnStyle.Direct?"凌赫叫了她一声，将纸卡递过去。":"他捏住纸卡，指尖停了一下。";
+            SaveReading();
+            if(EventSystem.current!=null)EventSystem.current.SetSelectedGameObject(null);
+        }
         private StoryBeat ResolveCardBeat(StoryBeat original)
         {
             if(readingCardStyle!=CardReturnStyle.Direct||books[bookIndex].chapters[chapterIndex].storyId!="campus-act-04")return original;
@@ -60,15 +56,21 @@ namespace LoveNarrativeGame.Prototype
         }
         private void RefreshCoop()
         {
-            if(coopState.Step==0){coopText.text="李晚云：我只把顶点代进去了……\n凌赫：我们一起看看，题目要的是区间里的最大值。";coopNextText.text="一起看看区间两端";}
-            else if(coopState.Step==1){coopText.text="凌赫：f(2)=-22，f(14)=26。开口向上，最大值在两端比较。\n李晚云：那M就是26。我刚才算的是最小值。";coopNextText.text="把M=26写在本子上";}
-            else {coopText.text="凌赫：m²+n²=(m+n)²-2mn=26²-2×91=494，不用分别解m和n。\n李晚云：还要把前面的M加上……我来写最后一步。";coopNextText.text="把本子转给她，接着算";}
+            RefreshNotebook(coopState.Step);
+            optionalMathButton.gameObject.SetActive(!coopState.Complete);
+            if(coopState.Step==0){coopText.text="李晚云：我只把顶点代进去了……\n凌赫：我们一起看看，题目要的是区间里的最大值。";coopNextText.text="先比较区间两端";}
+            else if(coopState.Step==1){coopText.text="凌赫：两端分别是负二十二和二十六。\n李晚云：那最大的就是二十六。我刚才算的是最小值。";coopNextText.text="写下 M = 26";}
+            else if(coopState.Step==2){coopText.text="李晚云：后面不用把 m 和 n 分别解出来？\n凌赫：不用。和的平方，减两倍的积。";coopNextText.text="接着算平方和";}
+            else if(coopState.Step==3){coopText.text="凌赫：这一项是四百九十四，还要加上前面的 M。\n李晚云：最后一步我来写。";coopNextText.text="把笔留给她，写下最后一步";}
+            else{coopText.text=independentMath?"答案写下了。把刚才的思路讲给她听。":"她接过笔，在最后一行落下了结果。";coopNextText.text=independentMath?"把思路讲给她听 →":"接着听她说 →";}
         }
         private void AdvanceCoop()
         {
-            if(!CanGentle(coopPanel))return;
-            coopState.Advance();
-            if(!coopState.Complete){RefreshCoop();return;}
+            if(!CanGentle(coopPanel)||lastCoopFrame==Time.frameCount)return;
+            lastCoopFrame=Time.frameCount;
+            foreach(var line in notebookLines)if(line.maxVisibleCharacters<line.text.Length){foreach(var note in notebookLines)note.maxVisibleCharacters=int.MaxValue;return;}
+            if(!coopState.Complete){coopState.Advance();RefreshCoop();return;}
+            if(independentMath){FinishGentle();return;}
             int target=System.Array.FindIndex(beats,b=>b.id=="math-v2-20");
             coopPanel.gameObject.SetActive(false);dialoguePanel.gameObject.SetActive(true);
             if(EventSystem.current!=null)EventSystem.current.SetSelectedGameObject(null);
@@ -78,11 +80,12 @@ namespace LoveNarrativeGame.Prototype
         private void OpenOptionalMath()
         {
             if(!CanGentle(coopPanel))return;coopPanel.gameObject.SetActive(false);mathPanel.gameObject.SetActive(true);
-            mathInput.text="";mathFeedback.text="不想单独算也没关系，可以随时回到一起推导。";
+            mathInput.text="";mathFeedback.text="在左页空白处写下结果；也可以随时回到一起推导。";
+            notebookWriting.gameObject.SetActive(false);
             if(EventSystem.current!=null)EventSystem.current.SetSelectedGameObject(mathInput.gameObject);mathInput.ActivateInputField();
         }
         private void ReturnToCoop()
-        {if(!CanGentle(mathPanel))return;mathPanel.gameObject.SetActive(false);coopPanel.gameObject.SetActive(true);if(EventSystem.current!=null)EventSystem.current.SetSelectedGameObject(null);RefreshCoop();}
+        {if(!CanGentle(mathPanel))return;mathPanel.gameObject.SetActive(false);coopPanel.gameObject.SetActive(true);if(EventSystem.current!=null)EventSystem.current.SetSelectedGameObject(null);notebookWriting.gameObject.SetActive(true);RefreshCoop();}
         private void FinishGentle()
         {
             mopPanel.gameObject.SetActive(false);cardPanel.gameObject.SetActive(false);coopPanel.gameObject.SetActive(false);dialoguePanel.gameObject.SetActive(true);

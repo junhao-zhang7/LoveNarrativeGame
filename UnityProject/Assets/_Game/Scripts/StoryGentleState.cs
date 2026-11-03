@@ -49,7 +49,7 @@ namespace LoveNarrativeGame.Prototype
     public sealed class StoryCoopMathState
     {
         public int Step { get; private set; }
-        public bool Complete => Step==3;
+        public bool Complete => Step==4;
         public bool Advance(){if(Complete)return false;Step++;return true;}
         public void Reset(){Step=0;}
     }

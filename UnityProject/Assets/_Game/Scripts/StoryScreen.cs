@@ -403,6 +403,8 @@ namespace LoveNarrativeGame.Prototype
                 art.uvRect = new Rect(Mathf.Lerp(r.x, cameraTarget.x, t), Mathf.Lerp(r.y, cameraTarget.y, t), Mathf.Lerp(r.width, cameraTarget.width, t), Mathf.Lerp(r.height, cameraTarget.height, t));
                 TickMop();
                 TickRoute();
+                TickCardPerformance();
+                TickNotebookInk();
             }
             if (Keyboard.current == null) return;
             if (Keyboard.current.escapeKey.wasPressedThisFrame) { if (selection.gameObject.activeSelf) Close(); else if (chapterMenu != null && chapterMenu.gameObject.activeSelf) ShowSelection(); else TogglePause(); return; }
@@ -412,29 +414,27 @@ namespace LoveNarrativeGame.Prototype
         private void Close() { closed?.Invoke(); Destroy(gameObject); }
         private void BuildMathInput()
         {
-            mathPanel = Paper("Math answer paper", playback, new Vector2(960, 190), new Vector2(1720, 330), new Color(.98f, .97f, .93f, .88f));
-            Text(mathPanel, new Vector2(650, 281), new Vector2(1160, 42), "凌赫在草稿上写了几行，很快算出了结果。", 27, false, blue);
-            Text(mathPanel, new Vector2(620, 185), new Vector2(1100, 128),
-                "f(x)=x²-12x-2，x∈[2,14]，M为区间最大值。\nm、n为正实数，m+n=26，mn=91。求 M+m²+n²。", 26);
-            Text(mathPanel, new Vector2(1370, 232), new Vector2(480, 48), "写下整道题的最终结果", 25, true, blue);
-            var field = Fill("Final answer", mathPanel, new Vector2(1300, 155), new Vector2(300, 66), new Color(.91f, .94f, .93f));
+            mathPanel = Rect("Answer on notebook", playback, new Vector2(960,540), new Vector2(1920,1080));
+            var footer=Paper("Answer dialogue",mathPanel,new Vector2(960,110),new Vector2(1720,190),new Color(.98f,.97f,.93f,.55f));
+            mathFeedback=Text(footer,new Vector2(860,135),new Vector2(1540,70),"在左页空白处写下整道题的结果。",27,false,blue);
+            var field = Fill("Final answer", mathPanel, new Vector2(850,365), new Vector2(330,62), new Color(.98f,.97f,.93f,.18f));
+            field.rectTransform.localRotation=Quaternion.Euler(0,0,14);
             mathInput = field.gameObject.AddComponent<TMP_InputField>();
             var viewport = Rect("Answer viewport", field.transform, Vector2.zero, Vector2.zero);
             viewport.anchorMin = Vector2.zero; viewport.anchorMax = Vector2.one;
             viewport.offsetMin = new Vector2(12, 5); viewport.offsetMax = new Vector2(-12, -5);
-            viewport.gameObject.AddComponent<RectMask2D>();
+            // Short answer text stays inside the paper; RectMask2D would clip a rotated input viewport.
             var inputText = Text(viewport, Vector2.zero, Vector2.zero, "", 32);
             inputText.rectTransform.anchorMin = Vector2.zero; inputText.rectTransform.anchorMax = Vector2.one;
             inputText.rectTransform.offsetMin = inputText.rectTransform.offsetMax = Vector2.zero;
-            var placeholder = Text(viewport, Vector2.zero, Vector2.zero, "输入答案", 27, false, blue);
+            var placeholder = Text(viewport, Vector2.zero, Vector2.zero, "写下答案", 27, false, blue);
             placeholder.rectTransform.anchorMin = Vector2.zero; placeholder.rectTransform.anchorMax = Vector2.one;
             placeholder.rectTransform.offsetMin = placeholder.rectTransform.offsetMax = Vector2.zero;
             mathInput.textViewport = viewport; mathInput.textComponent = inputText; mathInput.placeholder = placeholder;
             mathInput.fontAsset = inputText.font; mathInput.pointSize = 32;
-            mathInput.lineType = TMP_InputField.LineType.SingleLine; mathInput.characterLimit = 16;
+            mathInput.lineType = TMP_InputField.LineType.SingleLine; mathInput.characterLimit = 8;
             mathInput.onSubmit.AddListener(_ => SubmitMath());
-            Button(mathPanel, new Vector2(1560, 155), new Vector2(180, 66), "确认", SubmitMath, 27);
-            mathFeedback = Text(mathPanel, new Vector2(860, 57), new Vector2(1580, 70), "", 25, false, blue);
+            Button(mathPanel, new Vector2(1360,68), new Vector2(300,62), "写好了，给她看", SubmitMath, 26);
             mathPanel.gameObject.SetActive(false);
         }
         private void SubmitMath()
@@ -445,6 +445,7 @@ namespace LoveNarrativeGame.Prototype
                 mathFeedback.text = string.IsNullOrWhiteSpace(mathInput.text) ? "李晚云：你还没写呢。再看看？" : "李晚云：是这个答案吗？好像不太对，你再算算？";
                 mathInput.ActivateInputField(); return;
             }
+            if(beats[progress.Index].interaction==StoryInteraction.CooperateMath){CompleteOptionalMath();return;}
             mathPanel.gameObject.SetActive(false); dialoguePanel.gameObject.SetActive(true);
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
             lastAdvanceFrame = Time.frameCount;
