@@ -35,6 +35,8 @@ public static class MainMenuInstaller
         foreach (var picture in PaperCardStoryDraft.Pictures)
             PreparePicture("Assets/_Game/Resources/Story/PaperCard/" + picture + ".png");
         PreparePicture("Assets/_Game/Resources/Story/PaperCard/DirectCardReturn.png");
+        PreparePicture("Assets/_Game/Resources/Story/WaterCup/MopFloorPlate.png");
+        PreparePicture("Assets/_Game/Resources/Story/WaterCup/MopTool.png");
         foreach (var picture in MathHelpStoryDraft.Pictures)
             PreparePicture("Assets/_Game/Resources/Story/MathHelp/" + picture + ".png");
         var background = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/Menu/MainMenuBackground.png");

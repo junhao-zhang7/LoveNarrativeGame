@@ -40,54 +40,9 @@ namespace LoveNarrativeGame.Prototype
             mopPanel.gameObject.SetActive(beat.interaction==StoryInteraction.Mop);
             cardPanel.gameObject.SetActive(beat.interaction==StoryInteraction.CardChoice);
             coopPanel.gameObject.SetActive(beat.interaction==StoryInteraction.CooperateMath);
-            if(beat.interaction==StoryInteraction.Mop){mopState.Reset();mopPrevious=false;RefreshMop();}
+            if(beat.interaction==StoryInteraction.Mop) BeginMop();
             if(beat.interaction==StoryInteraction.CardChoice)readingCardStyle=CardReturnStyle.Unchosen;
             if(beat.interaction==StoryInteraction.CooperateMath){coopState.Reset();RefreshCoop();}
-        }
-        private void BuildMop()
-        {
-            mopPanel=Paper("Mop water",playback,new Vector2(960,530),new Vector2(1720,840),new Color(.98f,.97f,.93f,.97f));
-            Text(mopPanel,new Vector2(860,790),new Vector2(1400,60),"把地上的水收干净",34,true,blue);
-            Text(mopPanel,new Vector2(860,735),new Vector2(1500,44),"按住鼠标拖动拖把擦水，也可以点击“擦下一片”。",24,true);
-            mopArea=Rect("Floor close view",mopPanel,new Vector2(860,460),new Vector2(1400,470));
-            for(int y=0;y<8;y++)for(int x=0;x<14;x++)
-                Fill("Floor tile",mopArea,new Vector2(50+x*100,29+y*59),new Vector2(98,57),new Color(.70f+(x+y)%2*.025f,.71f+(x+y)%2*.025f,.69f+(x+y)%2*.025f));
-            Fill("Chair foot",mopArea,new Vector2(1310,445),new Vector2(26,48),new Color(.46f,.40f,.31f));
-            wetSpots=new GameObject[mopState.Count];
-            for(int i=0;i<wetSpots.Length;i++)
-            {
-                var spot=Rect("Water sheen",mopArea,new Vector2((float)StoryMopState.X(i)*1400,(float)StoryMopState.Y(i)*470),new Vector2(145,45));
-                wetSpots[i]=spot.gameObject;
-                var round=spot.gameObject.AddComponent<MenuInkGraphic>();round.kind=MenuInkGraphic.Shape.Dot;round.color=new Color(.74f,.89f,.97f,.7f);round.raycastTarget=false;
-            }
-            mopTool=Rect("Mop cursor",mopArea,new Vector2(700,235),new Vector2(140,45));
-            var grip=Fill("Wood handle",mopTool,new Vector2(70,87),new Vector2(12,130),new Color(.57f,.42f,.27f));grip.raycastTarget=false;
-            for(int i=0;i<12;i++) {var strand=Fill("Mop cloth",mopTool,new Vector2(15+i*10,20+Mathf.Sin(i)*4),new Vector2(13,36),new Color(.80f,.83f,.81f));strand.raycastTarget=false;}
-            mopFeedback=Text(mopPanel,new Vector2(860,165),new Vector2(1500,75),"",28,true,blue);
-            mopAlternative=Button(mopPanel,new Vector2(430,70),new Vector2(500,70),"擦下一片",()=>{if(!CanGentle(mopPanel))return;for(int i=0;i<5;i++)mopState.CleanNext();RefreshMop();},26);
-            mopAck=Button(mopPanel,new Vector2(1140,70),new Vector2(700,70),"凌赫：看到了。",()=>{if(!CanGentle(mopPanel))return;mopState.Acknowledge();mopPrevious=false;RefreshMop();},28);
-            mopDone=Button(mopPanel,new Vector2(1140,70),new Vector2(700,70),"放好拖把，回到座位",()=>{if(CanGentle(mopPanel)&&mopState.Current==StoryMopState.Stage.Complete)FinishGentle();},28);
-            mopPanel.gameObject.SetActive(false);
-        }
-        private void TickMop()
-        {
-            if(!CanGentle(mopPanel)||Mouse.current==null)return;
-            if(!Mouse.current.leftButton.isPressed){mopPrevious=false;return;}
-            Vector2 local;
-            if(!RectTransformUtility.ScreenPointToLocalPointInRectangle(mopArea,Mouse.current.position.ReadValue(),null,out local)){mopPrevious=false;return;}
-            Vector2 point=new Vector2(local.x/mopArea.rect.width+.5f,local.y/mopArea.rect.height+.5f);
-            if(point.x<0||point.x>1||point.y<0||point.y>1){mopPrevious=false;return;}
-            mopTool.anchoredPosition=new Vector2(point.x*1400,point.y*470);
-            Vector2 previous=mopPrevious?mopLast:point;
-            if(mopState.Wipe(previous.x,previous.y,point.x,point.y))RefreshMop();
-            mopLast=point;mopPrevious=true;
-        }
-        private void RefreshMop()
-        {
-            for(int i=0;i<wetSpots.Length;i++)wetSpots[i].SetActive(mopState.Visible(i));
-            bool notice=mopState.Current==StoryMopState.Stage.Notice,done=mopState.Current==StoryMopState.Stage.Complete;
-            mopAck.gameObject.SetActive(notice);mopDone.gameObject.SetActive(done);mopAlternative.interactable=!notice&&!done;
-            mopFeedback.text=notice?"李晚云：这边还有一点。":done?"水收干净了。把拖把放回去吧。":mopState.Current==StoryMopState.Stage.LastSpot?"凌赫：看到了。\n椅脚旁还留着一小片。":"拖把经过的地方，水渍慢慢淡去。";
         }
         private void ChooseCard(CardReturnStyle style)
         {if(!CanGentle(cardPanel)||style==CardReturnStyle.Unchosen)return;readingCardStyle=style;FinishGentle();}
